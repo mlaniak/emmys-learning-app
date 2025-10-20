@@ -159,6 +159,9 @@ const EmmyStudyGame = () => {
     updateBreadcrumbs(screen, additionalInfo);
     setShowSearch(false);
     setSearchQuery('');
+    
+    // Scroll to top of page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Adaptive Learning System
@@ -1260,7 +1263,12 @@ const EmmyStudyGame = () => {
     }, explanation && !ok ? 3500 : 1500);
   };
 
-  const resetGame = () => { setCurrentQuestion(0); setScore(0); setCurrentScreen('home'); };
+  const resetGame = () => { 
+    setCurrentQuestion(0); 
+    setScore(0); 
+    setCurrentScreen('home');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   if (currentScreen === 'home') {
     const currentTheme = themes[progress.selectedTheme] || themes.default;
@@ -1919,7 +1927,7 @@ const EmmyStudyGame = () => {
     const guide = studyGuides[type];
     return (
       <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-purple-200 to-pink-200 p-4 md:p-8">
-        <div onClick={() => setCurrentScreen('home')} className="bg-white px-6 py-3 rounded-full shadow-lg inline-flex gap-2 hover:scale-105 cursor-pointer mb-4">← Back</div>
+        <div onClick={() => { setCurrentScreen('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="bg-white px-6 py-3 rounded-full shadow-lg inline-flex gap-2 hover:scale-105 cursor-pointer mb-4">← Back</div>
         <div className="max-w-3xl mx-auto bg-white rounded-3xl shadow-2xl p-8 md:p-12">
           <div className="text-center mb-8">
             <div className="text-6xl md:text-7xl mb-4">{guide.icon}</div>
@@ -1936,7 +1944,7 @@ const EmmyStudyGame = () => {
             </div>
           ))}
           <div className="text-center">
-            <div onClick={() => { playSound('click'); setCurrentScreen(type); setCurrentQuestion(0); }} 
+            <div onClick={() => { playSound('click'); setCurrentScreen(type); setCurrentQuestion(0); window.scrollTo({ top: 0, behavior: 'smooth' }); }} 
               className="inline-block px-8 md:px-12 py-4 md:py-6 text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full shadow-lg hover:scale-110 cursor-pointer">
               Practice Now! 🎮
             </div>
@@ -1956,7 +1964,7 @@ const EmmyStudyGame = () => {
     
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-200 to-purple-400 p-4 md:p-8">
-        <div onClick={() => setCurrentScreen('home')} className="bg-white px-6 py-3 rounded-full shadow-lg inline-flex gap-2 hover:scale-105 cursor-pointer mb-4">← Back</div>
+        <div onClick={() => { setCurrentScreen('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="bg-white px-6 py-3 rounded-full shadow-lg inline-flex gap-2 hover:scale-105 cursor-pointer mb-4">← Back</div>
         <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl p-6 md:p-12">
           <div className="text-center mb-6">
             <div className="text-4xl md:text-5xl mb-3">✏️</div>
@@ -2005,7 +2013,7 @@ const EmmyStudyGame = () => {
           <div className="mt-6 flex justify-between gap-4">
             <div onClick={() => { if(currentQuestion>0) { setCurrentQuestion(currentQuestion-1); triggerHaptic('light'); } }} 
               className={`px-6 py-3 font-bold bg-gray-300 rounded-full cursor-pointer active:scale-95 transition-transform ${currentQuestion===0?'opacity-50':''}`}>← Prev</div>
-            <div onClick={() => { if(currentQuestion<spellingWords.length-1) { setCurrentQuestion(currentQuestion+1); triggerHaptic('light'); } else { setCurrentScreen('home'); triggerHaptic('success'); } }} 
+            <div onClick={() => { if(currentQuestion<spellingWords.length-1) { setCurrentQuestion(currentQuestion+1); triggerHaptic('light'); } else { setCurrentScreen('home'); triggerHaptic('success'); window.scrollTo({ top: 0, behavior: 'smooth' }); } }} 
               className="px-6 py-3 font-bold bg-purple-500 text-white rounded-full cursor-pointer active:scale-95 transition-transform">
               {currentQuestion < spellingWords.length-1 ? 'Next →' : 'Done 🎉'}
             </div>
@@ -2842,7 +2850,7 @@ const EmmyStudyGame = () => {
   return (
     <div className={`min-h-screen bg-gradient-to-br ${bgColors[currentScreen]} p-4 md:p-8`}>
       <div className="flex justify-between mb-4 gap-2">
-        <div onClick={() => setCurrentScreen('home')} className="bg-white px-4 md:px-6 py-2 md:py-3 rounded-full shadow-lg hover:scale-105 cursor-pointer">← Back</div>
+        <div onClick={() => { setCurrentScreen('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="bg-white px-4 md:px-6 py-2 md:py-3 rounded-full shadow-lg hover:scale-105 cursor-pointer">← Back</div>
         <div onClick={() => setCurrentQuestion(0)} className="bg-orange-500 px-4 md:px-6 py-2 md:py-3 rounded-full shadow-lg text-white font-bold hover:scale-105 cursor-pointer">🔄 Restart</div>
       </div>
       <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl p-6 md:p-12 relative">
