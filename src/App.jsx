@@ -398,27 +398,93 @@ const EmmyStudyGame = () => {
       categories: [
         {
           name: 'October Words (Test 10/31)',
-          words: ['than', 'think', 'their', 'these', 'when', 'each', 'such', 'me', 'find', 'see']
+          words: [
+            { word: 'than', example: 'I am taller than my sister.', usage: 'Used to compare two things' },
+            { word: 'think', example: 'I think it will rain today.', usage: 'To use your mind to consider something' },
+            { word: 'their', example: 'The children played with their toys.', usage: 'Shows something belongs to them' },
+            { word: 'these', example: 'These cookies are delicious!', usage: 'Points to things close by (plural)' },
+            { word: 'when', example: 'When will we go to the park?', usage: 'Asks about time' },
+            { word: 'each', example: 'Each student gets a pencil.', usage: 'Every single one' },
+            { word: 'such', example: 'She is such a good friend.', usage: 'Used to emphasize or describe' },
+            { word: 'me', example: 'Can you help me with this?', usage: 'Refers to yourself' },
+            { word: 'find', example: 'I need to find my lost shoe.', usage: 'To discover or locate something' },
+            { word: 'see', example: 'I can see the bird in the tree.', usage: 'To look at with your eyes' }
+          ]
         },
         {
           name: 'November Words',
-          words: ['come', 'some', 'done', 'one', 'none', 'gone', 'fun', 'run', 'sun', 'bun']
+          words: [
+            { word: 'come', example: 'Please come to dinner.', usage: 'To move toward someone or something' },
+            { word: 'some', example: 'I would like some milk.', usage: 'An amount that is not all' },
+            { word: 'done', example: 'I am done with my homework.', usage: 'Finished or completed' },
+            { word: 'one', example: 'I have one apple left.', usage: 'The number 1' },
+            { word: 'none', example: 'There are none left in the box.', usage: 'Not any, zero' },
+            { word: 'gone', example: 'The bus has gone already.', usage: 'Left or moved away' },
+            { word: 'fun', example: 'Playing games is so much fun!', usage: 'Enjoyable or entertaining' },
+            { word: 'run', example: 'I like to run in the park.', usage: 'To move quickly on your feet' },
+            { word: 'sun', example: 'The sun is shining brightly.', usage: 'The bright star in our sky' },
+            { word: 'bun', example: 'I ate a hot dog in a bun.', usage: 'A type of bread roll' }
+          ]
         },
         {
           name: 'December Words',
-          words: ['red', 'bed', 'fed', 'led', 'wed', 'said', 'paid', 'laid', 'maid', 'afraid']
+          words: [
+            { word: 'red', example: 'The apple is red and shiny.', usage: 'The color of fire trucks and roses' },
+            { word: 'bed', example: 'I sleep in my bed at night.', usage: 'Furniture for sleeping' },
+            { word: 'fed', example: 'I fed the dog this morning.', usage: 'Gave food to (past tense of feed)' },
+            { word: 'led', example: 'The teacher led us to the library.', usage: 'Showed the way (past tense of lead)' },
+            { word: 'wed', example: 'They got wed last summer.', usage: 'Married (past tense of wed)' },
+            { word: 'said', example: 'She said hello to me.', usage: 'Spoke words (past tense of say)' },
+            { word: 'paid', example: 'I paid for my lunch today.', usage: 'Gave money for something (past tense of pay)' },
+            { word: 'laid', example: 'The hen laid an egg.', usage: 'Put something down (past tense of lay)' },
+            { word: 'maid', example: 'The maid cleaned the room.', usage: 'A woman who cleans houses' },
+            { word: 'afraid', example: 'I am afraid of the dark.', usage: 'Feeling scared or frightened' }
+          ]
         },
         {
           name: 'January Words',
-          words: ['blue', 'true', 'glue', 'clue', 'due', 'new', 'few', 'grew', 'flew', 'drew']
+          words: [
+            { word: 'blue', example: 'The sky is blue today.', usage: 'The color of the ocean and sky' },
+            { word: 'true', example: 'It is true that cats like fish.', usage: 'Real or correct, not false' },
+            { word: 'glue', example: 'I used glue to fix my toy.', usage: 'A sticky substance for joining things' },
+            { word: 'clue', example: 'The footprint was a clue.', usage: 'A hint that helps solve a mystery' },
+            { word: 'due', example: 'My homework is due tomorrow.', usage: 'Expected or supposed to happen' },
+            { word: 'new', example: 'I got a new bike for my birthday.', usage: 'Not old, recently made or bought' },
+            { word: 'few', example: 'There are only a few cookies left.', usage: 'A small number, not many' },
+            { word: 'grew', example: 'The plant grew tall and strong.', usage: 'Got bigger (past tense of grow)' },
+            { word: 'flew', example: 'The bird flew over the house.', usage: 'Moved through the air (past tense of fly)' },
+            { word: 'drew', example: 'She drew a picture of a cat.', usage: 'Made a picture with pencil (past tense of draw)' }
+          ]
         },
         {
           name: 'February Words',
-          words: ['green', 'seen', 'been', 'queen', 'screen', 'between', 'fifteen', 'sixteen', 'seventeen', 'eighteen']
+          words: [
+            { word: 'green', example: 'The grass is green in spring.', usage: 'The color of grass and leaves' },
+            { word: 'seen', example: 'I have seen that movie before.', usage: 'Looked at with eyes (past tense of see)' },
+            { word: 'been', example: 'I have been to the zoo.', usage: 'Existed or happened (past tense of be)' },
+            { word: 'queen', example: 'The queen lives in a castle.', usage: 'A female ruler of a country' },
+            { word: 'screen', example: 'I watch movies on the screen.', usage: 'The flat surface on TVs and computers' },
+            { word: 'between', example: 'The cat sat between the dogs.', usage: 'In the middle of two things' },
+            { word: 'fifteen', example: 'I am fifteen years old.', usage: 'The number 15' },
+            { word: 'sixteen', example: 'There are sixteen candles on the cake.', usage: 'The number 16' },
+            { word: 'seventeen', example: 'I counted seventeen birds.', usage: 'The number 17' },
+            { word: 'eighteen', example: 'She will be eighteen next year.', usage: 'The number 18' }
+          ]
         },
         {
           name: 'March Words',
-          words: ['yellow', 'fellow', 'mellow', 'bellow', 'swallow', 'follow', 'hollow', 'pillow', 'willow', 'billow']
+          words: [
+            { word: 'yellow', example: 'The sunflowers are bright yellow.', usage: 'The color of the sun and bananas' },
+            { word: 'fellow', example: 'He is a nice fellow.', usage: 'A man or boy, a person' },
+            { word: 'mellow', example: 'The music was soft and mellow.', usage: 'Gentle, soft, or relaxed' },
+            { word: 'bellow', example: 'The cow will bellow loudly.', usage: 'To make a deep, loud sound' },
+            { word: 'swallow', example: 'I will swallow my medicine.', usage: 'To take food or liquid down your throat' },
+            { word: 'follow', example: 'Please follow me to the classroom.', usage: 'To go after someone or come behind' },
+            { word: 'hollow', example: 'The tree trunk is hollow inside.', usage: 'Empty on the inside' },
+            { word: 'pillow', example: 'I rest my head on my pillow.', usage: 'A soft cushion for your head' },
+            { word: 'willow', example: 'The willow tree has long branches.', usage: 'A type of tree with drooping branches' },
+            { word: 'billow', example: 'The clouds billow in the sky.', usage: 'To swell or move in waves' }
+          ]
         }
       ]
     },
@@ -1529,8 +1595,16 @@ const EmmyStudyGame = () => {
                   </h3>
                   <div className="bg-gradient-to-br from-yellow-100 to-orange-100 p-8 rounded-2xl border-4 border-yellow-300 mb-6">
                     <div className="text-4xl md:text-6xl font-bold text-purple-800 mb-4">
-                      {category.words[parentQuizWord]}
+                      {typeof category.words[parentQuizWord] === 'string' 
+                        ? category.words[parentQuizWord] 
+                        : category.words[parentQuizWord].word}
                     </div>
+                    {typeof category.words[parentQuizWord] === 'object' && category.words[parentQuizWord].example && (
+                      <div className="mb-4">
+                        <div className="text-lg text-gray-700 mb-2 italic">"{category.words[parentQuizWord].example}"</div>
+                        <div className="text-sm text-gray-600">{category.words[parentQuizWord].usage}</div>
+                      </div>
+                    )}
                     <p className="text-lg text-gray-600">Ask Emmy to spell this word!</p>
                   </div>
                   <div className="flex justify-center gap-4">
@@ -1564,20 +1638,34 @@ const EmmyStudyGame = () => {
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-                  {category.words.map((word, index) => (
-                    <div key={index} 
-                      className="bg-gradient-to-br from-purple-100 to-pink-100 p-4 rounded-xl border-2 border-purple-200 text-center hover:scale-105 transition-transform cursor-pointer"
-                      onClick={() => {
-                        playSound('click');
-                        triggerHaptic('light');
-                        setParentQuizMode(true);
-                        setParentQuizWord(index);
-                      }}>
-                      <div className="text-lg font-bold text-purple-800">{word}</div>
-                      <div className="text-xs text-gray-500 mt-1">Tap to quiz</div>
-                    </div>
-                  ))}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {category.words.map((wordItem, index) => {
+                    const word = typeof wordItem === 'string' ? wordItem : wordItem.word;
+                    const example = typeof wordItem === 'object' ? wordItem.example : null;
+                    const usage = typeof wordItem === 'object' ? wordItem.usage : null;
+                    
+                    return (
+                      <div key={index} 
+                        className="bg-gradient-to-br from-purple-100 to-pink-100 p-4 rounded-xl border-2 border-purple-200 hover:scale-105 transition-transform cursor-pointer"
+                        onClick={() => {
+                          playSound('click');
+                          triggerHaptic('light');
+                          setParentQuizMode(true);
+                          setParentQuizWord(index);
+                        }}>
+                        <div className="text-center">
+                          <div className="text-xl font-bold text-purple-800 mb-2">{word}</div>
+                          {example && (
+                            <div className="text-sm text-gray-700 mb-2 italic">"{example}"</div>
+                          )}
+                          {usage && (
+                            <div className="text-xs text-gray-600 mb-2">{usage}</div>
+                          )}
+                          <div className="text-xs text-purple-600 font-bold">Tap to quiz</div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
