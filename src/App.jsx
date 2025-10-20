@@ -1365,31 +1365,11 @@ const EmmyStudyGame = () => {
               </div>
             )}
 
-            {/* Main Learning Buttons - Large and Kid-Friendly */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-              {[
-                { name: 'phonics', title: 'Phonics', icon: '📚', color: 'from-blue-400 to-blue-600' },
-                { name: 'math', title: 'Math', icon: '🔢', color: 'from-green-400 to-green-600' },
-                { name: 'reading', title: 'Reading', icon: '📖', color: 'from-purple-400 to-purple-600' },
-                { name: 'spelling', title: 'Spelling', icon: '✏️', color: 'from-pink-400 to-pink-600' },
-                { name: 'science', title: 'Science', icon: '🔬', color: 'from-yellow-400 to-yellow-600' },
-                { name: 'social', title: 'Citizenship', icon: '🌟', color: 'from-indigo-400 to-indigo-600' }
-              ].map(game => (
-                <div key={game.name} onClick={() => { navigateTo(game.name); setCurrentQuestion(0); }}
-                  className={`bg-gradient-to-br ${game.color} p-6 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform relative hover:wiggle`}>
-                  <div className="text-4xl md:text-5xl mb-3 sparkle">{game.icon}</div>
-                  <h2 className="text-lg md:text-xl font-bold text-white">{game.title}</h2>
-                  {progress.completedSubjects[game.name] && (
-                    <div className="absolute top-2 right-2 text-2xl sparkle">🏆</div>
-                  )}
-                </div>
-              ))}
-            </div>
 
-            {/* Learning Games - Kid Friendly */}
+            {/* Learning Games - Main Section */}
             <div className="mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-6">🎮 Learning Games</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <h2 className="text-3xl md:text-4xl font-bold text-center text-purple-800 mb-6">🎮 Learning Games</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 {[
                   { name: 'phonics', title: 'Phonics', icon: '📚', color: 'from-pink-400 to-pink-600' },
                   { name: 'math', title: 'Math', icon: '🔢', color: 'from-blue-400 to-blue-600' },
@@ -1403,14 +1383,14 @@ const EmmyStudyGame = () => {
                   { name: 'history', title: 'History', icon: '📜', color: 'from-amber-400 to-amber-600' }
                 ].map(game => (
                   <div key={game.name} onClick={() => { navigateTo(game.name); setCurrentQuestion(0); }}
-                    className={`bg-gradient-to-br ${game.color} p-4 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform relative hover:wiggle`}>
-                    <div className="text-3xl md:text-4xl mb-2 sparkle">{game.icon}</div>
-                    <h2 className="text-sm md:text-base font-bold text-white">{game.title}</h2>
+                    className={`bg-gradient-to-br ${game.color} p-6 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform relative hover:wiggle`}>
+                    <div className="text-4xl md:text-5xl mb-3 sparkle">{game.icon}</div>
+                    <h2 className="text-lg md:text-xl font-bold text-white mb-2">{game.title}</h2>
                     {progress.completedSubjects[game.name] && (
-                      <div className="absolute top-1 right-1 text-lg sparkle">🏆</div>
+                      <div className="absolute top-2 right-2 text-2xl sparkle">🏆</div>
                     )}
                     {progress.completedSubjects[game.name] && (
-                      <div className="text-xs text-yellow-200 mt-1">Score: {progress.completedSubjects[game.name].score}</div>
+                      <div className="text-sm text-yellow-200 mt-2 font-semibold">Score: {progress.completedSubjects[game.name].score}</div>
                     )}
                   </div>
                 ))}
