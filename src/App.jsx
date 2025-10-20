@@ -1704,12 +1704,8 @@ const EmmyStudyGame = () => {
             </div>
           )}
           
-            {/* Main Action Buttons - Enhanced */}
+            {/* Main Action Buttons - Streamlined */}
             <div className="mt-6 flex justify-center gap-3 flex-wrap">
-              <div onClick={() => navigateTo('parent-reference')} 
-                className="px-6 py-3 bg-purple-500 text-white rounded-full font-bold cursor-pointer hover:bg-purple-600 active:scale-95 transition-transform">
-                📱 Parent Reference
-              </div>
               <div onClick={() => navigateTo('achievements')} 
                 className="px-6 py-3 bg-yellow-500 text-white rounded-full font-bold cursor-pointer hover:bg-yellow-600 active:scale-95 transition-transform">
                 🏅 Achievements
@@ -1905,49 +1901,55 @@ const EmmyStudyGame = () => {
             </div>
           </div>
 
-          {/* Parent Reference Materials */}
+          {/* Integrated Word Lists & Reference */}
           <div className="mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-6">📋 Reference Materials</h2>
-            <div className="bg-white rounded-2xl p-6 shadow-xl">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-lg font-bold text-purple-700 mb-3">📚 Quick Access</h3>
-                  <div className="space-y-2">
-                    <div onClick={() => navigateTo('parent-reference')} className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg cursor-pointer hover:bg-purple-100 transition-colors">
-                      <span className="text-2xl">📱</span>
-                      <div>
-                        <div className="font-semibold text-purple-800">Word Lists & Quiz</div>
-                        <div className="text-sm text-purple-600">Spelling words and practice</div>
-              </div>
-                    </div>
-                    <div onClick={() => navigateTo('progress')} className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors">
-                      <span className="text-2xl">📊</span>
-                      <div>
-                        <div className="font-semibold text-blue-800">Learning Analytics</div>
-                        <div className="text-sm text-blue-600">Track progress and performance</div>
-                      </div>
-                    </div>
+            <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-6">📚 Word Lists & Teaching Reference</h2>
+            
+            {/* Quick Word Lists */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+              {Object.entries(parentReference).slice(0, 6).map(([subject, data]) => (
+                <div key={subject} className="bg-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="text-2xl">{data.icon}</span>
+                    <h3 className="font-bold text-purple-800">{data.title}</h3>
                   </div>
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-purple-700 mb-3">🎯 Teaching Support</h3>
                   <div className="space-y-2">
-                    <div onClick={() => navigateTo('achievements')} className="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors">
-                      <span className="text-2xl">🏅</span>
-                      <div>
-                        <div className="font-semibold text-yellow-800">Achievements</div>
-                        <div className="text-sm text-yellow-600">View completed milestones</div>
+                    {data.categories.slice(0, 2).map((category, idx) => (
+                      <div key={idx} className="text-sm">
+                        <div className="font-semibold text-gray-700 mb-1">{category.name}</div>
+                        <div className="text-gray-600 text-xs">
+                          {category.words.slice(0, 3).join(', ')}
+                          {category.words.length > 3 && '...'}
+                        </div>
                       </div>
-                    </div>
-                    <div onClick={() => navigateTo('feedback')} className="flex items-center gap-3 p-3 bg-pink-50 rounded-lg cursor-pointer hover:bg-pink-100 transition-colors">
-                      <span className="text-2xl">💬</span>
-                      <div>
-                        <div className="font-semibold text-pink-800">Feedback</div>
-                        <div className="text-sm text-pink-600">Share insights and suggestions</div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
+                  <button
+                    onClick={() => {
+                      setSelectedSubject(subject);
+                      setSelectedCategory(0);
+                      setParentQuizMode(true);
+                      setParentQuizWord(0);
+                    }}
+                    className="w-full mt-3 px-3 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm font-medium transition-colors"
+                  >
+                    Practice Quiz
+                  </button>
                 </div>
+              ))}
+            </div>
+
+            {/* Study Guide Quick Access */}
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 shadow-lg">
+              <h3 className="text-lg font-bold text-indigo-800 mb-4 text-center">📖 Study Guide Quick Access</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {Object.entries(studyGuides).map(([type, guide]) => (
+                  <div key={type} className="bg-white rounded-lg p-3 text-center hover:shadow-md transition-shadow cursor-pointer"
+                    onClick={() => navigateTo(`guide-${type}`)}>
+                    <div className="text-2xl mb-2">{guide.icon}</div>
+                    <div className="text-sm font-semibold text-gray-700">{guide.title}</div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
