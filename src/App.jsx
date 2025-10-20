@@ -1725,7 +1725,34 @@ const EmmyStudyGame = () => {
     
     return (
       <div className={`min-h-screen bg-gradient-to-br ${currentTheme.colors} p-4 md:p-8`}>
-        <div onClick={() => setCurrentScreen('home')} className="bg-white px-6 py-3 rounded-full shadow-lg inline-flex gap-2 hover:scale-105 cursor-pointer mb-4">← Back</div>
+        {/* Breadcrumb Navigation */}
+        <div className="mb-4 flex items-center justify-between">
+          <nav className="flex items-center gap-2 text-sm text-gray-600">
+            {breadcrumbs.map((crumb, index) => (
+              <div key={index} className="flex items-center gap-2">
+                {index > 0 && <span>›</span>}
+                <span 
+                  className={index === breadcrumbs.length - 1 ? 'text-purple-600 font-bold' : 'hover:text-purple-500 cursor-pointer'}
+                  onClick={() => {
+                    if (index === 0) {
+                      navigateTo('home');
+                    } else if (index === 1) {
+                      navigateTo('achievements');
+                    }
+                  }}
+                >
+                  {crumb}
+                </span>
+              </div>
+            ))}
+          </nav>
+          
+          {/* Keyboard Shortcuts Help */}
+          <div className="hidden md:block text-xs text-gray-500">
+            <span className="bg-gray-100 px-2 py-1 rounded">Press S to search</span>
+          </div>
+        </div>
+
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl font-bold text-purple-800 mb-4">🏅 Achievements</h1>
@@ -1770,7 +1797,34 @@ const EmmyStudyGame = () => {
     
     return (
       <div className={`min-h-screen bg-gradient-to-br ${currentTheme.colors} p-4 md:p-8`}>
-        <div onClick={() => setCurrentScreen('home')} className="bg-white px-6 py-3 rounded-full shadow-lg inline-flex gap-2 hover:scale-105 cursor-pointer mb-4">← Back</div>
+        {/* Breadcrumb Navigation */}
+        <div className="mb-4 flex items-center justify-between">
+          <nav className="flex items-center gap-2 text-sm text-gray-600">
+            {breadcrumbs.map((crumb, index) => (
+              <div key={index} className="flex items-center gap-2">
+                {index > 0 && <span>›</span>}
+                <span 
+                  className={index === breadcrumbs.length - 1 ? 'text-purple-600 font-bold' : 'hover:text-purple-500 cursor-pointer'}
+                  onClick={() => {
+                    if (index === 0) {
+                      navigateTo('home');
+                    } else if (index === 1) {
+                      navigateTo('customize');
+                    }
+                  }}
+                >
+                  {crumb}
+                </span>
+              </div>
+            ))}
+          </nav>
+          
+          {/* Keyboard Shortcuts Help */}
+          <div className="hidden md:block text-xs text-gray-500">
+            <span className="bg-gray-100 px-2 py-1 rounded">Press S to search</span>
+          </div>
+        </div>
+
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl font-bold text-purple-800 mb-4">🎨 Customize</h1>
@@ -1865,7 +1919,34 @@ const EmmyStudyGame = () => {
     
     return (
       <div className={`min-h-screen bg-gradient-to-br ${currentTheme.colors} p-4 md:p-8`}>
-        <div onClick={() => setCurrentScreen('home')} className="no-print bg-white px-6 py-3 rounded-full shadow-lg inline-flex gap-2 hover:scale-105 cursor-pointer mb-4">← Back</div>
+        {/* Breadcrumb Navigation */}
+        <div className="mb-4 flex items-center justify-between">
+          <nav className="flex items-center gap-2 text-sm text-gray-600">
+            {breadcrumbs.map((crumb, index) => (
+              <div key={index} className="flex items-center gap-2">
+                {index > 0 && <span>›</span>}
+                <span 
+                  className={index === breadcrumbs.length - 1 ? 'text-purple-600 font-bold' : 'hover:text-purple-500 cursor-pointer'}
+                  onClick={() => {
+                    if (index === 0) {
+                      navigateTo('home');
+                    } else if (index === 1) {
+                      navigateTo('progress');
+                    }
+                  }}
+                >
+                  {crumb}
+                </span>
+              </div>
+            ))}
+          </nav>
+          
+          {/* Keyboard Shortcuts Help */}
+          <div className="hidden md:block text-xs text-gray-500">
+            <span className="bg-gray-100 px-2 py-1 rounded">Press S to search</span>
+          </div>
+        </div>
+
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl font-bold text-purple-800 mb-4">📊 Learning Progress</h1>
@@ -2053,7 +2134,34 @@ const EmmyStudyGame = () => {
     
     return (
       <div className={`min-h-screen bg-gradient-to-br ${currentTheme.colors} p-4 md:p-8`}>
-        <div onClick={() => setCurrentScreen('home')} className="bg-white px-6 py-3 rounded-full shadow-lg inline-flex gap-2 hover:scale-105 cursor-pointer mb-4">← Back</div>
+        {/* Breadcrumb Navigation */}
+        <div className="mb-4 flex items-center justify-between">
+          <nav className="flex items-center gap-2 text-sm text-gray-600">
+            {breadcrumbs.map((crumb, index) => (
+              <div key={index} className="flex items-center gap-2">
+                {index > 0 && <span>›</span>}
+                <span 
+                  className={index === breadcrumbs.length - 1 ? 'text-purple-600 font-bold' : 'hover:text-purple-500 cursor-pointer'}
+                  onClick={() => {
+                    if (index === 0) {
+                      navigateTo('home');
+                    } else if (index === 1) {
+                      navigateTo('parent-reference');
+                    }
+                  }}
+                >
+                  {crumb}
+                </span>
+              </div>
+            ))}
+          </nav>
+          
+          {/* Keyboard Shortcuts Help */}
+          <div className="hidden md:block text-xs text-gray-500">
+            <span className="bg-gray-100 px-2 py-1 rounded">Press S to search</span>
+          </div>
+        </div>
+
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl font-bold text-purple-800 mb-4">📱 Parent Quick Reference</h1>
