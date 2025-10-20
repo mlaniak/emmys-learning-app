@@ -21,6 +21,9 @@ const EmmyStudyGame = () => {
   const [parentQuizWord, setParentQuizWord] = useState(0);
   const [selectedSubject, setSelectedSubject] = useState('phonics');
   const [selectedCategory, setSelectedCategory] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSearch, setShowSearch] = useState(false);
+  const [breadcrumbs, setBreadcrumbs] = useState(['Home']);
   const [progress, setProgress] = useState(() => {
     const saved = localStorage.getItem('emmy-learning-progress');
     return saved ? JSON.parse(saved) : {
@@ -61,6 +64,84 @@ const EmmyStudyGame = () => {
   const saveProgress = (newProgress) => {
     setProgress(newProgress);
     localStorage.setItem('emmy-learning-progress', JSON.stringify(newProgress));
+  };
+
+  // Breadcrumb navigation helper
+  const updateBreadcrumbs = (newScreen, additionalInfo = '') => {
+    const breadcrumbMap = {
+      'home': ['Home'],
+      'parent-reference': ['Home', 'Parent Reference'],
+      'achievements': ['Home', 'Achievements'],
+      'customize': ['Home', 'Customize'],
+      'progress': ['Home', 'Progress'],
+      'phonics': ['Home', 'Learning Games', 'Phonics'],
+      'math': ['Home', 'Learning Games', 'Math'],
+      'reading': ['Home', 'Learning Games', 'Reading'],
+      'spelling': ['Home', 'Learning Games', 'Spelling'],
+      'science': ['Home', 'Learning Games', 'Science'],
+      'social': ['Home', 'Learning Games', 'Citizenship'],
+      'skipcounting': ['Home', 'Learning Games', 'Skip Counting'],
+      'art': ['Home', 'Learning Games', 'Art'],
+      'geography': ['Home', 'Learning Games', 'Geography'],
+      'history': ['Home', 'Learning Games', 'History']
+    };
+    
+    let newBreadcrumbs = breadcrumbMap[newScreen] || ['Home'];
+    if (additionalInfo) {
+      newBreadcrumbs.push(additionalInfo);
+    }
+    setBreadcrumbs(newBreadcrumbs);
+  };
+
+  // Search functionality
+  const searchResults = () => {
+    if (!searchQuery.trim()) return [];
+    
+    const results = [];
+    const query = searchQuery.toLowerCase();
+    
+    // Search in parent reference words
+    Object.entries(parentReference).forEach(([subjectKey, subject]) => {
+      subject.categories.forEach(category => {
+        category.words.forEach(wordItem => {
+          const word = typeof wordItem === 'string' ? wordItem : wordItem.word;
+          if (word.toLowerCase().includes(query)) {
+            results.push({
+              type: 'word',
+              subject: subject.title,
+              category: category.name,
+              word: word,
+              example: typeof wordItem === 'object' ? wordItem.example : null,
+              usage: typeof wordItem === 'object' ? wordItem.usage : null
+            });
+          }
+        });
+      });
+    });
+    
+    // Search in study guides
+    Object.entries(studyGuides).forEach(([key, guide]) => {
+      if (guide.title.toLowerCase().includes(query)) {
+        results.push({
+          type: 'subject',
+          subject: guide.title,
+          icon: guide.icon,
+          screen: key
+        });
+      }
+    });
+    
+    return results.slice(0, 10); // Limit to 10 results
+  };
+
+  // Navigation helper with breadcrumb updates
+  const navigateTo = (screen, additionalInfo = '') => {
+    playSound('click');
+    triggerHaptic('light');
+    setCurrentScreen(screen);
+    updateBreadcrumbs(screen, additionalInfo);
+    setShowSearch(false);
+    setSearchQuery('');
   };
 
   // Check and unlock achievements
@@ -747,6 +828,64 @@ const EmmyStudyGame = () => {
     };
   }, []);
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      // Only handle shortcuts when not in input fields
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      
+      switch(e.key.toLowerCase()) {
+        case 'h':
+          navigateTo('home');
+          break;
+        case 'p':
+          navigateTo('parent-reference');
+          break;
+        case 'a':
+          navigateTo('achievements');
+          break;
+        case 'c':
+          navigateTo('customize');
+          break;
+        case 'r':
+          navigateTo('progress');
+          break;
+        case 's':
+          setShowSearch(true);
+          break;
+        case 'm':
+          toggleMusic();
+          break;
+        case 'escape':
+          setShowSearch(false);
+          break;
+        case '1':
+          navigateTo('phonics');
+          setCurrentQuestion(0);
+          break;
+        case '2':
+          navigateTo('math');
+          setCurrentQuestion(0);
+          break;
+        case '3':
+          navigateTo('reading');
+          setCurrentQuestion(0);
+          break;
+        case '4':
+          navigateTo('spelling');
+          setCurrentQuestion(0);
+          break;
+        case '5':
+          navigateTo('science');
+          setCurrentQuestion(0);
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, []);
+
   const startDrawing = (e, idx) => {
     const canvas = canvasRefs[idx].current;
     if (!canvas) return;
@@ -881,6 +1020,86 @@ const EmmyStudyGame = () => {
             <span className="font-bold">Offline Mode</span>
           </div>
         )}
+
+        {/* Search Interface */}
+        {showSearch && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-center pt-20">
+            <div className="bg-white rounded-2xl p-6 max-w-2xl w-full mx-4 shadow-2xl">
+              <div className="flex items-center gap-4 mb-4">
+                <input
+                  type="text"
+                  placeholder="Search words, subjects, or topics..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="flex-1 px-4 py-3 border-2 border-purple-300 rounded-xl text-lg focus:border-purple-500 focus:outline-none"
+                  autoFocus
+                />
+                <button
+                  onClick={() => setShowSearch(false)}
+                  className="px-4 py-3 bg-gray-500 text-white rounded-xl hover:bg-gray-600 transition-colors"
+                >
+                  ✕
+                </button>
+              </div>
+              
+              {searchQuery && (
+                <div className="max-h-96 overflow-y-auto">
+                  {searchResults().length > 0 ? (
+                    <div className="space-y-2">
+                      {searchResults().map((result, index) => (
+                        <div
+                          key={index}
+                          onClick={() => {
+                            if (result.type === 'word') {
+                              navigateTo('parent-reference');
+                              setSelectedSubject(result.subject.toLowerCase().replace(' word lists', '').replace(' facts & numbers', '').replace(' comprehension', '').replace(' vocabulary', ''));
+                            } else {
+                              navigateTo(result.screen);
+                            }
+                          }}
+                          className="p-4 bg-gray-50 rounded-xl hover:bg-purple-50 cursor-pointer transition-colors"
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="text-2xl">{result.icon || '📝'}</span>
+                            <div>
+                              <div className="font-bold text-gray-800">{result.word || result.subject}</div>
+                              {result.category && <div className="text-sm text-gray-600">{result.category}</div>}
+                              {result.example && <div className="text-sm text-gray-500 italic">"{result.example}"</div>}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      <div className="text-4xl mb-2">🔍</div>
+                      <div>No results found for "{searchQuery}"</div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Breadcrumb Navigation */}
+        <div className="mb-4 flex items-center justify-between">
+          <nav className="flex items-center gap-2 text-sm text-gray-600">
+            {breadcrumbs.map((crumb, index) => (
+              <div key={index} className="flex items-center gap-2">
+                {index > 0 && <span>›</span>}
+                <span className={index === breadcrumbs.length - 1 ? 'text-purple-600 font-bold' : 'hover:text-purple-500 cursor-pointer'}>
+                  {crumb}
+                </span>
+              </div>
+            ))}
+          </nav>
+          
+          {/* Keyboard Shortcuts Help */}
+          <div className="hidden md:block text-xs text-gray-500">
+            <span className="bg-gray-100 px-2 py-1 rounded">Press S to search</span>
+          </div>
+        </div>
         
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-6">
@@ -909,23 +1128,27 @@ const EmmyStudyGame = () => {
             </div>
           </div>
           
-            {/* Main Action Buttons - Simplified */}
+            {/* Main Action Buttons - Enhanced */}
             <div className="mt-6 flex justify-center gap-3 flex-wrap">
-              <div onClick={() => { playSound('click'); triggerHaptic('medium'); setCurrentScreen('parent-reference'); }} 
+              <div onClick={() => navigateTo('parent-reference')} 
                 className="px-6 py-3 bg-purple-500 text-white rounded-full font-bold cursor-pointer hover:bg-purple-600 active:scale-95 transition-transform">
                 📱 Parent Reference
               </div>
-              <div onClick={() => { playSound('click'); triggerHaptic('medium'); setCurrentScreen('achievements'); }} 
+              <div onClick={() => navigateTo('achievements')} 
                 className="px-6 py-3 bg-yellow-500 text-white rounded-full font-bold cursor-pointer hover:bg-yellow-600 active:scale-95 transition-transform">
                 🏅 Achievements
               </div>
-              <div onClick={() => { playSound('click'); triggerHaptic('medium'); setCurrentScreen('customize'); }} 
+              <div onClick={() => navigateTo('customize')} 
                 className="px-6 py-3 bg-green-500 text-white rounded-full font-bold cursor-pointer hover:bg-green-600 active:scale-95 transition-transform">
                 🎨 Customize
               </div>
-              <div onClick={() => { playSound('click'); triggerHaptic('medium'); setCurrentScreen('progress'); }} 
+              <div onClick={() => navigateTo('progress')} 
                 className="px-6 py-3 bg-indigo-500 text-white rounded-full font-bold cursor-pointer hover:bg-indigo-600 active:scale-95 transition-transform">
                 📊 Progress
+              </div>
+              <div onClick={() => setShowSearch(true)} 
+                className="px-6 py-3 bg-orange-500 text-white rounded-full font-bold cursor-pointer hover:bg-orange-600 active:scale-95 transition-transform">
+                🔍 Search
               </div>
               <div onClick={() => { playSound('click'); triggerHaptic('light'); toggleMusic(); }} 
                 className={`px-6 py-3 text-white rounded-full font-bold cursor-pointer hover:opacity-80 active:scale-95 transition-transform ${isMusicPlaying ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'}`}>
@@ -1048,13 +1271,84 @@ const EmmyStudyGame = () => {
               </div>
             </div>
           </div>
+
+          {/* Quick Actions & Smart Recommendations */}
+          <div className="mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-4">⚡ Quick Actions</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Quick Practice - Random Subject */}
+              <div onClick={() => {
+                const subjects = ['phonics', 'math', 'reading', 'science', 'social', 'skipcounting', 'art', 'geography', 'history'];
+                const randomSubject = subjects[Math.floor(Math.random() * subjects.length)];
+                navigateTo(randomSubject);
+                setCurrentQuestion(0);
+              }} 
+                className="bg-gradient-to-br from-yellow-400 to-orange-500 p-6 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
+                <div className="text-4xl mb-2">🎲</div>
+                <h3 className="text-lg font-bold text-white">Random Practice</h3>
+                <p className="text-sm text-yellow-100">Surprise me!</p>
+              </div>
+
+              {/* Continue Last Subject */}
+              {progress.lastPlayedSubject && (
+                <div onClick={() => {
+                  navigateTo(progress.lastPlayedSubject);
+                  setCurrentQuestion(0);
+                }} 
+                  className="bg-gradient-to-br from-green-400 to-emerald-500 p-6 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
+                  <div className="text-4xl mb-2">🔄</div>
+                  <h3 className="text-lg font-bold text-white">Continue</h3>
+                  <p className="text-sm text-green-100">Last subject</p>
+                </div>
+              )}
+
+              {/* Weak Areas Practice */}
+              {(() => {
+                const weakAreas = Object.entries(progress.completedSubjects)
+                  .filter(([_, data]) => data && data.score < 80)
+                  .map(([subject, _]) => subject);
+                return weakAreas.length > 0 ? (
+                  <div onClick={() => {
+                    const randomWeak = weakAreas[Math.floor(Math.random() * weakAreas.length)];
+                    navigateTo(randomWeak);
+                    setCurrentQuestion(0);
+                  }} 
+                    className="bg-gradient-to-br from-red-400 to-pink-500 p-6 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
+                    <div className="text-4xl mb-2">💪</div>
+                    <h3 className="text-lg font-bold text-white">Practice Weak Areas</h3>
+                    <p className="text-sm text-red-100">{weakAreas.length} subjects</p>
+                  </div>
+                ) : null;
+              })()}
+
+              {/* Perfect Score Challenge */}
+              <div onClick={() => {
+                const perfectSubjects = Object.entries(progress.completedSubjects)
+                  .filter(([_, data]) => data && data.score === 100)
+                  .map(([subject, _]) => subject);
+                if (perfectSubjects.length > 0) {
+                  const randomPerfect = perfectSubjects[Math.floor(Math.random() * perfectSubjects.length)];
+                  navigateTo(randomPerfect);
+                  setCurrentQuestion(0);
+                } else {
+                  navigateTo('phonics');
+                  setCurrentQuestion(0);
+                }
+              }} 
+                className="bg-gradient-to-br from-purple-400 to-indigo-500 p-6 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
+                <div className="text-4xl mb-2">⭐</div>
+                <h3 className="text-lg font-bold text-white">Perfect Score Challenge</h3>
+                <p className="text-sm text-purple-100">Aim for 100%</p>
+              </div>
+            </div>
+          </div>
           
           {/* Study Guides Section */}
           <div className="mb-8">
             <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-4">📚 Study Guides</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {Object.keys(studyGuides).map(type => (
-                <div key={type} onClick={() => { playSound('click'); triggerHaptic('light'); setCurrentScreen(`guide-${type}`); }} 
+                <div key={type} onClick={() => { navigateTo(`guide-${type}`); }} 
                   className="bg-gradient-to-br from-pink-300 to-pink-500 p-4 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
                   <div className="text-2xl md:text-3xl mb-2">{studyGuides[type].icon}</div>
                   <h3 className="text-xs md:text-sm font-bold text-white">{studyGuides[type].title}</h3>
@@ -1078,7 +1372,7 @@ const EmmyStudyGame = () => {
               { name: 'geography', title: 'Geography', icon: '🌍', color: 'from-emerald-400 to-emerald-600' },
               { name: 'history', title: 'History', icon: '📜', color: 'from-amber-400 to-amber-600' }
             ].map(game => (
-              <div key={game.name} onClick={() => { playSound('click'); triggerHaptic('medium'); setCurrentScreen(game.name); setCurrentQuestion(0); }}
+              <div key={game.name} onClick={() => { navigateTo(game.name); setCurrentQuestion(0); }}
                 className={`bg-gradient-to-br ${game.color} p-4 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform relative hover:wiggle`}>
                 <div className="text-3xl md:text-4xl mb-2 sparkle">{game.icon}</div>
                 <h2 className="text-sm md:text-base font-bold text-white">{game.title}</h2>
@@ -1090,6 +1384,32 @@ const EmmyStudyGame = () => {
                 )}
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Mobile Bottom Navigation */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-purple-200 p-4 md:hidden z-30">
+          <div className="flex justify-around items-center">
+            <button onClick={() => navigateTo('home')} className="flex flex-col items-center gap-1 p-2">
+              <span className="text-2xl">🏠</span>
+              <span className="text-xs font-bold text-purple-600">Home</span>
+            </button>
+            <button onClick={() => navigateTo('parent-reference')} className="flex flex-col items-center gap-1 p-2">
+              <span className="text-2xl">📱</span>
+              <span className="text-xs font-bold text-purple-600">Reference</span>
+            </button>
+            <button onClick={() => setShowSearch(true)} className="flex flex-col items-center gap-1 p-2">
+              <span className="text-2xl">🔍</span>
+              <span className="text-xs font-bold text-purple-600">Search</span>
+            </button>
+            <button onClick={() => navigateTo('progress')} className="flex flex-col items-center gap-1 p-2">
+              <span className="text-2xl">📊</span>
+              <span className="text-xs font-bold text-purple-600">Progress</span>
+            </button>
+            <button onClick={() => navigateTo('achievements')} className="flex flex-col items-center gap-1 p-2">
+              <span className="text-2xl">🏅</span>
+              <span className="text-xs font-bold text-purple-600">Awards</span>
+            </button>
           </div>
         </div>
       </div>
