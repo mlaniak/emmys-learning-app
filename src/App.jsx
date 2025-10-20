@@ -1430,9 +1430,9 @@ const EmmyStudyGame = () => {
 
 
             {/* Learning Games - Main Section */}
-            <div className="mb-8">
-              <h2 className="text-3xl md:text-4xl font-bold text-center text-purple-800 mb-6">🎮 Learning Games</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            <div className="mb-6">
+              <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-4">🎮 Learning Games</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 {[
                   { name: 'phonics', title: 'Phonics', icon: '📚', color: 'from-pink-400 to-pink-600' },
                   { name: 'math', title: 'Math', icon: '🔢', color: 'from-blue-400 to-blue-600' },
@@ -1446,14 +1446,14 @@ const EmmyStudyGame = () => {
                   { name: 'history', title: 'History', icon: '📜', color: 'from-amber-400 to-amber-600' }
                 ].map(game => (
                   <div key={game.name} onClick={() => { navigateTo(game.name); setCurrentQuestion(0); }}
-                    className={`bg-gradient-to-br ${game.color} p-6 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform relative hover:wiggle`}>
-                    <div className="text-4xl md:text-5xl mb-3 sparkle">{game.icon}</div>
-                    <h2 className="text-lg md:text-xl font-bold text-white mb-2">{game.title}</h2>
+                    className={`bg-gradient-to-br ${game.color} p-4 rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform relative hover:wiggle`}>
+                    <div className="text-3xl md:text-4xl mb-2 sparkle">{game.icon}</div>
+                    <h2 className="text-sm md:text-base font-bold text-white mb-1">{game.title}</h2>
                     {progress.completedSubjects[game.name] && (
-                      <div className="absolute top-2 right-2 text-2xl sparkle">🏆</div>
+                      <div className="absolute top-1 right-1 text-lg sparkle">🏆</div>
                     )}
                     {progress.completedSubjects[game.name] && (
-                      <div className="text-sm text-yellow-200 mt-2 font-semibold">Score: {progress.completedSubjects[game.name].score}</div>
+                      <div className="text-xs text-yellow-200 mt-1 font-semibold">Score: {progress.completedSubjects[game.name].score}</div>
                     )}
                   </div>
                 ))}
@@ -1464,14 +1464,14 @@ const EmmyStudyGame = () => {
             <div className="mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-4">📚 Study Guides</h2>
               <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
-                {Object.keys(studyGuides).map(type => (
-                  <div key={type} onClick={() => { navigateTo(`guide-${type}`); }} 
-                    className="bg-gradient-to-br from-pink-300 to-pink-500 p-4 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
-                    <div className="text-2xl md:text-3xl mb-2">{studyGuides[type].icon}</div>
-                    <h3 className="text-xs md:text-sm font-bold text-white">{studyGuides[type].title}</h3>
-                    {progress.completedSubjects[type] && <div className="text-xs text-yellow-200 mt-1">✅</div>}
-                  </div>
-                ))}
+              {Object.keys(studyGuides).map(type => (
+                <div key={type} onClick={() => { navigateTo(`guide-${type}`); }} 
+                  className="bg-gradient-to-br from-pink-300 to-pink-500 p-3 rounded-lg shadow-lg hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
+                  <div className="text-xl mb-1">{studyGuides[type].icon}</div>
+                  <h3 className="text-xs font-bold text-white">{studyGuides[type].title}</h3>
+                  {progress.completedSubjects[type] && <div className="text-xs text-yellow-200 mt-1">✅</div>}
+                </div>
+              ))}
               </div>
             </div>
 
@@ -1851,47 +1851,47 @@ const EmmyStudyGame = () => {
           </div>
 
           {/* Parent Tools & Reference */}
-          <div className="mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-4">📚 Parent Tools</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="mb-6">
+            <h2 className="text-xl md:text-2xl font-bold text-center text-purple-800 mb-3">📚 Parent Tools</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {/* Word Lists & Quiz */}
               <div onClick={() => navigateTo('parent-reference')} 
-                className="bg-gradient-to-br from-purple-400 to-indigo-500 p-6 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
-                <div className="text-4xl mb-2">📱</div>
-                <h3 className="text-lg font-bold text-white">Word Lists & Quiz</h3>
-                <p className="text-sm text-purple-100">Quick reference</p>
+                className="bg-gradient-to-br from-purple-400 to-indigo-500 p-4 rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
+                <div className="text-3xl mb-1">📱</div>
+                <h3 className="text-sm font-bold text-white">Word Lists</h3>
+                <p className="text-xs text-purple-100">Quick reference</p>
               </div>
 
               {/* Learning Progress */}
               <div onClick={() => navigateTo('progress')} 
-                className="bg-gradient-to-br from-blue-400 to-cyan-500 p-6 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
-                <div className="text-4xl mb-2">📊</div>
-                <h3 className="text-lg font-bold text-white">Learning Progress</h3>
-                <p className="text-sm text-blue-100">Track progress</p>
+                className="bg-gradient-to-br from-blue-400 to-cyan-500 p-4 rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
+                <div className="text-3xl mb-1">📊</div>
+                <h3 className="text-sm font-bold text-white">Progress</h3>
+                <p className="text-xs text-blue-100">Track progress</p>
               </div>
 
               {/* Achievements */}
               <div onClick={() => navigateTo('achievements')} 
-                className="bg-gradient-to-br from-yellow-400 to-orange-500 p-6 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
-                <div className="text-4xl mb-2">🏅</div>
-                <h3 className="text-lg font-bold text-white">Achievements</h3>
-                <p className="text-sm text-yellow-100">View rewards</p>
+                className="bg-gradient-to-br from-yellow-400 to-orange-500 p-4 rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
+                <div className="text-3xl mb-1">🏅</div>
+                <h3 className="text-sm font-bold text-white">Awards</h3>
+                <p className="text-xs text-yellow-100">View rewards</p>
               </div>
 
               {/* Feedback */}
               <div onClick={() => navigateTo('feedback')} 
-                className="bg-gradient-to-br from-pink-400 to-rose-500 p-6 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
-                <div className="text-4xl mb-2">💬</div>
-                <h3 className="text-lg font-bold text-white">Feedback</h3>
-                <p className="text-sm text-pink-100">Share thoughts</p>
+                className="bg-gradient-to-br from-pink-400 to-rose-500 p-4 rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
+                <div className="text-3xl mb-1">💬</div>
+                <h3 className="text-sm font-bold text-white">Feedback</h3>
+                <p className="text-xs text-pink-100">Share thoughts</p>
               </div>
             </div>
           </div>
           
           {/* Study Guides Section */}
-          <div className="mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-4">📚 Study Guides</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+          <div className="mb-6">
+            <h2 className="text-xl md:text-2xl font-bold text-center text-purple-800 mb-3">📚 Study Guides</h2>
+            <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-2">
               {Object.keys(studyGuides).map(type => (
                 <div key={type} onClick={() => { navigateTo(`guide-${type}`); }} 
                   className="bg-gradient-to-br from-pink-300 to-pink-500 p-4 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
@@ -2984,16 +2984,16 @@ const EmmyStudyGame = () => {
         </button>
       )}
 
-      {/* Scroll to Top Button - Always visible for testing */}
-      <button
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="fixed bottom-6 right-6 z-[9999] bg-purple-500 hover:bg-purple-600 text-white p-4 rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all duration-200 border-2 border-white"
-        title="Scroll to top"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-        </svg>
-      </button>
+      {/* Scroll to Top Button */}
+      <div className="fixed bottom-4 right-4 z-[9999]">
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="bg-purple-500 hover:bg-purple-600 text-white p-3 rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all duration-200 border-2 border-white"
+          title="Scroll to top"
+        >
+          ↑
+        </button>
+      </div>
     </div>
   );
 };
