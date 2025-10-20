@@ -127,6 +127,8 @@ This app is automatically deployed to GitHub Pages on every push to the main bra
 
 **Live URL:** https://mlaniak.github.io/emmys-learning-app
 
+> **Note:** If you see a 404 error, the deployment may still be in progress. Check the Actions tab for the latest deployment status.
+
 ## 🤝 Contributing
 
 1. Fork the repository
