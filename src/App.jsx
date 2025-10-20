@@ -17,6 +17,8 @@ const EmmyStudyGame = () => {
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [difficulty, setDifficulty] = useState('medium');
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [parentQuizMode, setParentQuizMode] = useState(false);
+  const [parentQuizWord, setParentQuizWord] = useState(0);
   const [progress, setProgress] = useState(() => {
     const saved = localStorage.getItem('emmy-learning-progress');
     return saved ? JSON.parse(saved) : {
@@ -354,6 +356,140 @@ const EmmyStudyGame = () => {
     art: { title: 'Art Guide', icon: '🎨', sections: [{ heading: 'Colors, Shapes, and Art', items: ['Primary colors: Red, Blue, Yellow', 'Mix red+blue=purple, yellow+blue=green', 'Triangle has 3 sides, square has 4', 'Portrait=person, landscape=nature'] }] },
     geography: { title: 'Geography Guide', icon: '🌍', sections: [{ heading: 'World Geography', items: ['Pacific Ocean is biggest', 'Asia is largest continent', 'Antarctica is coldest', 'Mount Everest is tallest mountain'] }] },
     history: { title: 'History Guide', icon: '📜', sections: [{ heading: 'Important History', items: ['George Washington was first president', 'Columbus sailed in 1492', 'Edison invented light bulb', 'Armstrong walked on moon'] }] }
+  };
+
+  // Parent Quick Reference - Comprehensive Word Lists
+  const parentReference = {
+    phonics: {
+      title: 'Phonics Word Lists',
+      icon: '📚',
+      categories: [
+        {
+          name: 'TH Words',
+          words: ['then', 'than', 'think', 'that', 'this', 'with', 'bath', 'math', 'path', 'both', 'month', 'north', 'south', 'earth', 'birth']
+        },
+        {
+          name: 'WH Words', 
+          words: ['when', 'where', 'what', 'which', 'who', 'why', 'whip', 'whale', 'wheel', 'white', 'whisper', 'whistle', 'wheat', 'whisk', 'whiskers']
+        },
+        {
+          name: 'SH Words',
+          words: ['show', 'ship', 'shop', 'she', 'shoe', 'fish', 'wish', 'wash', 'brush', 'crash', 'flash', 'splash', 'squash', 'smash', 'trash']
+        },
+        {
+          name: 'CH Words',
+          words: ['chair', 'cheese', 'chicken', 'child', 'chin', 'chip', 'chop', 'church', 'lunch', 'march', 'much', 'such', 'teach', 'reach', 'catch']
+        },
+        {
+          name: 'PH Words',
+          words: ['phone', 'photo', 'elephant', 'alphabet', 'graph', 'paragraph', 'dolphin', 'trophy', 'sophomore', 'pharmacy', 'phrase', 'phase', 'physics', 'phantom', 'phoenix']
+        },
+        {
+          name: 'CK Words',
+          words: ['duck', 'back', 'pack', 'sack', 'tack', 'black', 'clock', 'block', 'rock', 'sock', 'lock', 'shock', 'stock', 'truck', 'stuck']
+        }
+      ]
+    },
+    spelling: {
+      title: 'Spelling Word Lists',
+      icon: '✏️',
+      categories: [
+        {
+          name: 'October Words (Test 10/31)',
+          words: ['than', 'think', 'their', 'these', 'when', 'each', 'such', 'me', 'find', 'see']
+        },
+        {
+          name: 'November Words',
+          words: ['come', 'some', 'done', 'one', 'none', 'gone', 'fun', 'run', 'sun', 'bun']
+        },
+        {
+          name: 'December Words',
+          words: ['red', 'bed', 'fed', 'led', 'wed', 'said', 'paid', 'laid', 'maid', 'afraid']
+        },
+        {
+          name: 'January Words',
+          words: ['blue', 'true', 'glue', 'clue', 'due', 'new', 'few', 'grew', 'flew', 'drew']
+        },
+        {
+          name: 'February Words',
+          words: ['green', 'seen', 'been', 'queen', 'screen', 'between', 'fifteen', 'sixteen', 'seventeen', 'eighteen']
+        },
+        {
+          name: 'March Words',
+          words: ['yellow', 'fellow', 'mellow', 'bellow', 'swallow', 'follow', 'hollow', 'pillow', 'willow', 'billow']
+        }
+      ]
+    },
+    math: {
+      title: 'Math Facts & Numbers',
+      icon: '🔢',
+      categories: [
+        {
+          name: 'Addition Facts (0-10)',
+          words: ['0+0=0', '1+1=2', '2+2=4', '3+3=6', '4+4=8', '5+5=10', '6+6=12', '7+7=14', '8+8=16', '9+9=18', '10+10=20']
+        },
+        {
+          name: 'Subtraction Facts (0-10)',
+          words: ['10-0=10', '10-1=9', '10-2=8', '10-3=7', '10-4=6', '10-5=5', '10-6=4', '10-7=3', '10-8=2', '10-9=1', '10-10=0']
+        },
+        {
+          name: 'Skip Counting by 2s',
+          words: ['2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30']
+        },
+        {
+          name: 'Skip Counting by 5s',
+          words: ['5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75']
+        },
+        {
+          name: 'Skip Counting by 10s',
+          words: ['10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150']
+        },
+        {
+          name: 'Number Words (1-20)',
+          words: ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty']
+        }
+      ]
+    },
+    reading: {
+      title: 'Reading Comprehension',
+      icon: '📖',
+      categories: [
+        {
+          name: 'Story Elements Questions',
+          words: ['Who are the characters?', 'Where does the story take place?', 'When does the story happen?', 'What is the problem?', 'How is the problem solved?', 'What happens at the beginning?', 'What happens in the middle?', 'What happens at the end?']
+        },
+        {
+          name: 'Sight Words (First 50)',
+          words: ['a', 'and', 'are', 'as', 'at', 'be', 'been', 'but', 'by', 'for', 'from', 'had', 'has', 'have', 'he', 'his', 'how', 'I', 'if', 'in', 'is', 'it', 'its', 'just', 'like', 'long', 'look', 'made', 'make', 'many', 'may', 'more', 'my', 'no', 'not', 'now', 'number', 'of', 'on', 'one', 'or', 'other', 'out', 'part', 'people', 'said', 'see', 'she', 'so', 'some']
+        },
+        {
+          name: 'Rhyming Words',
+          words: ['cat/hat/bat', 'dog/log/fog', 'sun/fun/run', 'cake/bake/make', 'ball/call/fall', 'tree/bee/see', 'car/star/far', 'book/look/cook', 'play/day/say', 'night/light/bright']
+        }
+      ]
+    },
+    science: {
+      title: 'Science Vocabulary',
+      icon: '🔬',
+      categories: [
+        {
+          name: 'Weather Words',
+          words: ['sunny', 'cloudy', 'rainy', 'snowy', 'windy', 'stormy', 'foggy', 'hot', 'cold', 'warm', 'cool', 'temperature', 'thermometer', 'precipitation', 'evaporation']
+        },
+        {
+          name: 'Plant Parts',
+          words: ['root', 'stem', 'leaf', 'flower', 'seed', 'fruit', 'bark', 'branch', 'trunk', 'petal', 'pollen', 'photosynthesis', 'germination', 'growth', 'nutrients']
+        },
+        {
+          name: 'Animal Groups',
+          words: ['mammal', 'bird', 'fish', 'reptile', 'amphibian', 'insect', 'spider', 'butterfly', 'bee', 'ant', 'frog', 'snake', 'turtle', 'whale', 'eagle']
+        },
+        {
+          name: 'Body Parts',
+          words: ['head', 'eyes', 'ears', 'nose', 'mouth', 'teeth', 'tongue', 'neck', 'shoulders', 'arms', 'hands', 'fingers', 'chest', 'stomach', 'legs', 'feet', 'toes']
+        }
+      ]
+    }
   };
 
   // Achievement System
@@ -707,6 +843,10 @@ const EmmyStudyGame = () => {
           
             {/* Main Action Buttons - Simplified */}
             <div className="mt-6 flex justify-center gap-3 flex-wrap">
+              <div onClick={() => { playSound('click'); triggerHaptic('medium'); setCurrentScreen('parent-reference'); }} 
+                className="px-6 py-3 bg-purple-500 text-white rounded-full font-bold cursor-pointer hover:bg-purple-600 active:scale-95 transition-transform">
+                📱 Parent Reference
+              </div>
               <div onClick={() => { playSound('click'); triggerHaptic('medium'); setCurrentScreen('achievements'); }} 
                 className="px-6 py-3 bg-yellow-500 text-white rounded-full font-bold cursor-pointer hover:bg-yellow-600 active:scale-95 transition-transform">
                 🏅 Achievements
@@ -1279,6 +1419,191 @@ const EmmyStudyGame = () => {
               className="px-8 py-4 bg-purple-500 text-white rounded-full font-bold text-lg hover:bg-purple-600 active:scale-95 transition-transform shadow-lg">
               🖨️ Print Progress Report
             </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (currentScreen === 'parent-reference') {
+    const currentTheme = themes[progress.selectedTheme] || themes.default;
+    const [selectedSubject, setSelectedSubject] = useState('phonics');
+    const [selectedCategory, setSelectedCategory] = useState(0);
+    
+    const subject = parentReference[selectedSubject];
+    const category = subject ? subject.categories[selectedCategory] : null;
+    
+    return (
+      <div className={`min-h-screen bg-gradient-to-br ${currentTheme.colors} p-4 md:p-8`}>
+        <div onClick={() => setCurrentScreen('home')} className="bg-white px-6 py-3 rounded-full shadow-lg inline-flex gap-2 hover:scale-105 cursor-pointer mb-4">← Back</div>
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl md:text-5xl font-bold text-purple-800 mb-4">📱 Parent Quick Reference</h1>
+            <p className="text-lg text-purple-600">Easy access to word lists for quizzing Emmy on the go!</p>
+          </div>
+          
+          {/* Subject Selection */}
+          <div className="bg-white rounded-2xl p-6 shadow-xl mb-8">
+            <h2 className="text-2xl font-bold text-purple-700 mb-4">📚 Choose Subject</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+              {Object.entries(parentReference).map(([key, subject]) => (
+                <div key={key} 
+                  onClick={() => { 
+                    playSound('click'); 
+                    triggerHaptic('light'); 
+                    setSelectedSubject(key); 
+                    setSelectedCategory(0); 
+                  }}
+                  className={`p-4 rounded-xl cursor-pointer transition-transform hover:scale-105 active:scale-95 ${
+                    selectedSubject === key 
+                      ? 'bg-purple-500 text-white' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}>
+                  <div className="text-center">
+                    <div className="text-3xl mb-2">{subject.icon}</div>
+                    <div className="font-bold text-sm">{subject.title}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Category Selection */}
+          {subject && (
+            <div className="bg-white rounded-2xl p-6 shadow-xl mb-8">
+              <h2 className="text-2xl font-bold text-purple-700 mb-4">📋 Choose Category</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {subject.categories.map((category, index) => (
+                  <div key={index} 
+                    onClick={() => { 
+                      playSound('click'); 
+                      triggerHaptic('light'); 
+                      setSelectedCategory(index); 
+                    }}
+                    className={`p-4 rounded-xl cursor-pointer transition-transform hover:scale-105 active:scale-95 ${
+                      selectedCategory === index 
+                        ? 'bg-blue-500 text-white' 
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}>
+                    <div className="font-bold text-sm">{category.name}</div>
+                    <div className="text-xs text-gray-500 mt-1">{category.words.length} items</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Word List Display */}
+          {category && (
+            <div className="bg-white rounded-2xl p-6 shadow-xl mb-8">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-purple-700">{category.name}</h2>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => { 
+                      playSound('click'); 
+                      triggerHaptic('light'); 
+                      setParentQuizMode(!parentQuizMode); 
+                      setParentQuizWord(0); 
+                    }}
+                    className={`px-4 py-2 rounded-full font-bold text-sm transition-transform hover:scale-105 active:scale-95 ${
+                      parentQuizMode 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-yellow-500 text-white'
+                    }`}>
+                    {parentQuizMode ? '📝 Quiz Mode' : '🎯 Start Quiz'}
+                  </button>
+                  <button 
+                    onClick={() => window.print()}
+                    className="px-4 py-2 bg-gray-500 text-white rounded-full font-bold text-sm hover:bg-gray-600 active:scale-95 transition-transform">
+                    🖨️ Print
+                  </button>
+                </div>
+              </div>
+              
+              {parentQuizMode ? (
+                <div className="text-center">
+                  <div className="text-6xl mb-4">🎯</div>
+                  <h3 className="text-3xl font-bold text-purple-700 mb-6">
+                    Word {parentQuizWord + 1} of {category.words.length}
+                  </h3>
+                  <div className="bg-gradient-to-br from-yellow-100 to-orange-100 p-8 rounded-2xl border-4 border-yellow-300 mb-6">
+                    <div className="text-4xl md:text-6xl font-bold text-purple-800 mb-4">
+                      {category.words[parentQuizWord]}
+                    </div>
+                    <p className="text-lg text-gray-600">Ask Emmy to spell this word!</p>
+                  </div>
+                  <div className="flex justify-center gap-4">
+                    <button 
+                      onClick={() => { 
+                        if (parentQuizWord > 0) { 
+                          setParentQuizWord(parentQuizWord - 1); 
+                          triggerHaptic('light'); 
+                        } 
+                      }}
+                      className={`px-6 py-3 rounded-full font-bold ${
+                        parentQuizWord > 0 
+                          ? 'bg-blue-500 text-white hover:bg-blue-600' 
+                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      }`}>
+                      ← Previous
+                    </button>
+                    <button 
+                      onClick={() => { 
+                        if (parentQuizWord < category.words.length - 1) { 
+                          setParentQuizWord(parentQuizWord + 1); 
+                          triggerHaptic('light'); 
+                        } else { 
+                          setParentQuizMode(false); 
+                          triggerHaptic('success'); 
+                        } 
+                      }}
+                      className="px-6 py-3 bg-green-500 text-white rounded-full font-bold hover:bg-green-600 active:scale-95 transition-transform">
+                      {parentQuizWord < category.words.length - 1 ? 'Next →' : 'Finish Quiz 🎉'}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                  {category.words.map((word, index) => (
+                    <div key={index} 
+                      className="bg-gradient-to-br from-purple-100 to-pink-100 p-4 rounded-xl border-2 border-purple-200 text-center hover:scale-105 transition-transform cursor-pointer"
+                      onClick={() => {
+                        playSound('click');
+                        triggerHaptic('light');
+                        setParentQuizMode(true);
+                        setParentQuizWord(index);
+                      }}>
+                      <div className="text-lg font-bold text-purple-800">{word}</div>
+                      <div className="text-xs text-gray-500 mt-1">Tap to quiz</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+          
+          {/* Quick Tips */}
+          <div className="bg-gradient-to-br from-yellow-100 to-orange-100 rounded-2xl p-6 shadow-xl">
+            <h3 className="text-xl font-bold text-purple-700 mb-4">💡 Quick Tips for Parents</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <h4 className="font-bold text-purple-600 mb-2">📱 Mobile-Friendly</h4>
+                <p className="text-gray-700">This screen is optimized for mobile devices. Perfect for quizzing Emmy while waiting in line or during car rides!</p>
+              </div>
+              <div>
+                <h4 className="font-bold text-purple-600 mb-2">🎯 Quiz Mode</h4>
+                <p className="text-gray-700">Use Quiz Mode to go through words one by one. Great for focused practice sessions!</p>
+              </div>
+              <div>
+                <h4 className="font-bold text-purple-600 mb-2">🖨️ Print Lists</h4>
+                <p className="text-gray-700">Print any word list for offline practice. Perfect for homework time or quiet activities!</p>
+              </div>
+              <div>
+                <h4 className="font-bold text-purple-600 mb-2">📚 All Subjects</h4>
+                <p className="text-gray-700">Access phonics, spelling, math facts, sight words, and science vocabulary all in one place!</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
