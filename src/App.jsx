@@ -1901,58 +1901,6 @@ const EmmyStudyGame = () => {
             </div>
           </div>
 
-          {/* Integrated Word Lists & Reference */}
-          <div className="mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-6">📚 Word Lists & Teaching Reference</h2>
-            
-            {/* Quick Word Lists */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-              {Object.entries(parentReference).slice(0, 6).map(([subject, data]) => (
-                <div key={subject} className="bg-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="text-2xl">{data.icon}</span>
-                    <h3 className="font-bold text-purple-800">{data.title}</h3>
-                  </div>
-                  <div className="space-y-2">
-                    {data.categories.slice(0, 2).map((category, idx) => (
-                      <div key={idx} className="text-sm">
-                        <div className="font-semibold text-gray-700 mb-1">{category.name}</div>
-                        <div className="text-gray-600 text-xs">
-                          {category.words.slice(0, 3).join(', ')}
-                          {category.words.length > 3 && '...'}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <button
-                    onClick={() => {
-                      setSelectedSubject(subject);
-                      setSelectedCategory(0);
-                      setParentQuizMode(true);
-                      setParentQuizWord(0);
-                    }}
-                    className="w-full mt-3 px-3 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm font-medium transition-colors"
-                  >
-                    Practice Quiz
-                  </button>
-                </div>
-              ))}
-            </div>
-
-            {/* Study Guide Quick Access */}
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 shadow-lg">
-              <h3 className="text-lg font-bold text-indigo-800 mb-4 text-center">📖 Study Guide Quick Access</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {Object.entries(studyGuides).map(([type, guide]) => (
-                  <div key={type} className="bg-white rounded-lg p-3 text-center hover:shadow-md transition-shadow cursor-pointer"
-                    onClick={() => navigateTo(`guide-${type}`)}>
-                    <div className="text-2xl mb-2">{guide.icon}</div>
-                    <div className="text-sm font-semibold text-gray-700">{guide.title}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Mobile Bottom Navigation */}
