@@ -1,6 +1,6 @@
 {
-  "name": "Emmy's Learning Adventure",
-  "short_name": "Emmy Learning",
+  "name": "Emmy's First Grade Learning Adventure",
+  "short_name": "Emmy First Grade",
   "description": "Interactive educational game for kids with 10 subjects and 100+ questions",
   "start_url": "/emmys-learning-app/",
   "display": "standalone",

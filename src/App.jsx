@@ -683,7 +683,7 @@ const EmmyStudyGame = () => {
             <div className="flex items-center justify-center gap-4 mb-4">
               <div className="text-6xl float">{currentAvatar.emoji}</div>
               <div>
-                <h1 className="text-4xl md:text-5xl font-bold text-purple-800 mb-2 rainbow">✨ Emmy's Learning Adventure ✨</h1>
+                <h1 className="text-4xl md:text-5xl font-bold text-purple-800 mb-2 rainbow">✨ Emmy's First Grade Learning Adventure ✨</h1>
                 <div className="text-lg text-purple-600 pulse">Welcome, {currentAvatar.name}!</div>
               </div>
             </div>

@@ -1,7 +1,7 @@
 {
   "name": "emmy-learning-app",
   "version": "1.0.0",
-  "description": "Emmy's Learning Adventure - Interactive educational game",
+  "description": "Emmy's First Grade Learning Adventure - Interactive educational game",
   "type": "module",
   "homepage": "https://mlaniak.github.io/emmys-learning-app",
   "main": "index.js",
