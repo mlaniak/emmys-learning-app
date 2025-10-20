@@ -19,6 +19,8 @@ const EmmyStudyGame = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [parentQuizMode, setParentQuizMode] = useState(false);
   const [parentQuizWord, setParentQuizWord] = useState(0);
+  const [selectedSubject, setSelectedSubject] = useState('phonics');
+  const [selectedCategory, setSelectedCategory] = useState(0);
   const [progress, setProgress] = useState(() => {
     const saved = localStorage.getItem('emmy-learning-progress');
     return saved ? JSON.parse(saved) : {
@@ -1427,8 +1429,6 @@ const EmmyStudyGame = () => {
 
   if (currentScreen === 'parent-reference') {
     const currentTheme = themes[progress.selectedTheme] || themes.default;
-    const [selectedSubject, setSelectedSubject] = useState('phonics');
-    const [selectedCategory, setSelectedCategory] = useState(0);
     
     const subject = parentReference[selectedSubject];
     const category = subject ? subject.categories[selectedCategory] : null;
