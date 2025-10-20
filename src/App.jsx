@@ -34,6 +34,7 @@ const EmmyStudyGame = () => {
   const [feedbackCategory, setFeedbackCategory] = useState('general');
   const [feedbackMessage, setFeedbackMessage] = useState('');
   const [feedbackRating, setFeedbackRating] = useState(5);
+  const [parentMode, setParentMode] = useState(false);
   const [progress, setProgress] = useState(() => {
     const saved = localStorage.getItem('emmy-learning-progress');
     return saved ? JSON.parse(saved) : {
@@ -1025,6 +1026,10 @@ const EmmyStudyGame = () => {
     // Load feedback from localStorage
     const savedFeedback = localStorage.getItem('emmy-feedback');
     if (savedFeedback) setFeedback(JSON.parse(savedFeedback));
+    
+    // Load parent mode from localStorage
+    const savedParentMode = localStorage.getItem('emmy-parent-mode');
+    if (savedParentMode) setParentMode(JSON.parse(savedParentMode));
   }, []);
 
   // Save learning streak
@@ -1034,6 +1039,11 @@ const EmmyStudyGame = () => {
       localStorage.setItem('last-learning-date', lastLearningDate);
     }
   }, [learningStreak, lastLearningDate]);
+
+  // Save parent mode
+  useEffect(() => {
+    localStorage.setItem('emmy-parent-mode', JSON.stringify(parentMode));
+  }, [parentMode]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -1046,7 +1056,11 @@ const EmmyStudyGame = () => {
           navigateTo('home');
           break;
         case 'p':
-          navigateTo('parent-reference');
+          if (e.ctrlKey || e.metaKey) {
+            setParentMode(!parentMode);
+          } else {
+            navigateTo('parent-reference');
+          }
           break;
         case 'a':
           navigateTo('achievements');
@@ -1213,8 +1227,150 @@ const EmmyStudyGame = () => {
     const currentTheme = themes[progress.selectedTheme] || themes.default;
     const currentAvatar = avatars[progress.avatar] || avatars.default;
     
+    // Kid-friendly simplified interface
+    if (!parentMode) {
+      return (
+        <div className={`min-h-screen bg-gradient-to-br ${currentTheme.colors} p-4 md:p-8`}>
+          {/* Parent Mode Toggle - Top Right */}
+          <div className="absolute top-4 right-4">
+            <button
+              onClick={() => setParentMode(true)}
+              className="bg-purple-100 hover:bg-purple-200 text-purple-700 px-3 py-2 rounded-full text-sm font-medium transition-colors"
+              title="Switch to Parent Mode"
+            >
+              👨‍👩‍👧‍👦 Parent Mode
+            </button>
+          </div>
+
+          {/* Achievement Notification */}
+          {showAchievement && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-2xl p-8 text-center max-w-md mx-4">
+                <div className="text-6xl mb-4">🏆</div>
+                <h2 className="text-2xl font-bold text-purple-800 mb-2">Achievement Unlocked!</h2>
+                <p className="text-lg text-gray-600 mb-4">{achievements[showAchievement]?.name}</p>
+                <p className="text-sm text-gray-500 mb-6">{achievements[showAchievement]?.description}</p>
+                <button
+                  onClick={() => setShowAchievement(null)}
+                  className="px-6 py-3 bg-purple-500 text-white rounded-full font-bold hover:bg-purple-600 active:scale-95 transition-transform"
+                >
+                  Awesome! 🎉
+                </button>
+              </div>
+            </div>
+          )}
+
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-8">
+              <div className="flex items-center justify-center gap-4 mb-4">
+                <div className="text-6xl float">{currentAvatar.emoji}</div>
+                <div>
+                  <h1 className="text-4xl md:text-5xl font-bold text-purple-800 mb-2 rainbow">✨ Emmy's Learning Adventure ✨</h1>
+                  <div className="text-lg text-purple-600 pulse">Hi {currentAvatar.name}! Ready to learn?</div>
+                </div>
+              </div>
+              
+              {/* Simple Progress Display */}
+              <div className="bg-white rounded-2xl p-4 shadow-xl inline-block">
+                <div className="flex items-center gap-6">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-purple-700">🏆 {progress.totalScore}</div>
+                    <div className="text-sm text-gray-600">Points</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-green-700">{Object.keys(progress.completedSubjects).length}/10</div>
+                    <div className="text-sm text-gray-600">Subjects</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-orange-700">🔥 {learningStreak}</div>
+                    <div className="text-sm text-gray-600">Day Streak</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Daily Challenge - Kid Friendly */}
+            {dailyChallenge && (
+              <div className="mb-8 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-2xl p-6 shadow-xl border-4 border-yellow-300 text-center">
+                <div className="text-4xl mb-2">{dailyChallenge.icon}</div>
+                <h3 className="text-xl font-bold text-orange-800 mb-2">Today's Challenge!</h3>
+                <p className="text-orange-600 mb-3">{dailyChallenge.description}</p>
+                <div className="bg-orange-200 rounded-full px-4 py-2 inline-block">
+                  <span className="font-bold text-orange-800">Reward: {dailyChallenge.reward} points</span>
+                </div>
+              </div>
+            )}
+
+            {/* Main Learning Buttons - Large and Kid-Friendly */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+              {[
+                { name: 'phonics', title: 'Phonics', icon: '📚', color: 'from-blue-400 to-blue-600' },
+                { name: 'math', title: 'Math', icon: '🔢', color: 'from-green-400 to-green-600' },
+                { name: 'reading', title: 'Reading', icon: '📖', color: 'from-purple-400 to-purple-600' },
+                { name: 'spelling', title: 'Spelling', icon: '✏️', color: 'from-pink-400 to-pink-600' },
+                { name: 'science', title: 'Science', icon: '🔬', color: 'from-yellow-400 to-yellow-600' },
+                { name: 'social', title: 'Citizenship', icon: '🌟', color: 'from-indigo-400 to-indigo-600' }
+              ].map(game => (
+                <div key={game.name} onClick={() => { navigateTo(game.name); setCurrentQuestion(0); }}
+                  className={`bg-gradient-to-br ${game.color} p-6 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform relative hover:wiggle`}>
+                  <div className="text-4xl md:text-5xl mb-3 sparkle">{game.icon}</div>
+                  <h2 className="text-lg md:text-xl font-bold text-white">{game.title}</h2>
+                  {progress.completedSubjects[game.name] && (
+                    <div className="absolute top-2 right-2 text-2xl sparkle">🏆</div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Study Guides - Kid Friendly */}
+            <div className="mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-4">📚 Study Guides</h2>
+              <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
+                {Object.keys(studyGuides).map(type => (
+                  <div key={type} onClick={() => { navigateTo(`guide-${type}`); }} 
+                    className="bg-gradient-to-br from-pink-300 to-pink-500 p-4 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
+                    <div className="text-2xl md:text-3xl mb-2">{studyGuides[type].icon}</div>
+                    <h3 className="text-xs md:text-sm font-bold text-white">{studyGuides[type].title}</h3>
+                    {progress.completedSubjects[type] && <div className="text-xs text-yellow-200 mt-1">✅</div>}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Simple Action Buttons */}
+            <div className="flex justify-center gap-3 flex-wrap">
+              <div onClick={() => navigateTo('achievements')} 
+                className="px-6 py-3 bg-yellow-500 text-white rounded-full font-bold cursor-pointer hover:bg-yellow-600 active:scale-95 transition-transform">
+                🏅 My Awards
+              </div>
+              <div onClick={() => navigateTo('customize')} 
+                className="px-6 py-3 bg-green-500 text-white rounded-full font-bold cursor-pointer hover:bg-green-600 active:scale-95 transition-transform">
+                🎨 Customize
+              </div>
+              <div onClick={() => { playSound('click'); triggerHaptic('light'); toggleMusic(); }} 
+                className={`px-6 py-3 text-white rounded-full font-bold cursor-pointer hover:opacity-80 active:scale-95 transition-transform ${isMusicPlaying ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'}`}>
+                {isMusicPlaying ? '🔇 Music Off' : '🎵 Music On'}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    
+    // Parent Mode - Full Interface
     return (
       <div className={`min-h-screen bg-gradient-to-br ${currentTheme.colors} p-4 md:p-8`}>
+        {/* Parent Mode Toggle - Top Right */}
+        <div className="absolute top-4 right-4">
+          <button
+            onClick={() => setParentMode(false)}
+            className="bg-pink-100 hover:bg-pink-200 text-pink-700 px-3 py-2 rounded-full text-sm font-medium transition-colors"
+            title="Switch to Kid Mode"
+          >
+            👶 Kid Mode
+          </button>
+        </div>
+
         {/* Achievement Notification */}
         {showAchievement && (
           <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
