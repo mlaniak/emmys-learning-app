@@ -687,69 +687,62 @@ const EmmyStudyGame = () => {
                 <div className="text-lg text-purple-600 pulse">Welcome, {currentAvatar.name}!</div>
               </div>
             </div>
-            <div className="mt-4 flex items-center justify-center gap-4 flex-wrap">
-              <span className="text-2xl md:text-3xl font-bold text-purple-700">🏆 {progress.totalScore}</span>
-              <div className="text-center">
-                <div className="text-lg font-bold text-purple-600">Streak: {progress.streak} days</div>
-                <div className="text-sm text-purple-500">Completed: {Object.keys(progress.completedSubjects).length}/10 subjects</div>
-                <div className="text-sm text-purple-500">Achievements: {progress.achievements.length}</div>
-              </div>
-              <div className="flex gap-2 flex-wrap justify-center">
-                <div onClick={() => { playSound('click'); triggerHaptic('medium'); setCurrentScreen('achievements'); }} 
-                  className="px-4 py-2 bg-yellow-500 text-white rounded-full font-bold cursor-pointer hover:bg-yellow-600 active:scale-95 transition-transform">
-                  🏅 Achievements
+            {/* Progress Stats - Simplified */}
+            <div className="mt-6 bg-white rounded-2xl p-6 shadow-xl">
+              <div className="flex items-center justify-center gap-8 flex-wrap">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-purple-700">🏆 {progress.totalScore}</div>
+                  <div className="text-sm text-gray-600">Total Points</div>
                 </div>
-                <div onClick={() => { playSound('click'); triggerHaptic('medium'); setCurrentScreen('customize'); }} 
-                  className="px-4 py-2 bg-green-500 text-white rounded-full font-bold cursor-pointer hover:bg-green-600 active:scale-95 transition-transform">
-                  🎨 Customize
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-green-700">{Object.keys(progress.completedSubjects).length}/10</div>
+                  <div className="text-sm text-gray-600">Subjects</div>
                 </div>
-                <div onClick={() => { playSound('click'); triggerHaptic('medium'); setCurrentScreen('progress'); }} 
-                  className="px-4 py-2 bg-indigo-500 text-white rounded-full font-bold cursor-pointer hover:bg-indigo-600 active:scale-95 transition-transform">
-                  📊 Progress
-                </div>
-                <div onClick={() => { playSound('click'); triggerHaptic('light'); toggleMusic(); }} 
-                  className={`px-4 py-2 text-white rounded-full font-bold cursor-pointer hover:opacity-80 active:scale-95 transition-transform ${isMusicPlaying ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'}`}>
-                  {isMusicPlaying ? '🔇 Music Off' : '🎵 Music On'}
-              </div>
-              {progress.totalScore > 0 && <div onClick={() => { playSound('click'); triggerHaptic('medium'); resetGame(); }} className="px-4 py-2 bg-red-500 text-white rounded-full font-bold cursor-pointer hover:bg-red-600 active:scale-95 transition-transform">Reset</div>}
-              </div>
-              
-              {/* Difficulty Selector */}
-              <div className="mt-6 bg-white rounded-2xl p-4 shadow-xl">
-                <h3 className="text-lg font-bold text-purple-700 mb-3 text-center">🎯 Difficulty Level</h3>
-                <div className="flex justify-center gap-2">
-                  {['easy', 'medium', 'hard'].map(level => (
-                    <div key={level} 
-                      onClick={() => { playSound('click'); triggerHaptic('light'); setDifficulty(level); }}
-                      className={`px-4 py-2 rounded-full font-bold cursor-pointer transition-transform hover:scale-105 active:scale-95 ${
-                        difficulty === level 
-                          ? 'bg-purple-500 text-white' 
-                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                      }`}>
-                      {level === 'easy' ? '😊 Easy' : level === 'medium' ? '😐 Medium' : '😤 Hard'}
-                    </div>
-                  ))}
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-yellow-700">{progress.achievements.length}</div>
+                  <div className="text-sm text-gray-600">Achievements</div>
                 </div>
               </div>
             </div>
-          </div>
-          
-          <div className="mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-4">📚 Study Guides</h2>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-              {Object.keys(studyGuides).map(type => (
-                <div key={type} onClick={() => { playSound('click'); triggerHaptic('light'); setCurrentScreen(`guide-${type}`); }} 
-                  className="bg-gradient-to-br from-pink-300 to-pink-500 p-4 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
-                  <div className="text-3xl mb-1">{studyGuides[type].icon}</div>
-                  <h3 className="text-xs md:text-sm font-bold text-white">{studyGuides[type].title}</h3>
-                  {progress.completedSubjects[type] && <div className="text-xs text-yellow-200">✅ Complete</div>}
+            
+            {/* Main Action Buttons - Simplified */}
+            <div className="mt-6 flex justify-center gap-3 flex-wrap">
+              <div onClick={() => { playSound('click'); triggerHaptic('medium'); setCurrentScreen('achievements'); }} 
+                className="px-6 py-3 bg-yellow-500 text-white rounded-full font-bold cursor-pointer hover:bg-yellow-600 active:scale-95 transition-transform">
+                🏅 Achievements
+              </div>
+              <div onClick={() => { playSound('click'); triggerHaptic('medium'); setCurrentScreen('customize'); }} 
+                className="px-6 py-3 bg-green-500 text-white rounded-full font-bold cursor-pointer hover:bg-green-600 active:scale-95 transition-transform">
+                🎨 Customize
+              </div>
+              <div onClick={() => { playSound('click'); triggerHaptic('medium'); setCurrentScreen('progress'); }} 
+                className="px-6 py-3 bg-indigo-500 text-white rounded-full font-bold cursor-pointer hover:bg-indigo-600 active:scale-95 transition-transform">
+                📊 Progress
+              </div>
+              <div onClick={() => { playSound('click'); triggerHaptic('light'); toggleMusic(); }} 
+                className={`px-6 py-3 text-white rounded-full font-bold cursor-pointer hover:opacity-80 active:scale-95 transition-transform ${isMusicPlaying ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'}`}>
+                {isMusicPlaying ? '🔇 Music Off' : '🎵 Music On'}
+              </div>
+            </div>
+            
+            {/* Difficulty Selector - More Compact */}
+            <div className="mt-4 flex justify-center gap-2">
+              {['easy', 'medium', 'hard'].map(level => (
+                <div key={level} 
+                  onClick={() => { playSound('click'); triggerHaptic('light'); setDifficulty(level); }}
+                  className={`px-4 py-2 rounded-full font-bold cursor-pointer transition-transform hover:scale-105 active:scale-95 text-sm ${
+                    difficulty === level 
+                      ? 'bg-purple-500 text-white' 
+                      : 'bg-white text-gray-700 hover:bg-gray-100'
+                  }`}>
+                  {level === 'easy' ? '😊 Easy' : level === 'medium' ? '😐 Medium' : '😤 Hard'}
                 </div>
               ))}
             </div>
           </div>
-
-          <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-4">🎮 Games</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          
+          <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-6">🎮 Learning Games</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {[
               { name: 'phonics', title: 'Phonics', icon: '📚', color: 'from-pink-400 to-pink-600' },
               { name: 'math', title: 'Math', icon: '🔢', color: 'from-blue-400 to-blue-600' },
@@ -762,16 +755,23 @@ const EmmyStudyGame = () => {
               { name: 'geography', title: 'Geography', icon: '🌍', color: 'from-emerald-400 to-emerald-600' },
               { name: 'history', title: 'History', icon: '📜', color: 'from-amber-400 to-amber-600' }
             ].map(game => (
-              <div key={game.name} onClick={() => { playSound('click'); triggerHaptic('medium'); setCurrentScreen(game.name); setCurrentQuestion(0); }}
-                className={`bg-gradient-to-br ${game.color} p-6 rounded-3xl shadow-2xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform relative hover:wiggle`}>
-                <div className="text-4xl md:text-5xl mb-2 sparkle">{game.icon}</div>
-                <h2 className="text-lg md:text-xl font-bold text-white">{game.title}</h2>
-                {progress.completedSubjects[game.name] && (
-                  <div className="absolute top-2 right-2 text-2xl sparkle">🏆</div>
-                )}
-                {progress.completedSubjects[game.name] && (
-                  <div className="text-sm text-yellow-200 mt-2">Score: {progress.completedSubjects[game.name].score}</div>
-                )}
+              <div key={game.name} className="relative group">
+                <div onClick={() => { playSound('click'); triggerHaptic('medium'); setCurrentScreen(game.name); setCurrentQuestion(0); }}
+                  className={`bg-gradient-to-br ${game.color} p-4 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform relative hover:wiggle`}>
+                  <div className="text-3xl md:text-4xl mb-2 sparkle">{game.icon}</div>
+                  <h2 className="text-sm md:text-base font-bold text-white">{game.title}</h2>
+                  {progress.completedSubjects[game.name] && (
+                    <div className="absolute top-1 right-1 text-lg sparkle">🏆</div>
+                  )}
+                  {progress.completedSubjects[game.name] && (
+                    <div className="text-xs text-yellow-200 mt-1">Score: {progress.completedSubjects[game.name].score}</div>
+                  )}
+                </div>
+                {/* Study Guide Button */}
+                <div onClick={() => { playSound('click'); triggerHaptic('light'); setCurrentScreen(`guide-${game.name}`); }}
+                  className="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:scale-110">
+                  <span className="text-xs">📚</span>
+                </div>
               </div>
             ))}
           </div>
