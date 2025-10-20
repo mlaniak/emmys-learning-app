@@ -98,6 +98,11 @@ const EmmyStudyGame = () => {
     setBreadcrumbs(newBreadcrumbs);
   };
 
+  // Initialize breadcrumbs on component mount
+  useEffect(() => {
+    updateBreadcrumbs(currentScreen);
+  }, []);
+
   // Search functionality
   const searchResults = () => {
     if (!searchQuery.trim()) return [];
@@ -1235,24 +1240,35 @@ const EmmyStudyGame = () => {
           </div>
         )}
 
-        {/* Breadcrumb Navigation */}
-        <div className="mb-4 flex items-center justify-between">
-          <nav className="flex items-center gap-2 text-sm text-gray-600">
-            {breadcrumbs.map((crumb, index) => (
-              <div key={index} className="flex items-center gap-2">
-                {index > 0 && <span>›</span>}
-                <span className={index === breadcrumbs.length - 1 ? 'text-purple-600 font-bold' : 'hover:text-purple-500 cursor-pointer'}>
-                  {crumb}
-                </span>
-              </div>
-            ))}
-          </nav>
-          
-          {/* Keyboard Shortcuts Help */}
-          <div className="hidden md:block text-xs text-gray-500">
-            <span className="bg-gray-100 px-2 py-1 rounded">Press S to search</span>
+        {/* Breadcrumb Navigation - Only show if not on home page */}
+        {currentScreen !== 'home' && (
+          <div className="mb-4 flex items-center justify-between">
+            <nav className="flex items-center gap-2 text-sm text-gray-600">
+              {breadcrumbs.map((crumb, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  {index > 0 && <span>›</span>}
+                  <span className={index === breadcrumbs.length - 1 ? 'text-purple-600 font-bold' : 'hover:text-purple-500 cursor-pointer'}>
+                    {crumb}
+                  </span>
+                </div>
+              ))}
+            </nav>
+            
+            {/* Keyboard Shortcuts Help */}
+            <div className="hidden md:block text-xs text-gray-500">
+              <span className="bg-gray-100 px-2 py-1 rounded">Press S to search</span>
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Keyboard Shortcuts Help for Home Page */}
+        {currentScreen === 'home' && (
+          <div className="mb-4 flex justify-end">
+            <div className="hidden md:block text-xs text-gray-500">
+              <span className="bg-gray-100 px-2 py-1 rounded">Press S to search</span>
+            </div>
+          </div>
+        )}
         
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-6">
