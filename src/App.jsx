@@ -690,10 +690,10 @@ const EmmyStudyGame = () => {
             {/* Progress Stats - Simplified */}
             <div className="mt-6 bg-white rounded-2xl p-6 shadow-xl">
               <div className="flex items-center justify-center gap-8 flex-wrap">
-                <div className="text-center">
+              <div className="text-center">
                   <div className="text-3xl font-bold text-purple-700">🏆 {progress.totalScore}</div>
                   <div className="text-sm text-gray-600">Total Points</div>
-                </div>
+              </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-green-700">{Object.keys(progress.completedSubjects).length}/10</div>
                   <div className="text-sm text-gray-600">Subjects</div>
@@ -702,9 +702,9 @@ const EmmyStudyGame = () => {
                   <div className="text-3xl font-bold text-yellow-700">{progress.achievements.length}</div>
                   <div className="text-sm text-gray-600">Achievements</div>
                 </div>
-              </div>
             </div>
-            
+          </div>
+          
             {/* Main Action Buttons - Simplified */}
             <div className="mt-6 flex justify-center gap-3 flex-wrap">
               <div onClick={() => { playSound('click'); triggerHaptic('medium'); setCurrentScreen('achievements'); }} 
@@ -741,6 +741,121 @@ const EmmyStudyGame = () => {
             </div>
           </div>
           
+          {/* Monthly Learning Plans */}
+          <div className="mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-4">📅 Monthly Learning Plans</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Week 1 Plan */}
+              <div className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl p-6 shadow-lg">
+                <div className="text-center mb-4">
+                  <div className="text-3xl mb-2">🌱</div>
+                  <h3 className="text-lg font-bold text-blue-800">Week 1: Foundation</h3>
+                  <p className="text-sm text-blue-600">Start with basics</p>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-600">✓</span>
+                    <span>Phonics & Math (Easy)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-600">✓</span>
+                    <span>Reading Basics</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-600">✓</span>
+                    <span>Science Introduction</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Week 2 Plan */}
+              <div className="bg-gradient-to-br from-green-100 to-green-200 rounded-2xl p-6 shadow-lg">
+                <div className="text-center mb-4">
+                  <div className="text-3xl mb-2">🌿</div>
+                  <h3 className="text-lg font-bold text-green-800">Week 2: Building</h3>
+                  <p className="text-sm text-green-600">Expand knowledge</p>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-600">✓</span>
+                    <span>Math & Spelling (Medium)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-600">✓</span>
+                    <span>Social Studies</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-600">✓</span>
+                    <span>Skip Counting</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Week 3 Plan */}
+              <div className="bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl p-6 shadow-lg">
+                <div className="text-center mb-4">
+                  <div className="text-3xl mb-2">🌺</div>
+                  <h3 className="text-lg font-bold text-purple-800">Week 3: Advanced</h3>
+                  <p className="text-sm text-purple-600">Master skills</p>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-600">✓</span>
+                    <span>Art & Geography</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-600">✓</span>
+                    <span>History & Hard Mode</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-600">✓</span>
+                    <span>All Achievements</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Progress Tracker */}
+            <div className="mt-6 bg-white rounded-2xl p-6 shadow-xl">
+              <h3 className="text-lg font-bold text-purple-700 mb-4 text-center">📊 This Month's Progress</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-600">
+                    {Math.min(Object.keys(progress.completedSubjects).length, 3)}/3
+                  </div>
+                  <div className="text-sm text-gray-600">Week 1 Goals</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-600">
+                    {Math.max(0, Math.min(Object.keys(progress.completedSubjects).length - 3, 3))}/3
+                  </div>
+                  <div className="text-sm text-gray-600">Week 2 Goals</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-purple-600">
+                    {Math.max(0, Math.min(Object.keys(progress.completedSubjects).length - 6, 4))}/4
+                  </div>
+                  <div className="text-sm text-gray-600">Week 3 Goals</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Study Guides Section */}
+          <div className="mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-4">📚 Study Guides</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              {Object.keys(studyGuides).map(type => (
+                <div key={type} onClick={() => { playSound('click'); triggerHaptic('light'); setCurrentScreen(`guide-${type}`); }} 
+                  className="bg-gradient-to-br from-pink-300 to-pink-500 p-4 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
+                  <div className="text-2xl md:text-3xl mb-2">{studyGuides[type].icon}</div>
+                  <h3 className="text-xs md:text-sm font-bold text-white">{studyGuides[type].title}</h3>
+                  {progress.completedSubjects[type] && <div className="text-xs text-yellow-200 mt-1">✅ Complete</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+
           <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-6">🎮 Learning Games</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {[
@@ -755,23 +870,16 @@ const EmmyStudyGame = () => {
               { name: 'geography', title: 'Geography', icon: '🌍', color: 'from-emerald-400 to-emerald-600' },
               { name: 'history', title: 'History', icon: '📜', color: 'from-amber-400 to-amber-600' }
             ].map(game => (
-              <div key={game.name} className="relative group">
-                <div onClick={() => { playSound('click'); triggerHaptic('medium'); setCurrentScreen(game.name); setCurrentQuestion(0); }}
-                  className={`bg-gradient-to-br ${game.color} p-4 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform relative hover:wiggle`}>
-                  <div className="text-3xl md:text-4xl mb-2 sparkle">{game.icon}</div>
-                  <h2 className="text-sm md:text-base font-bold text-white">{game.title}</h2>
-                  {progress.completedSubjects[game.name] && (
-                    <div className="absolute top-1 right-1 text-lg sparkle">🏆</div>
-                  )}
-                  {progress.completedSubjects[game.name] && (
-                    <div className="text-xs text-yellow-200 mt-1">Score: {progress.completedSubjects[game.name].score}</div>
-                  )}
-                </div>
-                {/* Study Guide Button */}
-                <div onClick={() => { playSound('click'); triggerHaptic('light'); setCurrentScreen(`guide-${game.name}`); }}
-                  className="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:scale-110">
-                  <span className="text-xs">📚</span>
-                </div>
+              <div key={game.name} onClick={() => { playSound('click'); triggerHaptic('medium'); setCurrentScreen(game.name); setCurrentQuestion(0); }}
+                className={`bg-gradient-to-br ${game.color} p-4 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform relative hover:wiggle`}>
+                <div className="text-3xl md:text-4xl mb-2 sparkle">{game.icon}</div>
+                <h2 className="text-sm md:text-base font-bold text-white">{game.title}</h2>
+                {progress.completedSubjects[game.name] && (
+                  <div className="absolute top-1 right-1 text-lg sparkle">🏆</div>
+                )}
+                {progress.completedSubjects[game.name] && (
+                  <div className="text-xs text-yellow-200 mt-1">Score: {progress.completedSubjects[game.name].score}</div>
+                )}
               </div>
             ))}
           </div>
