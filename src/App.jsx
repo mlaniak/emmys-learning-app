@@ -1386,6 +1386,37 @@ const EmmyStudyGame = () => {
               ))}
             </div>
 
+            {/* Learning Games - Kid Friendly */}
+            <div className="mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-6">🎮 Learning Games</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                {[
+                  { name: 'phonics', title: 'Phonics', icon: '📚', color: 'from-pink-400 to-pink-600' },
+                  { name: 'math', title: 'Math', icon: '🔢', color: 'from-blue-400 to-blue-600' },
+                  { name: 'reading', title: 'Reading', icon: '📖', color: 'from-green-400 to-green-600' },
+                  { name: 'spelling', title: 'Spelling', icon: '✏️', color: 'from-purple-400 to-purple-600' },
+                  { name: 'science', title: 'Science', icon: '🔬', color: 'from-teal-400 to-teal-600' },
+                  { name: 'social', title: 'Citizenship', icon: '🌟', color: 'from-orange-400 to-orange-600' },
+                  { name: 'skipcounting', title: 'Skip Count', icon: '🔢', color: 'from-indigo-400 to-indigo-600' },
+                  { name: 'art', title: 'Art', icon: '🎨', color: 'from-pink-400 to-rose-600' },
+                  { name: 'geography', title: 'Geography', icon: '🌍', color: 'from-emerald-400 to-emerald-600' },
+                  { name: 'history', title: 'History', icon: '📜', color: 'from-amber-400 to-amber-600' }
+                ].map(game => (
+                  <div key={game.name} onClick={() => { navigateTo(game.name); setCurrentQuestion(0); }}
+                    className={`bg-gradient-to-br ${game.color} p-4 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform relative hover:wiggle`}>
+                    <div className="text-3xl md:text-4xl mb-2 sparkle">{game.icon}</div>
+                    <h2 className="text-sm md:text-base font-bold text-white">{game.title}</h2>
+                    {progress.completedSubjects[game.name] && (
+                      <div className="absolute top-1 right-1 text-lg sparkle">🏆</div>
+                    )}
+                    {progress.completedSubjects[game.name] && (
+                      <div className="text-xs text-yellow-200 mt-1">Score: {progress.completedSubjects[game.name].score}</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {/* Study Guides - Kid Friendly */}
             <div className="mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-4">📚 Study Guides</h2>
