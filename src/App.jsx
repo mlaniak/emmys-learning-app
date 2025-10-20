@@ -24,6 +24,11 @@ const EmmyStudyGame = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
   const [breadcrumbs, setBreadcrumbs] = useState(['Home']);
+  const [learningStreak, setLearningStreak] = useState(0);
+  const [lastLearningDate, setLastLearningDate] = useState(null);
+  const [dailyChallenge, setDailyChallenge] = useState(null);
+  const [confidenceLevels, setConfidenceLevels] = useState({});
+  const [adaptiveDifficulty, setAdaptiveDifficulty] = useState({});
   const [progress, setProgress] = useState(() => {
     const saved = localStorage.getItem('emmy-learning-progress');
     return saved ? JSON.parse(saved) : {
@@ -142,6 +147,126 @@ const EmmyStudyGame = () => {
     updateBreadcrumbs(screen, additionalInfo);
     setShowSearch(false);
     setSearchQuery('');
+  };
+
+  // Adaptive Learning System
+  const calculateAdaptiveDifficulty = (subject, performance) => {
+    const currentDifficulty = adaptiveDifficulty[subject] || 'medium';
+    const recentScores = performance.slice(-5); // Last 5 attempts
+    const averageScore = recentScores.reduce((sum, score) => sum + score, 0) / recentScores.length;
+    
+    if (averageScore >= 90 && recentScores.length >= 3) {
+      return 'hard';
+    } else if (averageScore <= 60 && recentScores.length >= 3) {
+      return 'easy';
+    }
+    return currentDifficulty;
+  };
+
+  const updateConfidenceLevel = (subject, isCorrect, responseTime) => {
+    const currentConfidence = confidenceLevels[subject] || 0.5;
+    let newConfidence = currentConfidence;
+    
+    if (isCorrect) {
+      newConfidence += 0.1;
+    } else {
+      newConfidence -= 0.15;
+    }
+    
+    // Adjust based on response time (faster = more confident)
+    if (responseTime < 3000) { // Less than 3 seconds
+      newConfidence += 0.05;
+    } else if (responseTime > 10000) { // More than 10 seconds
+      newConfidence -= 0.05;
+    }
+    
+    newConfidence = Math.max(0, Math.min(1, newConfidence)); // Clamp between 0 and 1
+    
+    setConfidenceLevels(prev => ({
+      ...prev,
+      [subject]: newConfidence
+    }));
+    
+    return newConfidence;
+  };
+
+  // Daily Challenge System
+  const generateDailyChallenge = () => {
+    const today = new Date().toDateString();
+    const savedChallenge = localStorage.getItem(`daily-challenge-${today}`);
+    
+    if (savedChallenge) {
+      return JSON.parse(savedChallenge);
+    }
+    
+    const challenges = [
+      {
+        id: 'perfect-score',
+        title: 'Perfect Score Mission',
+        description: 'Get 100% on any subject',
+        reward: 50,
+        icon: '⭐',
+        type: 'perfect_score'
+      },
+      {
+        id: 'streak-master',
+        title: 'Streak Master',
+        description: 'Complete 3 subjects in a row',
+        reward: 75,
+        icon: '🔥',
+        type: 'streak'
+      },
+      {
+        id: 'speed-demon',
+        title: 'Speed Demon',
+        description: 'Answer 10 questions in under 5 minutes',
+        reward: 60,
+        icon: '⚡',
+        type: 'speed'
+      },
+      {
+        id: 'explorer',
+        title: 'Subject Explorer',
+        description: 'Try 5 different subjects today',
+        reward: 40,
+        icon: '🗺️',
+        type: 'exploration'
+      },
+      {
+        id: 'confidence-builder',
+        title: 'Confidence Builder',
+        description: 'Improve confidence in your weakest subject',
+        reward: 55,
+        icon: '💪',
+        type: 'confidence'
+      }
+    ];
+    
+    const randomChallenge = challenges[Math.floor(Math.random() * challenges.length)];
+    localStorage.setItem(`daily-challenge-${today}`, JSON.stringify(randomChallenge));
+    return randomChallenge;
+  };
+
+  // Learning Streak System
+  const updateLearningStreak = () => {
+    const today = new Date().toDateString();
+    const lastDate = lastLearningDate;
+    
+    if (lastDate === today) {
+      return; // Already counted today
+    }
+    
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayString = yesterday.toDateString();
+    
+    if (lastDate === yesterdayString) {
+      setLearningStreak(prev => prev + 1);
+    } else if (lastDate !== today) {
+      setLearningStreak(1); // Reset streak
+    }
+    
+    setLastLearningDate(today);
   };
 
   // Check and unlock achievements
@@ -828,6 +953,26 @@ const EmmyStudyGame = () => {
     };
   }, []);
 
+  // Initialize daily challenge and learning streak
+  useEffect(() => {
+    const challenge = generateDailyChallenge();
+    setDailyChallenge(challenge);
+    
+    // Load learning streak from localStorage
+    const savedStreak = localStorage.getItem('learning-streak');
+    const savedLastDate = localStorage.getItem('last-learning-date');
+    if (savedStreak) setLearningStreak(parseInt(savedStreak));
+    if (savedLastDate) setLastLearningDate(savedLastDate);
+  }, []);
+
+  // Save learning streak
+  useEffect(() => {
+    localStorage.setItem('learning-streak', learningStreak.toString());
+    if (lastLearningDate) {
+      localStorage.setItem('last-learning-date', lastLearningDate);
+    }
+  }, [learningStreak, lastLearningDate]);
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyPress = (e) => {
@@ -919,9 +1064,17 @@ const EmmyStudyGame = () => {
   };
 
   const handleAnswer = (sel, cor, qs, explanation) => {
+    const startTime = Date.now();
     const ok = sel === cor;
     const newScore = score + (ok ? 10 : 0);
-      setScore(newScore);
+    setScore(newScore);
+    
+    // Update confidence tracking
+    const responseTime = Date.now() - startTime;
+    const confidence = updateConfidenceLevel(currentScreen, ok, responseTime);
+    
+    // Update learning streak
+    updateLearningStreak();
     
     // Update stats
     const updatedStats = {
@@ -1110,7 +1263,7 @@ const EmmyStudyGame = () => {
                 <div className="text-lg text-purple-600 pulse">Welcome, {currentAvatar.name}!</div>
               </div>
             </div>
-            {/* Progress Stats - Simplified */}
+            {/* Progress Stats - Enhanced */}
             <div className="mt-6 bg-white rounded-2xl p-6 shadow-xl">
               <div className="flex items-center justify-center gap-8 flex-wrap">
               <div className="text-center">
@@ -1125,8 +1278,27 @@ const EmmyStudyGame = () => {
                   <div className="text-3xl font-bold text-yellow-700">{progress.achievements.length}</div>
                   <div className="text-sm text-gray-600">Achievements</div>
                 </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-orange-700">🔥 {learningStreak}</div>
+                  <div className="text-sm text-gray-600">Day Streak</div>
+                </div>
             </div>
           </div>
+
+          {/* Daily Challenge */}
+          {dailyChallenge && (
+            <div className="mt-6 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-2xl p-6 shadow-xl border-4 border-yellow-300">
+              <div className="text-center">
+                <div className="text-4xl mb-2">{dailyChallenge.icon}</div>
+                <h3 className="text-2xl font-bold text-orange-800 mb-2">Daily Challenge</h3>
+                <h4 className="text-lg font-bold text-orange-700 mb-2">{dailyChallenge.title}</h4>
+                <p className="text-orange-600 mb-4">{dailyChallenge.description}</p>
+                <div className="bg-orange-200 rounded-full px-4 py-2 inline-block">
+                  <span className="font-bold text-orange-800">Reward: {dailyChallenge.reward} points</span>
+                </div>
+              </div>
+            </div>
+          )}
           
             {/* Main Action Buttons - Enhanced */}
             <div className="mt-6 flex justify-center gap-3 flex-wrap">
@@ -1769,10 +1941,54 @@ const EmmyStudyGame = () => {
                   <span className="text-gray-600">Average Score:</span>
                   <span className="font-bold text-blue-600">{averageScore}%</span>
                 </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Learning Streak:</span>
+                  <span className="font-bold text-orange-600">🔥 {learningStreak} days</span>
+                </div>
                 {favoriteSubject && (
                   <div className="flex justify-between">
                     <span className="text-gray-600">Favorite Subject:</span>
                     <span className="font-bold text-purple-600">{favoriteSubject.name}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-2xl p-6 shadow-xl">
+              <h3 className="text-xl font-bold text-purple-700 mb-4">💪 Confidence Levels</h3>
+              <div className="space-y-3">
+                {Object.entries(confidenceLevels).map(([subject, confidence]) => {
+                  const subjectNames = {
+                    phonics: 'Phonics', math: 'Math', reading: 'Reading', 
+                    spelling: 'Spelling', science: 'Science', social: 'Citizenship',
+                    skipcounting: 'Skip Counting', art: 'Art', geography: 'Geography', history: 'History'
+                  };
+                  const confidenceColor = confidence >= 0.8 ? 'text-green-600' : 
+                                        confidence >= 0.6 ? 'text-yellow-600' : 'text-red-600';
+                  const confidenceBar = Math.round(confidence * 100);
+                  
+                  return (
+                    <div key={subject} className="space-y-1">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">{subjectNames[subject] || subject}</span>
+                        <span className={`font-bold ${confidenceColor}`}>{confidenceBar}%</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className={`h-2 rounded-full transition-all duration-500 ${
+                            confidence >= 0.8 ? 'bg-green-500' : 
+                            confidence >= 0.6 ? 'bg-yellow-500' : 'bg-red-500'
+                          }`}
+                          style={{ width: `${confidenceBar}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  );
+                })}
+                {Object.keys(confidenceLevels).length === 0 && (
+                  <div className="text-center text-gray-500 py-4">
+                    <div className="text-2xl mb-2">📊</div>
+                    <div>Start learning to see confidence levels!</div>
                   </div>
                 )}
               </div>
