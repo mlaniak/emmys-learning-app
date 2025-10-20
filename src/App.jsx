@@ -86,16 +86,16 @@ const EmmyStudyGame = () => {
       'customize': ['Home', 'Customize'],
       'progress': ['Home', 'Progress'],
       'feedback': ['Home', 'Feedback'],
-      'phonics': ['Home', 'Learning Games', 'Phonics'],
-      'math': ['Home', 'Learning Games', 'Math'],
-      'reading': ['Home', 'Learning Games', 'Reading'],
-      'spelling': ['Home', 'Learning Games', 'Spelling'],
-      'science': ['Home', 'Learning Games', 'Science'],
-      'social': ['Home', 'Learning Games', 'Citizenship'],
-      'skipcounting': ['Home', 'Learning Games', 'Skip Counting'],
-      'art': ['Home', 'Learning Games', 'Art'],
-      'geography': ['Home', 'Learning Games', 'Geography'],
-      'history': ['Home', 'Learning Games', 'History']
+      'phonics': ['Home', 'Study Guides', 'Phonics'],
+      'math': ['Home', 'Study Guides', 'Math'],
+      'reading': ['Home', 'Study Guides', 'Reading'],
+      'spelling': ['Home', 'Study Guides', 'Spelling'],
+      'science': ['Home', 'Study Guides', 'Science'],
+      'social': ['Home', 'Study Guides', 'Citizenship'],
+      'skipcounting': ['Home', 'Study Guides', 'Skip Counting'],
+      'art': ['Home', 'Study Guides', 'Art'],
+      'geography': ['Home', 'Study Guides', 'Geography'],
+      'history': ['Home', 'Study Guides', 'History']
     };
     
     let newBreadcrumbs = breadcrumbMap[newScreen] || ['Home'];
@@ -1797,29 +1797,30 @@ const EmmyStudyGame = () => {
             </div>
           </div>
 
-          <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-6">🎮 Learning Games</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-6">📚 Study Guides & Reference Materials</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {[
-              { name: 'phonics', title: 'Phonics', icon: '📚', color: 'from-pink-400 to-pink-600' },
-              { name: 'math', title: 'Math', icon: '🔢', color: 'from-blue-400 to-blue-600' },
-              { name: 'reading', title: 'Reading', icon: '📖', color: 'from-green-400 to-green-600' },
-              { name: 'spelling', title: 'Spelling', icon: '✏️', color: 'from-purple-400 to-purple-600' },
-              { name: 'science', title: 'Science', icon: '🔬', color: 'from-teal-400 to-teal-600' },
-              { name: 'social', title: 'Citizenship', icon: '🌟', color: 'from-orange-400 to-orange-600' },
-              { name: 'skipcounting', title: 'Skip Count', icon: '🔢', color: 'from-indigo-400 to-indigo-600' },
-              { name: 'art', title: 'Art', icon: '🎨', color: 'from-pink-400 to-rose-600' },
-              { name: 'geography', title: 'Geography', icon: '🌍', color: 'from-emerald-400 to-emerald-600' },
-              { name: 'history', title: 'History', icon: '📜', color: 'from-amber-400 to-amber-600' }
-            ].map(game => (
-              <div key={game.name} onClick={() => { navigateTo(game.name); setCurrentQuestion(0); }}
-                className={`bg-gradient-to-br ${game.color} p-4 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform relative hover:wiggle`}>
-                <div className="text-3xl md:text-4xl mb-2 sparkle">{game.icon}</div>
-                <h2 className="text-sm md:text-base font-bold text-white">{game.title}</h2>
-                {progress.completedSubjects[game.name] && (
-                  <div className="absolute top-1 right-1 text-lg sparkle">🏆</div>
+              { name: 'phonics', title: 'Phonics Guide', icon: '📚', color: 'from-pink-400 to-pink-600', description: 'Letter sounds & blends' },
+              { name: 'math', title: 'Math Concepts', icon: '🔢', color: 'from-blue-400 to-blue-600', description: 'Numbers & operations' },
+              { name: 'reading', title: 'Reading Lists', icon: '📖', color: 'from-green-400 to-green-600', description: 'Books & vocabulary' },
+              { name: 'spelling', title: 'Spelling Lists', icon: '✏️', color: 'from-purple-400 to-purple-600', description: 'Word lists & rules' },
+              { name: 'science', title: 'Science Topics', icon: '🔬', color: 'from-teal-400 to-teal-600', description: 'Nature & experiments' },
+              { name: 'social', title: 'Social Studies', icon: '🌟', color: 'from-orange-400 to-orange-600', description: 'Community & citizenship' },
+              { name: 'skipcounting', title: 'Skip Counting', icon: '🔢', color: 'from-indigo-400 to-indigo-600', description: 'Number patterns' },
+              { name: 'art', title: 'Art Projects', icon: '🎨', color: 'from-pink-400 to-rose-600', description: 'Creative activities' },
+              { name: 'geography', title: 'Geography', icon: '🌍', color: 'from-emerald-400 to-emerald-600', description: 'Maps & places' },
+              { name: 'history', title: 'History', icon: '📜', color: 'from-amber-400 to-amber-600', description: 'Stories & timelines' }
+            ].map(subject => (
+              <div key={subject.name} onClick={() => { navigateTo(subject.name); setCurrentQuestion(0); }}
+                className={`bg-gradient-to-br ${subject.color} p-4 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform relative hover:wiggle`}>
+                <div className="text-3xl md:text-4xl mb-2 sparkle">{subject.icon}</div>
+                <h2 className="text-sm md:text-base font-bold text-white mb-1">{subject.title}</h2>
+                <div className="text-xs text-white opacity-90 mb-2">{subject.description}</div>
+                {progress.completedSubjects[subject.name] && (
+                  <div className="absolute top-1 right-1 text-lg sparkle">📖</div>
                 )}
-                {progress.completedSubjects[game.name] && (
-                  <div className="text-xs text-yellow-200 mt-1">Score: {progress.completedSubjects[game.name].score}</div>
+                {progress.completedSubjects[subject.name] && (
+                  <div className="text-xs text-yellow-200 mt-1">Progress: {progress.completedSubjects[subject.name].score}%</div>
                 )}
               </div>
             ))}
