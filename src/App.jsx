@@ -29,6 +29,11 @@ const EmmyStudyGame = () => {
   const [dailyChallenge, setDailyChallenge] = useState(null);
   const [confidenceLevels, setConfidenceLevels] = useState({});
   const [adaptiveDifficulty, setAdaptiveDifficulty] = useState({});
+  const [feedback, setFeedback] = useState([]);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbackCategory, setFeedbackCategory] = useState('general');
+  const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [feedbackRating, setFeedbackRating] = useState(5);
   const [progress, setProgress] = useState(() => {
     const saved = localStorage.getItem('emmy-learning-progress');
     return saved ? JSON.parse(saved) : {
@@ -79,6 +84,7 @@ const EmmyStudyGame = () => {
       'achievements': ['Home', 'Achievements'],
       'customize': ['Home', 'Customize'],
       'progress': ['Home', 'Progress'],
+      'feedback': ['Home', 'Feedback'],
       'phonics': ['Home', 'Learning Games', 'Phonics'],
       'math': ['Home', 'Learning Games', 'Math'],
       'reading': ['Home', 'Learning Games', 'Reading'],
@@ -272,6 +278,53 @@ const EmmyStudyGame = () => {
     }
     
     setLastLearningDate(today);
+  };
+
+  // Feedback System
+  const submitFeedback = () => {
+    if (!feedbackMessage.trim()) return;
+    
+    const newFeedback = {
+      id: Date.now(),
+      category: feedbackCategory,
+      message: feedbackMessage.trim(),
+      rating: feedbackRating,
+      timestamp: new Date().toISOString(),
+      userAgent: navigator.userAgent,
+      currentScreen: currentScreen,
+      progress: {
+        totalScore: progress.totalScore,
+        completedSubjects: Object.keys(progress.completedSubjects).length,
+        learningStreak: learningStreak
+      }
+    };
+    
+    const updatedFeedback = [...feedback, newFeedback];
+    setFeedback(updatedFeedback);
+    localStorage.setItem('emmy-feedback', JSON.stringify(updatedFeedback));
+    
+    // Reset form
+    setFeedbackMessage('');
+    setFeedbackRating(5);
+    setFeedbackCategory('general');
+    setShowFeedbackModal(false);
+    
+    // Show success message
+    playSound('correct');
+    triggerHaptic('success');
+    setShowFeedback('Thank you for your feedback! We appreciate your input.');
+    setTimeout(() => setShowFeedback(null), 3000);
+  };
+
+  const getFeedbackStats = () => {
+    const total = feedback.length;
+    const avgRating = total > 0 ? feedback.reduce((sum, f) => sum + f.rating, 0) / total : 0;
+    const categories = feedback.reduce((acc, f) => {
+      acc[f.category] = (acc[f.category] || 0) + 1;
+      return acc;
+    }, {});
+    
+    return { total, avgRating, categories };
   };
 
   // Check and unlock achievements
@@ -968,6 +1021,10 @@ const EmmyStudyGame = () => {
     const savedLastDate = localStorage.getItem('last-learning-date');
     if (savedStreak) setLearningStreak(parseInt(savedStreak));
     if (savedLastDate) setLastLearningDate(savedLastDate);
+    
+    // Load feedback from localStorage
+    const savedFeedback = localStorage.getItem('emmy-feedback');
+    if (savedFeedback) setFeedback(JSON.parse(savedFeedback));
   }, []);
 
   // Save learning streak
@@ -1337,6 +1394,10 @@ const EmmyStudyGame = () => {
               <div onClick={() => setShowSearch(true)} 
                 className="px-6 py-3 bg-orange-500 text-white rounded-full font-bold cursor-pointer hover:bg-orange-600 active:scale-95 transition-transform">
                 🔍 Search
+              </div>
+              <div onClick={() => navigateTo('feedback')} 
+                className="px-6 py-3 bg-pink-500 text-white rounded-full font-bold cursor-pointer hover:bg-pink-600 active:scale-95 transition-transform">
+                💬 Feedback
               </div>
               <div onClick={() => { playSound('click'); triggerHaptic('light'); toggleMusic(); }} 
                 className={`px-6 py-3 text-white rounded-full font-bold cursor-pointer hover:opacity-80 active:scale-95 transition-transform ${isMusicPlaying ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'}`}>
@@ -2126,6 +2187,160 @@ const EmmyStudyGame = () => {
     );
   }
 
+  if (currentScreen === 'feedback') {
+    const currentTheme = themes[progress.selectedTheme] || themes.default;
+    const feedbackStats = getFeedbackStats();
+    
+    return (
+      <div className={`min-h-screen bg-gradient-to-br ${currentTheme.colors} p-4 md:p-8`}>
+        {/* Breadcrumb Navigation */}
+        <div className="mb-4 flex items-center justify-between">
+          <nav className="flex items-center gap-2 text-sm text-gray-600">
+            {breadcrumbs.map((crumb, index) => (
+              <div key={index} className="flex items-center gap-2">
+                {index > 0 && <span>›</span>}
+                <span 
+                  className={index === breadcrumbs.length - 1 ? 'text-purple-600 font-bold' : 'hover:text-purple-500 cursor-pointer'}
+                  onClick={() => {
+                    if (index === 0) {
+                      navigateTo('home');
+                    } else if (index === 1) {
+                      navigateTo('feedback');
+                    }
+                  }}
+                >
+                  {crumb}
+                </span>
+              </div>
+            ))}
+          </nav>
+          
+          {/* Keyboard Shortcuts Help */}
+          <div className="hidden md:block text-xs text-gray-500">
+            <span className="bg-gray-100 px-2 py-1 rounded">Press S to search</span>
+          </div>
+        </div>
+
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl md:text-5xl font-bold text-purple-800 mb-4">💬 Feedback & Suggestions</h1>
+            <p className="text-lg text-purple-600">Help us improve Emmy's learning experience!</p>
+          </div>
+
+          {/* Feedback Stats */}
+          <div className="bg-white rounded-2xl p-6 shadow-xl mb-8">
+            <h2 className="text-2xl font-bold text-purple-700 mb-4">📊 Feedback Overview</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-purple-700">{feedbackStats.total}</div>
+                <div className="text-gray-600">Total Feedback</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-green-700">{feedbackStats.avgRating.toFixed(1)}</div>
+                <div className="text-gray-600">Average Rating</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-blue-700">{Object.keys(feedbackStats.categories).length}</div>
+                <div className="text-gray-600">Categories</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Feedback Form */}
+          <div className="bg-white rounded-2xl p-6 shadow-xl mb-8">
+            <h2 className="text-2xl font-bold text-purple-700 mb-6">✍️ Share Your Feedback</h2>
+            
+            <div className="space-y-6">
+              {/* Category Selection */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                <select 
+                  value={feedbackCategory} 
+                  onChange={(e) => setFeedbackCategory(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                >
+                  <option value="general">General Feedback</option>
+                  <option value="bug">Bug Report</option>
+                  <option value="feature">Feature Request</option>
+                  <option value="content">Content Suggestion</option>
+                  <option value="ui">UI/UX Improvement</option>
+                  <option value="performance">Performance Issue</option>
+                  <option value="accessibility">Accessibility</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              {/* Rating */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Rating (1-5 stars)</label>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <button
+                      key={star}
+                      onClick={() => setFeedbackRating(star)}
+                      className={`text-3xl ${star <= feedbackRating ? 'text-yellow-400' : 'text-gray-300'} hover:text-yellow-400 transition-colors`}
+                    >
+                      ⭐
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Message */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Your Message</label>
+                <textarea
+                  value={feedbackMessage}
+                  onChange={(e) => setFeedbackMessage(e.target.value)}
+                  placeholder="Tell us what you think! What's working well? What could be improved? Any suggestions for new features or content?"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent h-32 resize-none"
+                />
+              </div>
+
+              {/* Submit Button */}
+              <button
+                onClick={submitFeedback}
+                disabled={!feedbackMessage.trim()}
+                className="w-full px-6 py-3 bg-purple-500 text-white rounded-lg font-bold hover:bg-purple-600 active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                📤 Submit Feedback
+              </button>
+            </div>
+          </div>
+
+          {/* Recent Feedback */}
+          {feedback.length > 0 && (
+            <div className="bg-white rounded-2xl p-6 shadow-xl">
+              <h2 className="text-2xl font-bold text-purple-700 mb-6">📝 Recent Feedback</h2>
+              <div className="space-y-4">
+                {feedback.slice(-5).reverse().map(item => (
+                  <div key={item.id} className="border-l-4 border-purple-300 pl-4 py-2">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-purple-600 capitalize">{item.category}</span>
+                      <div className="flex items-center gap-2">
+                        <div className="flex">
+                          {[1, 2, 3, 4, 5].map(star => (
+                            <span key={star} className={`text-sm ${star <= item.rating ? 'text-yellow-400' : 'text-gray-300'}`}>
+                              ⭐
+                            </span>
+                          ))}
+                        </div>
+                        <span className="text-xs text-gray-500">
+                          {new Date(item.timestamp).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-gray-700">{item.message}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   if (currentScreen === 'parent-reference') {
     const currentTheme = themes[progress.selectedTheme] || themes.default;
     
@@ -2488,6 +2703,17 @@ const EmmyStudyGame = () => {
           .grid > div { margin-bottom: 20px; }
         }
       `}</style>
+      
+      {/* Quick Feedback Button */}
+      {currentScreen !== 'home' && currentScreen !== 'feedback' && (
+        <button
+          onClick={() => navigateTo('feedback')}
+          className="fixed bottom-4 right-4 z-40 bg-pink-500 hover:bg-pink-600 text-white p-3 rounded-full shadow-lg hover:scale-110 active:scale-95 transition-transform"
+          title="Quick Feedback"
+        >
+          💬
+        </button>
+      )}
     </div>
   );
 };
