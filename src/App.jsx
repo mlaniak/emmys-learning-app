@@ -1027,9 +1027,15 @@ const EmmyStudyGame = () => {
     const savedFeedback = localStorage.getItem('emmy-feedback');
     if (savedFeedback) setFeedback(JSON.parse(savedFeedback));
     
-    // Load parent mode from localStorage
+    // Load parent mode from localStorage - default to Kids mode
     const savedParentMode = localStorage.getItem('emmy-parent-mode');
-    if (savedParentMode) setParentMode(JSON.parse(savedParentMode));
+    if (savedParentMode !== null) {
+      setParentMode(JSON.parse(savedParentMode));
+    } else {
+      // First time user - default to Kids mode and save it
+      setParentMode(false);
+      localStorage.setItem('emmy-parent-mode', 'false');
+    }
   }, []);
 
   // Save learning streak
@@ -1043,6 +1049,39 @@ const EmmyStudyGame = () => {
   // Save parent mode
   useEffect(() => {
     localStorage.setItem('emmy-parent-mode', JSON.stringify(parentMode));
+  }, [parentMode]);
+
+  // Auto-reset to Kids mode after 30 minutes of inactivity
+  useEffect(() => {
+    let inactivityTimer;
+    
+    const resetToKidsMode = () => {
+      if (parentMode) {
+        setParentMode(false);
+        localStorage.setItem('emmy-parent-mode', 'false');
+      }
+    };
+    
+    const resetTimer = () => {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(resetToKidsMode, 30 * 60 * 1000); // 30 minutes
+    };
+    
+    // Reset timer on any user activity
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    events.forEach(event => {
+      document.addEventListener(event, resetTimer, true);
+    });
+    
+    // Start the timer
+    resetTimer();
+    
+    return () => {
+      clearTimeout(inactivityTimer);
+      events.forEach(event => {
+        document.removeEventListener(event, resetTimer, true);
+      });
+    };
   }, [parentMode]);
 
   // Keyboard shortcuts
@@ -1242,6 +1281,7 @@ const EmmyStudyGame = () => {
                       : 'bg-transparent text-purple-600 hover:bg-purple-50'
                   }`}
                   onClick={() => setParentMode(false)}
+                  title="Kids Mode (Default)"
                 >
                   👶 Kids
                 </button>
@@ -1252,10 +1292,17 @@ const EmmyStudyGame = () => {
                       : 'bg-transparent text-purple-600 hover:bg-purple-50'
                   }`}
                   onClick={() => setParentMode(true)}
+                  title="Switch to Parent Mode"
                 >
                   👨‍👩‍👧‍👦 Parents
                 </button>
               </div>
+            </div>
+            {/* Default Mode Indicator */}
+            <div className="mt-2 text-center">
+              <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium">
+                ✨ Kids Mode (Default)
+              </span>
             </div>
           </div>
 
@@ -1388,6 +1435,7 @@ const EmmyStudyGame = () => {
                     : 'bg-transparent text-purple-600 hover:bg-purple-50'
                 }`}
                 onClick={() => setParentMode(false)}
+                title="Switch to Kids Mode (Default)"
               >
                 👶 Kids
               </button>
@@ -1398,10 +1446,24 @@ const EmmyStudyGame = () => {
                     : 'bg-transparent text-purple-600 hover:bg-purple-50'
                 }`}
                 onClick={() => setParentMode(true)}
+                title="Switch to Parent Mode"
               >
                 👨‍👩‍👧‍👦 Parents
               </button>
             </div>
+          </div>
+          {/* Reset to Kids Mode Button */}
+          <div className="mt-2">
+            <button
+              onClick={() => {
+                setParentMode(false);
+                localStorage.setItem('emmy-parent-mode', 'false');
+              }}
+              className="bg-pink-100 hover:bg-pink-200 text-pink-700 px-3 py-1 rounded-full text-xs font-medium transition-colors shadow-sm"
+              title="Reset to Kids Mode (Default)"
+            >
+              🔄 Reset to Kids
+            </button>
           </div>
         </div>
 
