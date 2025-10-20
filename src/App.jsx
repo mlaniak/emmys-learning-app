@@ -12,6 +12,36 @@ const EmmyStudyGame = () => {
   const [drawColor, setDrawColor] = useState('#8B5CF6');
   const [showExplanation, setShowExplanation] = useState(false);
   const [correctAnswer, setCorrectAnswer] = useState('');
+  const [progress, setProgress] = useState(() => {
+    const saved = localStorage.getItem('emmy-learning-progress');
+    return saved ? JSON.parse(saved) : {
+      completedSubjects: {},
+      totalScore: 0,
+      streak: 0,
+      lastPlayed: null,
+      achievements: []
+    };
+  });
+
+  // Haptic feedback for mobile devices
+  const triggerHaptic = (type = 'light') => {
+    if ('vibrate' in navigator) {
+      const patterns = {
+        light: [10],
+        medium: [20],
+        heavy: [30],
+        success: [10, 10, 10],
+        error: [50, 50, 50]
+      };
+      navigator.vibrate(patterns[type] || patterns.light);
+    }
+  };
+
+  // Save progress to localStorage
+  const saveProgress = (newProgress) => {
+    setProgress(newProgress);
+    localStorage.setItem('emmy-learning-progress', JSON.stringify(newProgress));
+  };
 
   const phonicsQuestions = [
     { word: 'then', question: 'Does this word have TH or SH?', options: ['TH', 'SH'], correct: 'TH', image: '⏰' },
@@ -172,6 +202,8 @@ const EmmyStudyGame = () => {
   const startDrawing = (e, idx) => {
     const canvas = canvasRefs[idx].current;
     if (!canvas) return;
+    e.preventDefault();
+    triggerHaptic('light');
     setIsDrawing(true); setCurrentCanvas(idx);
     const rect = canvas.getBoundingClientRect();
     const x = (e.clientX || e.touches?.[0]?.clientX) - rect.left;
@@ -202,12 +234,23 @@ const EmmyStudyGame = () => {
   const handleAnswer = (sel, cor, qs, explanation) => {
     const ok = sel === cor;
     if (ok) { 
-      setScore(score + 10); 
+      const newScore = score + 10;
+      setScore(newScore);
       playSound('correct');
+      triggerHaptic('success');
       setShowFeedback('correct'); 
       setAnswerAnimation('correct-bounce');
+      
+      // Update progress
+      const newProgress = {
+        ...progress,
+        totalScore: progress.totalScore + 10,
+        lastPlayed: new Date().toISOString()
+      };
+      saveProgress(newProgress);
     } else { 
       playSound('incorrect');
+      triggerHaptic('error');
       setShowFeedback('incorrect'); 
       setAnswerAnimation('incorrect-shake');
       setCorrectAnswer(cor);
@@ -221,7 +264,21 @@ const EmmyStudyGame = () => {
       if (currentQuestion < qs.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
       } else {
+        // Mark subject as completed
+        const newProgress = {
+          ...progress,
+          completedSubjects: {
+            ...progress.completedSubjects,
+            [currentScreen]: {
+              completed: true,
+              score: score + (ok ? 10 : 0),
+              completedAt: new Date().toISOString()
+            }
+          }
+        };
+        saveProgress(newProgress);
         playSound('complete');
+        triggerHaptic('success');
         setCurrentScreen('complete');
       }
     }, explanation && !ok ? 3500 : 1500);
@@ -236,8 +293,12 @@ const EmmyStudyGame = () => {
           <div className="text-center mb-6">
             <h1 className="text-4xl md:text-5xl font-bold text-purple-800 mb-2">✨ Emmy's Learning Adventure ✨</h1>
             <div className="mt-4 flex items-center justify-center gap-4">
-              <span className="text-2xl md:text-3xl font-bold text-purple-700">🏆 {score}</span>
-              {score > 0 && <div onClick={() => { playSound('click'); resetGame(); }} className="px-4 py-2 bg-red-500 text-white rounded-full font-bold cursor-pointer hover:bg-red-600">Reset</div>}
+              <span className="text-2xl md:text-3xl font-bold text-purple-700">🏆 {progress.totalScore}</span>
+              <div className="text-center">
+                <div className="text-lg font-bold text-purple-600">Streak: {progress.streak} days</div>
+                <div className="text-sm text-purple-500">Completed: {Object.keys(progress.completedSubjects).length}/7 subjects</div>
+              </div>
+              {progress.totalScore > 0 && <div onClick={() => { playSound('click'); triggerHaptic('medium'); resetGame(); }} className="px-4 py-2 bg-red-500 text-white rounded-full font-bold cursor-pointer hover:bg-red-600 active:scale-95 transition-transform">Reset</div>}
             </div>
           </div>
           
@@ -245,10 +306,11 @@ const EmmyStudyGame = () => {
             <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-4">📚 Study Guides</h2>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               {Object.keys(studyGuides).map(type => (
-                <div key={type} onClick={() => { playSound('click'); setCurrentScreen(`guide-${type}`); }} 
-                  className="bg-gradient-to-br from-pink-300 to-pink-500 p-4 rounded-2xl shadow-xl hover:scale-105 cursor-pointer text-center">
+                <div key={type} onClick={() => { playSound('click'); triggerHaptic('light'); setCurrentScreen(`guide-${type}`); }} 
+                  className="bg-gradient-to-br from-pink-300 to-pink-500 p-4 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
                   <div className="text-3xl mb-1">{studyGuides[type].icon}</div>
                   <h3 className="text-xs md:text-sm font-bold text-white">{studyGuides[type].title}</h3>
+                  {progress.completedSubjects[type] && <div className="text-xs text-yellow-200">✅ Complete</div>}
                 </div>
               ))}
             </div>
@@ -265,10 +327,16 @@ const EmmyStudyGame = () => {
               { name: 'social', title: 'Citizenship', icon: '🌟', color: 'from-orange-400 to-orange-600' },
               { name: 'skipcounting', title: 'Skip Count', icon: '🔢', color: 'from-indigo-400 to-indigo-600' }
             ].map(game => (
-              <div key={game.name} onClick={() => { playSound('click'); setCurrentScreen(game.name); setCurrentQuestion(0); }}
-                className={`bg-gradient-to-br ${game.color} p-6 rounded-3xl shadow-2xl hover:scale-105 cursor-pointer text-center`}>
+              <div key={game.name} onClick={() => { playSound('click'); triggerHaptic('medium'); setCurrentScreen(game.name); setCurrentQuestion(0); }}
+                className={`bg-gradient-to-br ${game.color} p-6 rounded-3xl shadow-2xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform relative`}>
                 <div className="text-4xl md:text-5xl mb-2">{game.icon}</div>
                 <h2 className="text-lg md:text-xl font-bold text-white">{game.title}</h2>
+                {progress.completedSubjects[game.name] && (
+                  <div className="absolute top-2 right-2 text-2xl">🏆</div>
+                )}
+                {progress.completedSubjects[game.name] && (
+                  <div className="text-sm text-yellow-200 mt-2">Score: {progress.completedSubjects[game.name].score}</div>
+                )}
               </div>
             ))}
           </div>
@@ -332,9 +400,12 @@ const EmmyStudyGame = () => {
             <p className="text-center text-base md:text-lg font-bold text-purple-700 mb-3">🌈 Choose Rainbow Color!</p>
             <div className="flex justify-center gap-2 flex-wrap">
               {colors.map(color => (
-                <div key={color.value} onClick={() => setDrawColor(color.value)}
-                  className={`w-10 h-10 md:w-12 md:h-12 rounded-full cursor-pointer hover:scale-110 ${drawColor === color.value ? 'ring-4 ring-yellow-400' : ''}`}
-                  style={{ backgroundColor: color.value }} />
+                <div key={color.value} onClick={() => { setDrawColor(color.value); triggerHaptic('light'); }}
+                  className={`w-10 h-10 md:w-12 md:h-12 rounded-full cursor-pointer hover:scale-110 active:scale-95 transition-transform ${drawColor === color.value ? 'ring-4 ring-yellow-400' : ''}`}
+                  style={{ backgroundColor: color.value }}
+                  role="button"
+                  aria-label={`Select ${color.name} color`}
+                  tabIndex={0} />
               ))}
             </div>
           </div>
@@ -346,24 +417,27 @@ const EmmyStudyGame = () => {
                 <div key={i}>
                   <div className="flex items-center mb-2">
                     <span className="text-xl font-bold text-purple-600 mr-3">{i+1}.</span>
-                    <div onClick={() => clearCanvas(i)} className="ml-auto px-3 py-1 bg-red-400 text-white rounded-full text-sm font-bold cursor-pointer hover:bg-red-500">Clear</div>
+                    <div onClick={() => { clearCanvas(i); triggerHaptic('light'); }} className="ml-auto px-3 py-1 bg-red-400 text-white rounded-full text-sm font-bold cursor-pointer hover:bg-red-500 active:scale-95 transition-transform">Clear</div>
                   </div>
                   <canvas ref={canvasRefs[i]} width={600} height={80}
                     onMouseDown={(e) => startDrawing(e, i)} onMouseMove={(e) => draw(e, i)} 
                     onMouseUp={() => { setIsDrawing(false); setCurrentCanvas(null); }}
                     onTouchStart={(e) => startDrawing(e, i)} onTouchMove={(e) => draw(e, i)} 
                     onTouchEnd={() => { setIsDrawing(false); setCurrentCanvas(null); }}
-                    className="w-full border-4 border-dashed border-purple-300 rounded-xl bg-white cursor-crosshair"
-                    style={{touchAction: 'none'}} />
+                    className="w-full border-4 border-dashed border-purple-300 rounded-xl bg-white cursor-crosshair touch-none select-none"
+                    style={{touchAction: 'none'}}
+                    role="img"
+                    aria-label={`Drawing canvas ${i+1} for spelling practice`}
+                    tabIndex={0} />
                 </div>
               ))}
             </div>
           </div>
           <div className="mt-6 flex justify-between gap-4">
-            <div onClick={() => { if(currentQuestion>0) setCurrentQuestion(currentQuestion-1); }} 
-              className={`px-6 py-3 font-bold bg-gray-300 rounded-full cursor-pointer ${currentQuestion===0?'opacity-50':''}`}>← Prev</div>
-            <div onClick={() => { if(currentQuestion<spellingWords.length-1) setCurrentQuestion(currentQuestion+1); else setCurrentScreen('home'); }} 
-              className="px-6 py-3 font-bold bg-purple-500 text-white rounded-full cursor-pointer">
+            <div onClick={() => { if(currentQuestion>0) { setCurrentQuestion(currentQuestion-1); triggerHaptic('light'); } }} 
+              className={`px-6 py-3 font-bold bg-gray-300 rounded-full cursor-pointer active:scale-95 transition-transform ${currentQuestion===0?'opacity-50':''}`}>← Prev</div>
+            <div onClick={() => { if(currentQuestion<spellingWords.length-1) { setCurrentQuestion(currentQuestion+1); triggerHaptic('light'); } else { setCurrentScreen('home'); triggerHaptic('success'); } }} 
+              className="px-6 py-3 font-bold bg-purple-500 text-white rounded-full cursor-pointer active:scale-95 transition-transform">
               {currentQuestion < spellingWords.length-1 ? 'Next →' : 'Done 🎉'}
             </div>
           </div>
@@ -425,8 +499,11 @@ const EmmyStudyGame = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           {(q.options || []).map((opt, i) => (
-            <div key={i} onClick={() => handleAnswer(opt, q.correct || q.answer, qs, q.explanation)} 
-              className="p-6 md:p-8 text-2xl md:text-3xl font-bold rounded-2xl shadow-lg hover:scale-110 cursor-pointer bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900">
+            <div key={i} onClick={() => { triggerHaptic('medium'); handleAnswer(opt, q.correct || q.answer, qs, q.explanation); }} 
+              className="p-6 md:p-8 text-2xl md:text-3xl font-bold rounded-2xl shadow-lg hover:scale-110 active:scale-105 cursor-pointer bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900 transition-transform"
+              role="button"
+              aria-label={`Answer option: ${opt}`}
+              tabIndex={0}>
               {opt}
             </div>
           ))}
