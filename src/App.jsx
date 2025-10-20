@@ -1143,7 +1143,7 @@ const EmmyStudyGame = () => {
     const startTime = Date.now();
     const ok = sel === cor;
     const newScore = score + (ok ? 10 : 0);
-    setScore(newScore);
+      setScore(newScore);
     
     // Update confidence tracking
     const responseTime = Date.now() - startTime;
@@ -1229,8 +1229,8 @@ const EmmyStudyGame = () => {
     
     // Kid-friendly simplified interface
     if (!parentMode) {
-      return (
-        <div className={`min-h-screen bg-gradient-to-br ${currentTheme.colors} p-4 md:p-8`}>
+    return (
+      <div className={`min-h-screen bg-gradient-to-br ${currentTheme.colors} p-4 md:p-8`}>
           {/* Mode Toggle - Top Left */}
           <div className="absolute top-4 left-4 z-30">
             <div className="bg-white rounded-full p-1 shadow-lg border-2 border-purple-200">
@@ -1514,8 +1514,8 @@ const EmmyStudyGame = () => {
               <div className="hidden md:block text-xs text-gray-500">
                 <span className="bg-gray-100 px-2 py-1 rounded">Press S to search</span>
               </div>
-            </div>
-          )}
+          </div>
+        )}
         
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-6">
@@ -1547,7 +1547,7 @@ const EmmyStudyGame = () => {
                 </div>
             </div>
           </div>
-
+          
           {/* Daily Challenge */}
           {dailyChallenge && (
             <div className="mt-6 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-2xl p-6 shadow-xl border-4 border-yellow-300">
@@ -1711,73 +1711,40 @@ const EmmyStudyGame = () => {
             </div>
           </div>
 
-          {/* Quick Actions & Smart Recommendations */}
+          {/* Parent Tools & Reference */}
           <div className="mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-4">⚡ Quick Actions</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-4">📚 Parent Tools</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Quick Practice - Random Subject */}
-              <div onClick={() => {
-                const subjects = ['phonics', 'math', 'reading', 'science', 'social', 'skipcounting', 'art', 'geography', 'history'];
-                const randomSubject = subjects[Math.floor(Math.random() * subjects.length)];
-                navigateTo(randomSubject);
-                setCurrentQuestion(0);
-              }} 
-                className="bg-gradient-to-br from-yellow-400 to-orange-500 p-6 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
-                <div className="text-4xl mb-2">🎲</div>
-                <h3 className="text-lg font-bold text-white">Random Practice</h3>
-                <p className="text-sm text-yellow-100">Surprise me!</p>
+              {/* Word Lists & Quiz */}
+              <div onClick={() => navigateTo('parent-reference')} 
+                className="bg-gradient-to-br from-purple-400 to-indigo-500 p-6 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
+                <div className="text-4xl mb-2">📱</div>
+                <h3 className="text-lg font-bold text-white">Word Lists & Quiz</h3>
+                <p className="text-sm text-purple-100">Quick reference</p>
               </div>
 
-              {/* Continue Last Subject */}
-              {progress.lastPlayedSubject && (
-                <div onClick={() => {
-                  navigateTo(progress.lastPlayedSubject);
-                  setCurrentQuestion(0);
-                }} 
-                  className="bg-gradient-to-br from-green-400 to-emerald-500 p-6 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
-                  <div className="text-4xl mb-2">🔄</div>
-                  <h3 className="text-lg font-bold text-white">Continue</h3>
-                  <p className="text-sm text-green-100">Last subject</p>
-                </div>
-              )}
+              {/* Learning Progress */}
+              <div onClick={() => navigateTo('progress')} 
+                className="bg-gradient-to-br from-blue-400 to-cyan-500 p-6 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
+                <div className="text-4xl mb-2">📊</div>
+                <h3 className="text-lg font-bold text-white">Learning Progress</h3>
+                <p className="text-sm text-blue-100">Track progress</p>
+              </div>
 
-              {/* Weak Areas Practice */}
-              {(() => {
-                const weakAreas = Object.entries(progress.completedSubjects)
-                  .filter(([_, data]) => data && data.score < 80)
-                  .map(([subject, _]) => subject);
-                return weakAreas.length > 0 ? (
-                  <div onClick={() => {
-                    const randomWeak = weakAreas[Math.floor(Math.random() * weakAreas.length)];
-                    navigateTo(randomWeak);
-                    setCurrentQuestion(0);
-                  }} 
-                    className="bg-gradient-to-br from-red-400 to-pink-500 p-6 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
-                    <div className="text-4xl mb-2">💪</div>
-                    <h3 className="text-lg font-bold text-white">Practice Weak Areas</h3>
-                    <p className="text-sm text-red-100">{weakAreas.length} subjects</p>
-                  </div>
-                ) : null;
-              })()}
+              {/* Achievements */}
+              <div onClick={() => navigateTo('achievements')} 
+                className="bg-gradient-to-br from-yellow-400 to-orange-500 p-6 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
+                <div className="text-4xl mb-2">🏅</div>
+                <h3 className="text-lg font-bold text-white">Achievements</h3>
+                <p className="text-sm text-yellow-100">View rewards</p>
+              </div>
 
-              {/* Perfect Score Challenge */}
-              <div onClick={() => {
-                const perfectSubjects = Object.entries(progress.completedSubjects)
-                  .filter(([_, data]) => data && data.score === 100)
-                  .map(([subject, _]) => subject);
-                if (perfectSubjects.length > 0) {
-                  const randomPerfect = perfectSubjects[Math.floor(Math.random() * perfectSubjects.length)];
-                  navigateTo(randomPerfect);
-                  setCurrentQuestion(0);
-                } else {
-                  navigateTo('phonics');
-                  setCurrentQuestion(0);
-                }
-              }} 
-                className="bg-gradient-to-br from-purple-400 to-indigo-500 p-6 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
-                <div className="text-4xl mb-2">⭐</div>
-                <h3 className="text-lg font-bold text-white">Perfect Score Challenge</h3>
-                <p className="text-sm text-purple-100">Aim for 100%</p>
+              {/* Feedback */}
+              <div onClick={() => navigateTo('feedback')} 
+                className="bg-gradient-to-br from-pink-400 to-rose-500 p-6 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
+                <div className="text-4xl mb-2">💬</div>
+                <h3 className="text-lg font-bold text-white">Feedback</h3>
+                <p className="text-sm text-pink-100">Share thoughts</p>
               </div>
             </div>
           </div>
@@ -1797,33 +1764,51 @@ const EmmyStudyGame = () => {
             </div>
           </div>
 
-          <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-6">📚 Study Guides & Reference Materials</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {[
-              { name: 'phonics', title: 'Phonics Guide', icon: '📚', color: 'from-pink-400 to-pink-600', description: 'Letter sounds & blends' },
-              { name: 'math', title: 'Math Concepts', icon: '🔢', color: 'from-blue-400 to-blue-600', description: 'Numbers & operations' },
-              { name: 'reading', title: 'Reading Lists', icon: '📖', color: 'from-green-400 to-green-600', description: 'Books & vocabulary' },
-              { name: 'spelling', title: 'Spelling Lists', icon: '✏️', color: 'from-purple-400 to-purple-600', description: 'Word lists & rules' },
-              { name: 'science', title: 'Science Topics', icon: '🔬', color: 'from-teal-400 to-teal-600', description: 'Nature & experiments' },
-              { name: 'social', title: 'Social Studies', icon: '🌟', color: 'from-orange-400 to-orange-600', description: 'Community & citizenship' },
-              { name: 'skipcounting', title: 'Skip Counting', icon: '🔢', color: 'from-indigo-400 to-indigo-600', description: 'Number patterns' },
-              { name: 'art', title: 'Art Projects', icon: '🎨', color: 'from-pink-400 to-rose-600', description: 'Creative activities' },
-              { name: 'geography', title: 'Geography', icon: '🌍', color: 'from-emerald-400 to-emerald-600', description: 'Maps & places' },
-              { name: 'history', title: 'History', icon: '📜', color: 'from-amber-400 to-amber-600', description: 'Stories & timelines' }
-            ].map(subject => (
-              <div key={subject.name} onClick={() => { navigateTo(subject.name); setCurrentQuestion(0); }}
-                className={`bg-gradient-to-br ${subject.color} p-4 rounded-2xl shadow-xl hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform relative hover:wiggle`}>
-                <div className="text-3xl md:text-4xl mb-2 sparkle">{subject.icon}</div>
-                <h2 className="text-sm md:text-base font-bold text-white mb-1">{subject.title}</h2>
-                <div className="text-xs text-white opacity-90 mb-2">{subject.description}</div>
-                {progress.completedSubjects[subject.name] && (
-                  <div className="absolute top-1 right-1 text-lg sparkle">📖</div>
-                )}
-                {progress.completedSubjects[subject.name] && (
-                  <div className="text-xs text-yellow-200 mt-1">Progress: {progress.completedSubjects[subject.name].score}%</div>
-                )}
+          {/* Parent Reference Materials */}
+          <div className="mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-center text-purple-800 mb-6">📋 Reference Materials</h2>
+            <div className="bg-white rounded-2xl p-6 shadow-xl">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="text-lg font-bold text-purple-700 mb-3">📚 Quick Access</h3>
+                  <div className="space-y-2">
+                    <div onClick={() => navigateTo('parent-reference')} className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg cursor-pointer hover:bg-purple-100 transition-colors">
+                      <span className="text-2xl">📱</span>
+                      <div>
+                        <div className="font-semibold text-purple-800">Word Lists & Quiz</div>
+                        <div className="text-sm text-purple-600">Spelling words and practice</div>
               </div>
-            ))}
+                    </div>
+                    <div onClick={() => navigateTo('progress')} className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors">
+                      <span className="text-2xl">📊</span>
+                      <div>
+                        <div className="font-semibold text-blue-800">Learning Analytics</div>
+                        <div className="text-sm text-blue-600">Track progress and performance</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-purple-700 mb-3">🎯 Teaching Support</h3>
+                  <div className="space-y-2">
+                    <div onClick={() => navigateTo('achievements')} className="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg cursor-pointer hover:bg-yellow-100 transition-colors">
+                      <span className="text-2xl">🏅</span>
+                      <div>
+                        <div className="font-semibold text-yellow-800">Achievements</div>
+                        <div className="text-sm text-yellow-600">View completed milestones</div>
+                      </div>
+                    </div>
+                    <div onClick={() => navigateTo('feedback')} className="flex items-center gap-3 p-3 bg-pink-50 rounded-lg cursor-pointer hover:bg-pink-100 transition-colors">
+                      <span className="text-2xl">💬</span>
+                      <div>
+                        <div className="font-semibold text-pink-800">Feedback</div>
+                        <div className="text-sm text-pink-600">Share insights and suggestions</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
