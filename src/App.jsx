@@ -150,9 +150,21 @@ const EmmyStudyGame = () => {
   useEffect(() => {
     canvasRefs.forEach((ref) => {
       if (ref.current) {
-        const ctx = ref.current.getContext('2d');
-        ctx.strokeStyle = drawColor; ctx.lineWidth = 3;
-        ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        const canvas = ref.current;
+        const ctx = canvas.getContext('2d');
+        
+        // Set up high DPI canvas
+        const rect = canvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.scale(dpr, dpr);
+        
+        // Set drawing properties
+        ctx.strokeStyle = drawColor; 
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round'; 
+        ctx.lineJoin = 'round';
       }
     });
   }, [currentScreen, drawColor]);
@@ -177,8 +189,9 @@ const EmmyStudyGame = () => {
     const rect = canvas.getBoundingClientRect();
     const x = (e.clientX || e.touches?.[0]?.clientX) - rect.left;
     const y = (e.clientY || e.touches?.[0]?.clientY) - rect.top;
-    canvas.getContext('2d').lineTo(x, y);
-    canvas.getContext('2d').stroke();
+    const ctx = canvas.getContext('2d');
+    ctx.lineTo(x, y);
+    ctx.stroke();
   };
 
   const clearCanvas = (idx) => {
