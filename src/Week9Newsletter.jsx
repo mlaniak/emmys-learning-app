@@ -7,7 +7,7 @@ const Week9Newsletter = () => {
   if (showPDF) {
     return (
       <PDFViewer
-        pdfPath="/newsletters/1st_grade_Newsletter_week__9.pdf"
+        pdfPath="/emmys-learning-app/newsletters/1st_grade_Newsletter_week__9.pdf"
         title="Week 9 Newsletter - October 13th-17th"
         onBack={() => setShowPDF(false)}
       />
