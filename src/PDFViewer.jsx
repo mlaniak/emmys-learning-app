@@ -43,6 +43,19 @@ const PDFViewer = ({ pdfPath, onBack, title }) => {
           )}
         </div>
 
+        {/* Mobile PDF Notice */}
+        {isMobile && (
+          <div className="mb-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+            <div className="flex items-start">
+              <div className="text-yellow-600 mr-2">⚠️</div>
+              <div className="text-sm text-yellow-800">
+                <p className="font-semibold">Mobile PDF Limitation:</p>
+                <p>The embedded PDF may not scroll through all pages on mobile. For the best experience, use the "Open PDF in New Tab" button below.</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* PDF Container */}
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
           {error ? (
@@ -71,13 +84,14 @@ const PDFViewer = ({ pdfPath, onBack, title }) => {
               {isMobile ? (
                 <div className="w-full h-[calc(100vh-120px)] overflow-hidden">
                   <iframe
-                    src={pdfPath}
+                    src={`${pdfPath}#view=FitH&toolbar=1&navpanes=1&scrollbar=1`}
                     className="w-full h-full"
                     title={title}
                     onLoad={handleLoad}
                     onError={handleError}
                     style={{ border: 'none' }}
                     allowFullScreen
+                    sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
                   />
                 </div>
               ) : (
@@ -99,8 +113,8 @@ const PDFViewer = ({ pdfPath, onBack, title }) => {
           <div className="bg-white rounded-xl p-4 shadow-lg">
             {isMobile ? (
               <div className="text-gray-600">
-                <p className="font-semibold mb-3">📱 Having trouble viewing the PDF?</p>
-                <p className="text-sm mb-3">For the best mobile experience, try opening the PDF in your device's native viewer:</p>
+                <p className="font-semibold mb-3">📱 PDF Scrolling Issue?</p>
+                <p className="text-sm mb-3">If you can't scroll through all pages of the PDF above, use the native viewer for full functionality:</p>
                 <a 
                   href={pdfPath} 
                   target="_blank" 
@@ -110,7 +124,9 @@ const PDFViewer = ({ pdfPath, onBack, title }) => {
                   📄 Open PDF in New Tab
                 </a>
                 <div className="mt-3 text-xs text-gray-500">
-                  <p>This will open the PDF in your device's built-in PDF viewer with full navigation controls.</p>
+                  <p>• Native viewer allows scrolling through all pages</p>
+                  <p>• Better zoom and navigation controls</p>
+                  <p>• Works consistently across all mobile devices</p>
                 </div>
               </div>
             ) : (
