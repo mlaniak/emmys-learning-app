@@ -264,9 +264,11 @@ const EmmyStudyGame = () => {
       navigate('/');
     } else if (screen === 'newsletter') {
       if (params.week) {
+        console.log('Navigating to specific newsletter:', params.week);
         navigate(`/newsletter/${params.week}`);
         setSelectedNewsletter(parseInt(params.week));
       } else {
+        console.log('Navigating to newsletter selector');
         navigate('/newsletter');
         setSelectedNewsletter(null);
       }
@@ -2785,8 +2787,8 @@ const EmmyStudyGame = () => {
       return (
         <div className="min-h-screen bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200 p-4 md:p-8">
             <NewsletterComponent onBack={() => {
+            console.log('Back button clicked, navigating to newsletter selector');
             navigateTo('newsletter');
-            setSelectedNewsletter(null);
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }} />
         </div>
