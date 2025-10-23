@@ -1,6 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
+import PDFViewer from './PDFViewer';
 
-const Week10Newsletter = () => {
+const Week10Newsletter = ({ onViewPDF }) => {
+  const [showPDF, setShowPDF] = useState(false);
+
+  if (showPDF) {
+    return (
+      <PDFViewer
+        pdfPath="/newsletters/1st_grade_Newsletter_Week__10.pdf"
+        title="Week 10 Newsletter - October 20th-24th"
+        onBack={() => setShowPDF(false)}
+      />
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white text-gray-800 font-sans">
       {/* Header */}
@@ -8,6 +21,16 @@ const Week10Newsletter = () => {
         <h1 className="text-3xl font-bold text-blue-600 mb-2">1st Grade Newsletter - Week 10</h1>
         <h2 className="text-xl text-gray-600">October 20th-24th</h2>
         <div className="w-24 h-1 bg-blue-600 mx-auto mt-4"></div>
+        
+        {/* PDF View Button */}
+        <div className="mt-4">
+          <button
+            onClick={() => setShowPDF(true)}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full font-bold transition-colors shadow-lg hover:shadow-xl"
+          >
+            📄 View Original PDF
+          </button>
+        </div>
       </div>
 
       {/* Message from Teachers */}
