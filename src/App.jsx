@@ -162,6 +162,51 @@ const EmmyStudyGame = () => {
 
   // URL synchronization effect
   useEffect(() => {
+    // Handle hash-based redirects from 404.html
+    if (window.location.hash && window.location.hash.startsWith('#')) {
+      const hashPath = window.location.hash.substring(1);
+      const pathParts = hashPath.split('/').filter(part => part);
+      
+      // Update the URL to the correct path without hash
+      window.history.replaceState(null, '', `/emmys-learning-app${hashPath}`);
+      
+      // Process the path
+      if (hashPath === '/' || hashPath === '') {
+        setCurrentScreen('home');
+      } else if (pathParts[0] === 'newsletter') {
+        setCurrentScreen('newsletter');
+        if (pathParts[1]) {
+          setSelectedNewsletter(parseInt(pathParts[1]));
+        } else {
+          setSelectedNewsletter(null);
+        }
+      } else if (pathParts[0] === 'parent-reference') {
+        setCurrentScreen('parent-reference');
+        if (pathParts[1]) {
+          setSelectedSubject(pathParts[1]);
+          if (pathParts[2]) {
+            setSelectedCategory(parseInt(pathParts[2]));
+          } else {
+            setSelectedCategory(0);
+          }
+        } else {
+          setSelectedSubject('phonics');
+          setSelectedCategory(0);
+        }
+      } else if (pathParts[0] === 'spelling') {
+        setCurrentScreen('spelling');
+      } else if (pathParts[0] === 'achievements') {
+        setCurrentScreen('achievements');
+      } else if (pathParts[0] === 'progress') {
+        setCurrentScreen('progress');
+      } else if (pathParts[0] === 'customize') {
+        setCurrentScreen('customize');
+      } else if (pathParts[0] === 'feedback') {
+        setCurrentScreen('feedback');
+      }
+      return;
+    }
+    
     const path = location.pathname.replace('/emmys-learning-app', '');
     const pathParts = path.split('/').filter(part => part);
     

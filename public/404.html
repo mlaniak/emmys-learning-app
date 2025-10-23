@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Redirecting...</title>
+  <script type="text/javascript">
+    // Single-Page App redirect for GitHub Pages
+    // This script redirects all 404s to the index.html, preserving the path
+    var path = window.location.pathname;
+    var redirect = path.replace('/emmys-learning-app', '') + window.location.search + window.location.hash;
+    window.location.replace('/emmys-learning-app/#' + redirect);
+  </script>
+</head>
+<body>
+  If you are not redirected automatically, follow this <a href="/emmys-learning-app/">link</a>.
+</body>
+</html>
