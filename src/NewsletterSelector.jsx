@@ -3,10 +3,10 @@ import React from 'react';
 const NewsletterSelector = ({ onSelectNewsletter, onBack }) => {
   const newsletters = [
     {
-      week: 8,
-      title: "Week 8 Newsletter",
-      date: "October 6th-10th",
-      description: "First Grade Newsletter - Week 8",
+      week: 10,
+      title: "Week 10 Newsletter",
+      date: "October 20th-24th", 
+      description: "First Grade Newsletter - Week 10",
       icon: "📰"
     },
     {
@@ -17,10 +17,10 @@ const NewsletterSelector = ({ onSelectNewsletter, onBack }) => {
       icon: "📰"
     },
     {
-      week: 10,
-      title: "Week 10 Newsletter",
-      date: "October 20th-24th", 
-      description: "First Grade Newsletter - Week 10",
+      week: 8,
+      title: "Week 8 Newsletter",
+      date: "October 6th-10th",
+      description: "First Grade Newsletter - Week 8",
       icon: "📰"
     }
   ];
