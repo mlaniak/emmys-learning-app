@@ -1,10 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Week10Newsletter from './Week10Newsletter';
 import Week9Newsletter from './Week9Newsletter';
 import Week8Newsletter from './Week8Newsletter';
 import NewsletterSelector from './NewsletterSelector';
 
 const EmmyStudyGame = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [currentScreen, setCurrentScreen] = useState('home');
   const [score, setScore] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -157,7 +160,36 @@ const EmmyStudyGame = () => {
     return results.slice(0, 10); // Limit to 10 results
   };
 
-  // Navigation helper with breadcrumb updates
+  // URL synchronization effect
+  useEffect(() => {
+    const path = location.pathname.replace('/emmys-learning-app', '');
+    if (path === '/' || path === '') {
+      setCurrentScreen('home');
+    } else if (path.startsWith('/newsletter')) {
+      const week = path.split('/')[2];
+      if (week) {
+        setCurrentScreen('newsletter');
+        setSelectedNewsletter(parseInt(week));
+      } else {
+        setCurrentScreen('newsletter');
+        setSelectedNewsletter(null);
+      }
+    } else if (path === '/parent-reference') {
+      setCurrentScreen('parent-reference');
+    } else if (path === '/spelling') {
+      setCurrentScreen('spelling');
+    } else if (path === '/achievements') {
+      setCurrentScreen('achievements');
+    } else if (path === '/progress') {
+      setCurrentScreen('progress');
+    } else if (path === '/customize') {
+      setCurrentScreen('customize');
+    } else if (path === '/feedback') {
+      setCurrentScreen('feedback');
+    }
+  }, [location.pathname]);
+
+  // Navigation helper with breadcrumb updates and URL updates
   const navigateTo = (screen, additionalInfo = '') => {
     playSound('click');
     triggerHaptic('light');
@@ -165,6 +197,18 @@ const EmmyStudyGame = () => {
     updateBreadcrumbs(screen, additionalInfo);
     setShowSearch(false);
     setSearchQuery('');
+    
+    // Update URL based on screen
+    if (screen === 'home') {
+      navigate('/');
+    } else if (screen === 'newsletter') {
+      navigate('/newsletter');
+    } else if (screen.startsWith('newsletter-')) {
+      const week = screen.replace('newsletter-', '');
+      navigate(`/newsletter/${week}`);
+    } else {
+      navigate(`/${screen}`);
+    }
     
     // Reset newsletter selection when navigating to newsletter
     if (screen === 'newsletter') {
@@ -3067,5 +3111,25 @@ const EmmyStudyGame = () => {
   );
 };
 
-export default EmmyStudyGame;
+// Main App Component with URL Routing
+const App = () => {
+  return (
+    <BrowserRouter basename="/emmys-learning-app">
+      <Routes>
+        <Route path="/" element={<EmmyStudyGame />} />
+        <Route path="/newsletter" element={<EmmyStudyGame />} />
+        <Route path="/newsletter/:week" element={<EmmyStudyGame />} />
+        <Route path="/parent-reference" element={<EmmyStudyGame />} />
+        <Route path="/spelling" element={<EmmyStudyGame />} />
+        <Route path="/achievements" element={<EmmyStudyGame />} />
+        <Route path="/progress" element={<EmmyStudyGame />} />
+        <Route path="/customize" element={<EmmyStudyGame />} />
+        <Route path="/feedback" element={<EmmyStudyGame />} />
+        <Route path="*" element={<EmmyStudyGame />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
+
+export default App;
 
