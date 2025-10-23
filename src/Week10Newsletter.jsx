@@ -730,7 +730,7 @@ const Week10Newsletter = ({ onViewPDF }) => {
           <ol className="list-decimal list-inside space-y-2 mb-4">
             <li>https://www.fortbendisd.com/1link</li>
             <li>Login to 1Link</li>
-            <li>Enter your child's email address (if you don't have it, you can look this up on Skyward > Choose your Student > Student Profile)</li>
+              <li>Enter your child's email address (if you don't have it, you can look this up on Skyward &gt; Choose your Student &gt; Student Profile)</li>
             <li>Password: 123456</li>
             <li>Clever</li>
             <li>DreamBox Math</li>
