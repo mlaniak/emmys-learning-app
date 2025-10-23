@@ -213,10 +213,13 @@ const EmmyStudyGame = () => {
     if (path === '/' || path === '') {
       setCurrentScreen('home');
     } else if (pathParts[0] === 'newsletter') {
+      console.log('URL sync: newsletter path detected, pathParts:', pathParts);
       setCurrentScreen('newsletter');
       if (pathParts[1]) {
+        console.log('Setting selectedNewsletter to:', pathParts[1]);
         setSelectedNewsletter(parseInt(pathParts[1]));
       } else {
+        console.log('Setting selectedNewsletter to null');
         setSelectedNewsletter(null);
       }
     } else if (pathParts[0] === 'parent-reference') {
