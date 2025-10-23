@@ -171,6 +171,12 @@ const EmmyStudyGame = () => {
       setSelectedNewsletter(null);
     }
     
+    // Reset parent reference selection when navigating to parent-reference
+    if (screen === 'parent-reference') {
+      setSelectedSubject('phonics');
+      setSelectedCategory(0);
+    }
+    
     // Scroll to top of page
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
