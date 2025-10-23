@@ -9,6 +9,8 @@ const EmmyStudyGame = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [currentScreen, setCurrentScreen] = useState('home');
+  
+  console.log('EmmyStudyGame component rendered. currentScreen:', currentScreen, 'location.pathname:', location.pathname);
   const [score, setScore] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const canvasRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
@@ -162,6 +164,7 @@ const EmmyStudyGame = () => {
 
   // URL synchronization effect
   useEffect(() => {
+    console.log('URL sync effect triggered. location.pathname:', location.pathname);
     // Handle hash-based redirects from 404.html
     if (window.location.hash && window.location.hash.startsWith('#')) {
       const hashPath = window.location.hash.substring(1);
