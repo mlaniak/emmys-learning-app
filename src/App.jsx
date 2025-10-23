@@ -1,4 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
+import Week10Newsletter from './Week10Newsletter';
+import Week9Newsletter from './Week9Newsletter';
+import Week8Newsletter from './Week8Newsletter';
+import NewsletterSelector from './NewsletterSelector';
 
 const EmmyStudyGame = () => {
   const [currentScreen, setCurrentScreen] = useState('home');
@@ -36,6 +40,7 @@ const EmmyStudyGame = () => {
   const [feedbackRating, setFeedbackRating] = useState(5);
   const [parentMode, setParentMode] = useState(false);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
+  const [selectedNewsletter, setSelectedNewsletter] = useState(null);
   const [progress, setProgress] = useState(() => {
     const saved = localStorage.getItem('emmy-learning-progress');
     return saved ? JSON.parse(saved) : {
@@ -1728,6 +1733,10 @@ const EmmyStudyGame = () => {
                 className="px-6 py-3 bg-pink-500 text-white rounded-full font-bold cursor-pointer hover:bg-pink-600 active:scale-95 transition-transform">
                 💬 Feedback
               </div>
+              <div onClick={() => navigateTo('newsletter')} 
+                className="px-6 py-3 bg-blue-500 text-white rounded-full font-bold cursor-pointer hover:bg-blue-600 active:scale-95 transition-transform">
+                📰 Newsletter
+              </div>
               <div onClick={() => { playSound('click'); triggerHaptic('light'); toggleMusic(); }} 
                 className={`px-6 py-3 text-white rounded-full font-bold cursor-pointer hover:opacity-80 active:scale-95 transition-transform ${isMusicPlaying ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'}`}>
                 {isMusicPlaying ? '🔇 Music Off' : '🎵 Music On'}
@@ -1884,6 +1893,14 @@ const EmmyStudyGame = () => {
                 <div className="text-3xl mb-1">💬</div>
                 <h3 className="text-sm font-bold text-white">Feedback</h3>
                 <p className="text-xs text-pink-100">Share thoughts</p>
+              </div>
+
+              {/* Newsletter */}
+              <div onClick={() => navigateTo('newsletter')} 
+                className="bg-gradient-to-br from-blue-400 to-indigo-500 p-4 rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
+                <div className="text-3xl mb-1">📰</div>
+                <h3 className="text-sm font-bold text-white">Newsletter</h3>
+                <p className="text-xs text-blue-100">Week 10</p>
               </div>
             </div>
           </div>
@@ -2608,6 +2625,47 @@ const EmmyStudyGame = () => {
         </div>
       </div>
     );
+  }
+
+  if (currentScreen === 'newsletter') {
+    // Show newsletter selector if no specific newsletter is selected
+    if (!selectedNewsletter) {
+      return (
+        <NewsletterSelector 
+          onSelectNewsletter={(week) => {
+            setSelectedNewsletter(week);
+            setCurrentScreen(`newsletter-${week}`);
+          }}
+          onBack={() => {
+            setCurrentScreen('home');
+            setSelectedNewsletter(null);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        />
+      );
+    }
+    
+    // Show specific newsletter based on selection
+    const newsletterComponents = {
+      8: Week8Newsletter,
+      9: Week9Newsletter,
+      10: Week10Newsletter
+    };
+    
+    const NewsletterComponent = newsletterComponents[selectedNewsletter];
+    
+    if (NewsletterComponent) {
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200 p-4 md:p-8">
+          <div onClick={() => { 
+            setCurrentScreen('newsletter'); 
+            setSelectedNewsletter(null);
+            window.scrollTo({ top: 0, behavior: 'smooth' }); 
+          }} className="bg-white px-6 py-3 rounded-full shadow-lg inline-flex gap-2 hover:scale-105 cursor-pointer mb-4">← Back to Newsletters</div>
+          <NewsletterComponent />
+        </div>
+      );
+    }
   }
 
   if (currentScreen === 'parent-reference') {
