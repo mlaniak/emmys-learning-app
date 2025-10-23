@@ -166,6 +166,11 @@ const EmmyStudyGame = () => {
     setShowSearch(false);
     setSearchQuery('');
     
+    // Reset newsletter selection when navigating to newsletter
+    if (screen === 'newsletter') {
+      setSelectedNewsletter(null);
+    }
+    
     // Scroll to top of page
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -2627,7 +2632,7 @@ const EmmyStudyGame = () => {
     );
   }
 
-  if (currentScreen === 'newsletter') {
+  if (currentScreen === 'newsletter' || currentScreen.startsWith('newsletter-')) {
     // Show newsletter selector if no specific newsletter is selected
     if (!selectedNewsletter) {
       return (
