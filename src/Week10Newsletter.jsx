@@ -18,7 +18,10 @@ const Week10Newsletter = ({ onViewPDF, onBack }) => {
     <div className="min-h-screen bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200 p-4 md:p-8">
       <div className="max-w-4xl mx-auto p-6 bg-white text-gray-800 font-sans rounded-3xl shadow-2xl">
         {/* Back Button */}
-        <div onClick={onBack} className="bg-white px-6 py-3 rounded-full shadow-lg inline-flex gap-2 hover:scale-105 cursor-pointer mb-6">← Back to Newsletters</div>
+        <div onClick={() => {
+          console.log('Week10Newsletter back button clicked');
+          onBack();
+        }} className="bg-white px-6 py-3 rounded-full shadow-lg inline-flex gap-2 hover:scale-105 cursor-pointer mb-6">← Back to Newsletters</div>
         
         {/* Header */}
         <div className="text-center mb-8">
