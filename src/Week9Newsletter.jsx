@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PDFViewer from './PDFViewer';
 
-const Week9Newsletter = () => {
+const Week9Newsletter = ({ onBack }) => {
   const [showPDF, setShowPDF] = useState(false);
 
   if (showPDF) {
@@ -14,9 +14,13 @@ const Week9Newsletter = () => {
     );
   }
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white text-gray-800 font-sans">
-      {/* Header */}
-      <div className="text-center mb-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200 p-4 md:p-8">
+      <div className="max-w-4xl mx-auto p-6 bg-white text-gray-800 font-sans rounded-3xl shadow-2xl">
+        {/* Back Button */}
+        <div onClick={onBack} className="bg-white px-6 py-3 rounded-full shadow-lg inline-flex gap-2 hover:scale-105 cursor-pointer mb-6">← Back to Newsletters</div>
+        
+        {/* Header */}
+        <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-blue-600 mb-2">1st Grade Newsletter - Week 9</h1>
         <h2 className="text-xl text-gray-600">October 13th-17th</h2>
         <div className="w-24 h-1 bg-blue-600 mx-auto mt-4"></div>
@@ -208,9 +212,10 @@ const Week9Newsletter = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <div className="text-center text-gray-500 text-sm mt-8 pt-4 border-t">
-        <p>Week 9 Newsletter - October 13th-17th</p>
+        {/* Footer */}
+        <div className="text-center text-gray-500 text-sm mt-8 pt-4 border-t">
+          <p>Week 9 Newsletter - October 13th-17th</p>
+        </div>
       </div>
     </div>
   );

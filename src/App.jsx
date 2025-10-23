@@ -2784,12 +2784,11 @@ const EmmyStudyGame = () => {
     if (NewsletterComponent) {
       return (
         <div className="min-h-screen bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200 p-4 md:p-8">
-          <div onClick={() => { 
-            setCurrentScreen('newsletter'); 
+            <NewsletterComponent onBack={() => {
+            navigateTo('newsletter');
             setSelectedNewsletter(null);
-            window.scrollTo({ top: 0, behavior: 'smooth' }); 
-          }} className="bg-white px-6 py-3 rounded-full shadow-lg inline-flex gap-2 hover:scale-105 cursor-pointer mb-4">← Back to Newsletters</div>
-          <NewsletterComponent />
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }} />
         </div>
       );
     }
