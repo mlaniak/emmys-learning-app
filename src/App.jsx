@@ -10,7 +10,6 @@ const EmmyStudyGame = () => {
   const location = useLocation();
   const [currentScreen, setCurrentScreen] = useState('home');
   
-  console.log('EmmyStudyGame component rendered. currentScreen:', currentScreen, 'location.pathname:', location.pathname);
   const [score, setScore] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const canvasRefs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
@@ -164,7 +163,6 @@ const EmmyStudyGame = () => {
 
   // URL synchronization effect
   useEffect(() => {
-    console.log('URL sync effect triggered. location.pathname:', location.pathname);
     // Handle hash-based redirects from 404.html
     if (window.location.hash && window.location.hash.startsWith('#')) {
       const hashPath = window.location.hash.substring(1);
@@ -216,13 +214,10 @@ const EmmyStudyGame = () => {
     if (path === '/' || path === '') {
       setCurrentScreen('home');
     } else if (pathParts[0] === 'newsletter') {
-      console.log('URL sync: newsletter path detected, pathParts:', pathParts);
       setCurrentScreen('newsletter');
       if (pathParts[1]) {
-        console.log('Setting selectedNewsletter to:', pathParts[1]);
         setSelectedNewsletter(parseInt(pathParts[1]));
       } else {
-        console.log('Setting selectedNewsletter to null');
         setSelectedNewsletter(null);
       }
     } else if (pathParts[0] === 'parent-reference') {
@@ -270,11 +265,9 @@ const EmmyStudyGame = () => {
       navigate('/');
     } else if (screen === 'newsletter') {
       if (params.week) {
-        console.log('Navigating to specific newsletter:', params.week);
         navigate(`/newsletter/${params.week}`);
         setSelectedNewsletter(parseInt(params.week));
       } else {
-        console.log('Navigating to newsletter selector');
         navigate('/newsletter');
         setSelectedNewsletter(null);
       }
@@ -2764,10 +2757,8 @@ const EmmyStudyGame = () => {
   }
 
   if (currentScreen === 'newsletter' || currentScreen.startsWith('newsletter-')) {
-    console.log('Newsletter screen detected. currentScreen:', currentScreen, 'selectedNewsletter:', selectedNewsletter);
     // Show newsletter selector if no specific newsletter is selected
     if (!selectedNewsletter) {
-      console.log('Showing newsletter selector');
       return (
         <NewsletterSelector 
           onSelectNewsletter={(week) => {
@@ -2792,11 +2783,9 @@ const EmmyStudyGame = () => {
     const NewsletterComponent = newsletterComponents[selectedNewsletter];
     
     if (NewsletterComponent) {
-      console.log('Showing specific newsletter component for week:', selectedNewsletter);
       return (
         <div className="min-h-screen bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200 p-4 md:p-8">
             <NewsletterComponent onBack={() => {
-            console.log('Back button clicked, navigating to newsletter selector');
             navigateTo('newsletter');
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }} />
