@@ -2761,8 +2761,10 @@ const EmmyStudyGame = () => {
   }
 
   if (currentScreen === 'newsletter' || currentScreen.startsWith('newsletter-')) {
+    console.log('Newsletter screen detected. currentScreen:', currentScreen, 'selectedNewsletter:', selectedNewsletter);
     // Show newsletter selector if no specific newsletter is selected
     if (!selectedNewsletter) {
+      console.log('Showing newsletter selector');
       return (
         <NewsletterSelector 
           onSelectNewsletter={(week) => {
@@ -2787,6 +2789,7 @@ const EmmyStudyGame = () => {
     const NewsletterComponent = newsletterComponents[selectedNewsletter];
     
     if (NewsletterComponent) {
+      console.log('Showing specific newsletter component for week:', selectedNewsletter);
       return (
         <div className="min-h-screen bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200 p-4 md:p-8">
             <NewsletterComponent onBack={() => {
