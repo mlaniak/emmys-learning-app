@@ -163,34 +163,50 @@ const EmmyStudyGame = () => {
   // URL synchronization effect
   useEffect(() => {
     const path = location.pathname.replace('/emmys-learning-app', '');
+    const pathParts = path.split('/').filter(part => part);
+    
     if (path === '/' || path === '') {
       setCurrentScreen('home');
-    } else if (path.startsWith('/newsletter')) {
-      const week = path.split('/')[2];
-      if (week) {
-        setCurrentScreen('newsletter');
-        setSelectedNewsletter(parseInt(week));
+    } else if (pathParts[0] === 'newsletter') {
+      setCurrentScreen('newsletter');
+      if (pathParts[1]) {
+        setSelectedNewsletter(parseInt(pathParts[1]));
       } else {
-        setCurrentScreen('newsletter');
         setSelectedNewsletter(null);
       }
-    } else if (path === '/parent-reference') {
+    } else if (pathParts[0] === 'parent-reference') {
       setCurrentScreen('parent-reference');
-    } else if (path === '/spelling') {
+      if (pathParts[1]) {
+        setSelectedSubject(pathParts[1]);
+        if (pathParts[2]) {
+          setSelectedCategory(parseInt(pathParts[2]));
+        } else {
+          setSelectedCategory(0);
+        }
+      } else {
+        setSelectedSubject('phonics');
+        setSelectedCategory(0);
+      }
+    } else if (pathParts[0] === 'spelling') {
       setCurrentScreen('spelling');
-    } else if (path === '/achievements') {
+      // Handle spelling modes if needed
+    } else if (pathParts[0] === 'achievements') {
       setCurrentScreen('achievements');
-    } else if (path === '/progress') {
+      // Handle achievement categories if needed
+    } else if (pathParts[0] === 'progress') {
       setCurrentScreen('progress');
-    } else if (path === '/customize') {
+      // Handle progress sections if needed
+    } else if (pathParts[0] === 'customize') {
       setCurrentScreen('customize');
-    } else if (path === '/feedback') {
+      // Handle customize sections if needed
+    } else if (pathParts[0] === 'feedback') {
       setCurrentScreen('feedback');
+      // Handle feedback categories if needed
     }
   }, [location.pathname]);
 
   // Navigation helper with breadcrumb updates and URL updates
-  const navigateTo = (screen, additionalInfo = '') => {
+  const navigateTo = (screen, additionalInfo = '', params = {}) => {
     playSound('click');
     triggerHaptic('light');
     setCurrentScreen(screen);
@@ -198,27 +214,39 @@ const EmmyStudyGame = () => {
     setShowSearch(false);
     setSearchQuery('');
     
-    // Update URL based on screen
+    // Update URL based on screen and parameters
     if (screen === 'home') {
       navigate('/');
     } else if (screen === 'newsletter') {
-      navigate('/newsletter');
+      if (params.week) {
+        navigate(`/newsletter/${params.week}`);
+        setSelectedNewsletter(parseInt(params.week));
+      } else {
+        navigate('/newsletter');
+        setSelectedNewsletter(null);
+      }
     } else if (screen.startsWith('newsletter-')) {
       const week = screen.replace('newsletter-', '');
       navigate(`/newsletter/${week}`);
+      setSelectedNewsletter(parseInt(week));
+    } else if (screen === 'parent-reference') {
+      if (params.subject) {
+        if (params.category !== undefined) {
+          navigate(`/parent-reference/${params.subject}/${params.category}`);
+          setSelectedSubject(params.subject);
+          setSelectedCategory(parseInt(params.category));
+        } else {
+          navigate(`/parent-reference/${params.subject}`);
+          setSelectedSubject(params.subject);
+          setSelectedCategory(0);
+        }
+      } else {
+        navigate('/parent-reference');
+        setSelectedSubject('phonics');
+        setSelectedCategory(0);
+      }
     } else {
       navigate(`/${screen}`);
-    }
-    
-    // Reset newsletter selection when navigating to newsletter
-    if (screen === 'newsletter') {
-      setSelectedNewsletter(null);
-    }
-    
-    // Reset parent reference selection when navigating to parent-reference
-    if (screen === 'parent-reference') {
-      setSelectedSubject('phonics');
-      setSelectedCategory(0);
     }
     
     // Scroll to top of page
@@ -2688,8 +2716,7 @@ const EmmyStudyGame = () => {
       return (
         <NewsletterSelector 
           onSelectNewsletter={(week) => {
-            setSelectedNewsletter(week);
-            setCurrentScreen(`newsletter-${week}`);
+            navigateTo('newsletter', '', { week: week });
           }}
           onBack={() => {
             setCurrentScreen('home');
@@ -2772,10 +2799,7 @@ const EmmyStudyGame = () => {
               {Object.entries(parentReference).map(([key, subject]) => (
                 <div key={key} 
                   onClick={() => { 
-                    playSound('click'); 
-                    triggerHaptic('light'); 
-                    setSelectedSubject(key); 
-                    setSelectedCategory(0); 
+                    navigateTo('parent-reference', '', { subject: key, category: 0 });
                   }}
                   className={`p-4 rounded-xl cursor-pointer transition-transform hover:scale-105 active:scale-95 ${
                     selectedSubject === key 
@@ -2799,9 +2823,7 @@ const EmmyStudyGame = () => {
                 {subject.categories.map((category, index) => (
                   <div key={index} 
                     onClick={() => { 
-                      playSound('click'); 
-                      triggerHaptic('light'); 
-                      setSelectedCategory(index); 
+                      navigateTo('parent-reference', '', { subject: selectedSubject, category: index });
                     }}
                     className={`p-4 rounded-xl cursor-pointer transition-transform hover:scale-105 active:scale-95 ${
                       selectedCategory === index 
@@ -3117,14 +3139,33 @@ const App = () => {
     <BrowserRouter basename="/emmys-learning-app">
       <Routes>
         <Route path="/" element={<EmmyStudyGame />} />
+        
+        {/* Newsletter Routes */}
         <Route path="/newsletter" element={<EmmyStudyGame />} />
         <Route path="/newsletter/:week" element={<EmmyStudyGame />} />
+        
+        {/* Parent Reference Routes */}
         <Route path="/parent-reference" element={<EmmyStudyGame />} />
+        <Route path="/parent-reference/:subject" element={<EmmyStudyGame />} />
+        <Route path="/parent-reference/:subject/:category" element={<EmmyStudyGame />} />
+        
+        {/* Game Routes */}
         <Route path="/spelling" element={<EmmyStudyGame />} />
+        <Route path="/spelling/:mode" element={<EmmyStudyGame />} />
+        
+        {/* Progress & Achievement Routes */}
         <Route path="/achievements" element={<EmmyStudyGame />} />
+        <Route path="/achievements/:category" element={<EmmyStudyGame />} />
         <Route path="/progress" element={<EmmyStudyGame />} />
+        <Route path="/progress/:section" element={<EmmyStudyGame />} />
+        
+        {/* Settings Routes */}
         <Route path="/customize" element={<EmmyStudyGame />} />
+        <Route path="/customize/:section" element={<EmmyStudyGame />} />
         <Route path="/feedback" element={<EmmyStudyGame />} />
+        <Route path="/feedback/:category" element={<EmmyStudyGame />} />
+        
+        {/* Fallback */}
         <Route path="*" element={<EmmyStudyGame />} />
       </Routes>
     </BrowserRouter>
