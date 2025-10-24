@@ -1584,7 +1584,7 @@ Your Student 🌟
         triggerHaptic('success');
         setCurrentScreen('complete');
       }
-    }, explanation && !ok ? 3500 : 2500);
+    }, explanation && !ok ? 3500 : 1500);
   };
 
   const resetGame = () => { 
