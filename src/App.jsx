@@ -140,7 +140,8 @@ const EmmyStudyGame = () => {
       'history': 'History'
     }[currentScreen] || currentScreen;
 
-    const percentage = Math.round((score / (currentQuestion * 10)) * 100);
+    const questionsAnswered = currentQuestion + 1; // currentQuestion is 0-indexed, so add 1
+    const percentage = Math.round((score / (questionsAnswered * 10)) * 100);
     const completionTime = new Date().toLocaleString();
     
     const emailSubject = `🎉 ${subjectName} Completion - Great Job!`;
@@ -153,7 +154,7 @@ I just completed the ${subjectName} module in Emmy's Learning Adventure!
 • Subject: ${subjectName}
 • Score: ${score} points
 • Percentage: ${percentage}%
-• Questions Answered: ${currentQuestion}
+• Questions Answered: ${questionsAnswered}
 • Correct Answers: ${Math.floor(score / 10)}
 • Completed: ${completionTime}
 
