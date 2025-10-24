@@ -1418,7 +1418,7 @@ Your Student 🌟
           navigateTo('home');
           break;
         case 'p':
-          navigateTo('parent-reference');
+            navigateTo('parent-reference');
           break;
         case 'a':
           navigateTo('achievements');
@@ -1429,7 +1429,7 @@ Your Student 🌟
         case 'r':
           // Only trigger if not combined with shift (to avoid interfering with Cmd+Shift+R)
           if (!e.shiftKey) {
-            navigateTo('progress');
+          navigateTo('progress');
           }
           break;
         case 's':
@@ -1860,12 +1860,11 @@ Your Student 🌟
             </div>
           </div>
         </div>
-      </div>
     );
-  }
+    }
     
-  // Parent Mode - Full Interface
-  return (
+    // Parent Mode - Full Interface
+    return (
       <div className={`min-h-screen bg-gradient-to-br ${currentTheme.colors} p-4 md:p-8`}>
         {/* Mode Toggle - Top Left */}
         <div className="absolute top-4 left-4 z-30">
@@ -2417,7 +2416,7 @@ Your Student 🌟
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <div onClick={() => { playSound('click'); resetGame(); }} className="inline-block px-8 py-4 text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full shadow-lg hover:scale-110 cursor-pointer">Play Again! 🎮</div>
             <div onClick={() => { playSound('click'); setShowShareModal(true); }} className="inline-block px-8 py-4 text-lg font-bold bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-full shadow-lg hover:scale-110 cursor-pointer">Share with Parents! 📧</div>
-          </div>
+        </div>
         </div>
 
         {/* Share Modal */}
@@ -2884,18 +2883,18 @@ Your Student 🌟
           {/* Print Report and Share Buttons */}
           <div className="text-center mt-8 space-y-4">
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button 
-                onClick={() => window.print()}
-                className="px-8 py-4 bg-purple-500 text-white rounded-full font-bold text-lg hover:bg-purple-600 active:scale-95 transition-transform shadow-lg">
-                🖨️ Print Progress Report
-              </button>
+            <button 
+              onClick={() => window.print()}
+              className="px-8 py-4 bg-purple-500 text-white rounded-full font-bold text-lg hover:bg-purple-600 active:scale-95 transition-transform shadow-lg">
+              🖨️ Print Progress Report
+            </button>
               <button 
                 onClick={() => setShowShareModal(true)}
                 className="px-8 py-4 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-full font-bold text-lg hover:from-green-600 hover:to-blue-600 active:scale-95 transition-transform shadow-lg">
                 📧 Share Progress with Parents
               </button>
-            </div>
           </div>
+        </div>
         </div>
 
         {/* Progress Share Modal */}
