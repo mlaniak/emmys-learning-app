@@ -2726,7 +2726,8 @@ Your Student 🌟
     const baseScore = currentQuestion * 10; // Maximum possible base score
     const basePercentage = Math.round((baseScore / baseScore) * 100); // Always 100% if completed
     const bonusPoints = score - baseScore; // Any points above base score are bonus
-    const percentage = Math.round((score / (currentQuestion * 10)) * 100); // For display purposes
+    const questionsAnswered = currentQuestion + 1; // currentQuestion is 0-indexed, so add 1
+    const percentage = Math.round((score / (questionsAnswered * 10)) * 100); // For display purposes
     
     const subjectName = {
       'phonics': 'Phonics',
@@ -2797,7 +2798,7 @@ Your Student 🌟
                     <p>• Subject: {subjectName}</p>
                     <p>• Score: {score} points</p>
                     <p>• Accuracy: {percentage}%</p>
-                    <p>• Questions: {currentQuestion}</p>
+                    <p>• Questions: {questionsAnswered}</p>
                   </div>
                 </div>
               </div>
