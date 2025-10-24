@@ -698,7 +698,16 @@ Your Student 🌟
     { word: 'show', question: 'Does this word have SH or TH?', options: ['SH', 'TH'], correct: 'SH', image: '👁️' },
     { word: 'chair', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '🪑' },
     { word: 'duck', question: 'Does this word have CK or K?', options: ['CK', 'K'], correct: 'CK', image: '🦆' },
-      { word: 'ship', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '🚢' }
+      { word: 'ship', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '🚢' },
+      { word: 'that', question: 'Does this word have TH or T?', options: ['TH', 'T'], correct: 'TH', image: '👆' },
+      { word: 'shop', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '🏪' },
+      { word: 'chip', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '🍟' },
+      { word: 'back', question: 'Does this word have CK or K?', options: ['CK', 'K'], correct: 'CK', image: '🔙' },
+      { word: 'fish', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '🐟' },
+      { word: 'rich', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '💰' },
+      { word: 'wish', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '🌟' },
+      { word: 'much', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '📏' },
+      { word: 'rush', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '🏃' }
     ],
     medium: [
     { word: 'when', question: 'Does this word have WH or TH?', options: ['WH', 'TH'], correct: 'WH', image: '🕐' },
@@ -707,7 +716,16 @@ Your Student 🌟
     { word: 'whip', question: 'Does this word have WH or W?', options: ['WH', 'W'], correct: 'WH', image: '🥊' },
       { word: 'thick', question: 'Does this word have TH or T?', options: ['TH', 'T'], correct: 'TH', image: '📚' },
       { word: 'brush', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '🪥' },
-      { word: 'cheese', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '🧀' }
+      { word: 'cheese', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '🧀' },
+      { word: 'where', question: 'Does this word have WH or W?', options: ['WH', 'W'], correct: 'WH', image: '📍' },
+      { word: 'graph', question: 'Does this word have PH or F?', options: ['PH', 'F'], correct: 'PH', image: '📊' },
+      { word: 'white', question: 'Does this word have WH or W?', options: ['WH', 'W'], correct: 'WH', image: '⚪' },
+      { word: 'photo', question: 'Does this word have PH or F?', options: ['PH', 'F'], correct: 'PH', image: '📷' },
+      { word: 'while', question: 'Does this word have WH or W?', options: ['WH', 'W'], correct: 'WH', image: '⏰' },
+      { word: 'elephant', question: 'Does this word have PH or F?', options: ['PH', 'F'], correct: 'PH', image: '🐘' },
+      { word: 'whale', question: 'Does this word have WH or W?', options: ['WH', 'W'], correct: 'WH', image: '🐋' },
+      { word: 'alphabet', question: 'Does this word have PH or F?', options: ['PH', 'F'], correct: 'PH', image: '🔤' },
+      { word: 'wheel', question: 'Does this word have WH or W?', options: ['WH', 'W'], correct: 'WH', image: '🎡' }
     ],
     hard: [
       { word: 'photo', question: 'Does this word have PH or F?', options: ['PH', 'F'], correct: 'PH', image: '📷' },
@@ -717,7 +735,24 @@ Your Student 🌟
       { word: 'machine', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '⚙️' },
       { word: 'graph', question: 'Does this word have PH or F?', options: ['PH', 'F'], correct: 'PH', image: '📊' },
       { word: 'wheat', question: 'Does this word have WH or W?', options: ['WH', 'W'], correct: 'WH', image: '🌾' },
-      { word: 'knock', question: 'Does this word have CK or K?', options: ['CK', 'K'], correct: 'CK', image: '🚪' }
+      { word: 'knock', question: 'Does this word have CK or K?', options: ['CK', 'K'], correct: 'CK', image: '🚪' },
+      { word: 'champion', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '🏆' },
+      { word: 'sheriff', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '👮' },
+      { word: 'physical', question: 'Does this word have PH or F?', options: ['PH', 'F'], correct: 'PH', image: '💪' },
+      { word: 'whether', question: 'Does this word have WH or W?', options: ['WH', 'W'], correct: 'WH', image: '🤔' },
+      { word: 'chocolate', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '🍫' },
+      { word: 'sherbet', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '🍧' },
+      { word: 'philosophy', question: 'Does this word have PH or F?', options: ['PH', 'F'], correct: 'PH', image: '🤔' },
+      { word: 'whisper', question: 'Does this word have WH or W?', options: ['WH', 'W'], correct: 'WH', image: '🤫' },
+      { word: 'chemistry', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '🧪' },
+      { word: 'shampoo', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '🧴' },
+      { word: 'phantom', question: 'Does this word have PH or F?', options: ['PH', 'F'], correct: 'PH', image: '👻' },
+      { word: 'whistle', question: 'Does this word have WH or W?', options: ['WH', 'W'], correct: 'WH', image: '🔊' },
+      { word: 'challenge', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '🎯' },
+      { word: 'sheriff', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '👮' },
+      { word: 'pharmacy', question: 'Does this word have PH or F?', options: ['PH', 'F'], correct: 'PH', image: '💊' },
+      { word: 'whichever', question: 'Does this word have WH or W?', options: ['WH', 'W'], correct: 'WH', image: '🔄' },
+      { word: 'champion', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '🏆' }
     ]
   };
 
@@ -749,7 +784,31 @@ Your Student 🌟
       { question: 'Emma has 6 stickers. She gives away 1. How many stickers does she have left?', options: ['4', '5'], correct: '5', emoji: '⭐' },
       { question: 'How many sides does a square have?', options: ['3', '4'], correct: '4', emoji: '⬜' },
       { question: 'How many corners does a triangle have?', options: ['3', '4'], correct: '3', emoji: '🔺' },
-      { question: 'Which shape has 4 equal sides?', options: ['Triangle', 'Square'], correct: 'Square', emoji: '⬜' }
+      { question: 'Which shape has 4 equal sides?', options: ['Triangle', 'Square'], correct: 'Square', emoji: '⬜' },
+      { question: 'What is 1 + 4?', options: ['4', '5'], correct: '5', emoji: '➕' },
+      { question: 'What is 7 - 3?', options: ['3', '4'], correct: '4', emoji: '➖' },
+      { question: 'How many eyes does a person have?', options: ['1', '2'], correct: '2', emoji: '👀' },
+      { question: 'What is 4 + 3?', options: ['6', '7'], correct: '7', emoji: '➕' },
+      { question: 'What is 9 - 2?', options: ['6', '7'], correct: '7', emoji: '➖' },
+      { question: 'How many wheels on a car?', options: ['3', '4'], correct: '4', emoji: '🚗' },
+      { question: 'What is 2 + 4?', options: ['5', '6'], correct: '6', emoji: '➕' },
+      { question: 'What is 8 - 1?', options: ['6', '7'], correct: '7', emoji: '➖' },
+      { question: 'How many sides does a rectangle have?', options: ['3', '4'], correct: '4', emoji: '📐' },
+      { question: 'What is 5 + 1?', options: ['5', '6'], correct: '6', emoji: '➕' },
+      { question: 'What is 6 - 2?', options: ['3', '4'], correct: '4', emoji: '➖' },
+      { question: 'How many legs does a dog have?', options: ['3', '4'], correct: '4', emoji: '🐕' },
+      { question: 'What is 3 + 4?', options: ['6', '7'], correct: '7', emoji: '➕' },
+      { question: 'What is 10 - 3?', options: ['6', '7'], correct: '7', emoji: '➖' },
+      { question: 'How many corners does a square have?', options: ['3', '4'], correct: '4', emoji: '⬜' },
+      { question: 'What is 1 + 6?', options: ['6', '7'], correct: '7', emoji: '➕' },
+      { question: 'What is 8 - 4?', options: ['3', '4'], correct: '4', emoji: '➖' },
+      { question: 'How many arms does a person have?', options: ['1', '2'], correct: '2', emoji: '👋' },
+      { question: 'What is 4 + 2?', options: ['5', '6'], correct: '6', emoji: '➕' },
+      { question: 'What is 7 - 1?', options: ['5', '6'], correct: '6', emoji: '➖' },
+      { question: 'How many sides does a circle have?', options: ['0', '1'], correct: '0', emoji: '⭕' },
+      { question: 'What is 2 + 5?', options: ['6', '7'], correct: '7', emoji: '➕' },
+      { question: 'What is 9 - 3?', options: ['5', '6'], correct: '6', emoji: '➖' },
+      { question: 'How many wheels on a tricycle?', options: ['2', '3'], correct: '3', emoji: '🚲' }
     ],
     medium: [
     { question: 'Which number is GREATER?', options: ['47', '52'], correct: '52', emoji: '🔢' },
@@ -791,7 +850,26 @@ Your Student 🌟
       { question: 'How many sides does a rectangle have?', options: ['3', '4'], correct: '4', emoji: '📐' },
       { question: 'Which shape has 3 sides?', options: ['Square', 'Triangle'], correct: 'Triangle', emoji: '🔺' },
       { question: 'How many corners does a square have?', options: ['3', '4'], correct: '4', emoji: '⬜' },
-      { question: 'Which shape has no corners?', options: ['Circle', 'Triangle'], correct: 'Circle', emoji: '⭕' }
+      { question: 'Which shape has no corners?', options: ['Circle', 'Triangle'], correct: 'Circle', emoji: '⭕' },
+      { question: 'What is 13 + 4?', options: ['16', '17'], correct: '17', emoji: '➕' },
+      { question: 'What is 19 - 7?', options: ['11', '12'], correct: '12', emoji: '➖' },
+      { question: 'How many tens in 84?', options: ['8', '4'], correct: '8', emoji: '🎯' },
+      { question: 'Which is greater: 59 or 95?', options: ['59', '95'], correct: '95', emoji: '🔢' },
+      { question: 'What is 7 + 6?', options: ['12', '13'], correct: '13', emoji: '➕' },
+      { question: 'What is 21 - 9?', options: ['11', '12'], correct: '12', emoji: '➖' },
+      { question: 'How many ones in 46?', options: ['4', '6'], correct: '6', emoji: '🎯' },
+      { question: 'Which is smaller: 61 or 16?', options: ['61', '16'], correct: '16', emoji: '🔢' },
+      { question: 'What is 8 + 5?', options: ['12', '13'], correct: '13', emoji: '➕' },
+      { question: 'What is 16 - 8?', options: ['7', '8'], correct: '8', emoji: '➖' },
+      { question: 'How many tens in 73?', options: ['7', '3'], correct: '7', emoji: '🎯' },
+      { question: 'Which is greater: 48 or 84?', options: ['48', '84'], correct: '84', emoji: '🔢' },
+      { question: 'What is 9 + 7?', options: ['15', '16'], correct: '16', emoji: '➕' },
+      { question: 'What is 22 - 6?', options: ['15', '16'], correct: '16', emoji: '➖' },
+      { question: 'How many ones in 58?', options: ['5', '8'], correct: '8', emoji: '🎯' },
+      { question: 'Which is smaller: 39 or 93?', options: ['39', '93'], correct: '39', emoji: '🔢' },
+      { question: 'What is 6 + 8?', options: ['13', '14'], correct: '14', emoji: '➕' },
+      { question: 'What is 18 - 5?', options: ['12', '13'], correct: '13', emoji: '➖' },
+      { question: 'How many tens in 96?', options: ['9', '6'], correct: '9', emoji: '🎯' }
     ],
     hard: [
       { question: 'Which is greater: 67 or 76?', options: ['67', '76'], correct: '76', emoji: '🔢' },
@@ -834,7 +912,26 @@ Your Student 🌟
       { question: 'Which shape has 5 sides?', options: ['Pentagon', 'Hexagon'], correct: 'Pentagon', emoji: '⬟' },
       { question: 'How many corners does a pentagon have?', options: ['4', '5'], correct: '5', emoji: '⬟' },
       { question: 'Which shape has 8 sides?', options: ['Hexagon', 'Octagon'], correct: 'Octagon', emoji: '⏸️' },
-      { question: 'How many sides does a cube have?', options: ['5', '6'], correct: '6', emoji: '🧊' }
+      { question: 'How many sides does a cube have?', options: ['5', '6'], correct: '6', emoji: '🧊' },
+      { question: 'What is 89 + 76?', options: ['164', '165'], correct: '165', emoji: '➕' },
+      { question: 'What is 156 - 89?', options: ['66', '67'], correct: '67', emoji: '➖' },
+      { question: 'Which is greater: 567 or 576?', options: ['567', '576'], correct: '576', emoji: '🔢' },
+      { question: 'How many hundreds in 789?', options: ['7', '8'], correct: '7', emoji: '🎯' },
+      { question: 'What is 123 + 456?', options: ['578', '579'], correct: '579', emoji: '➕' },
+      { question: 'What is 789 - 234?', options: ['554', '555'], correct: '555', emoji: '➖' },
+      { question: 'Which is smaller: 456 or 465?', options: ['456', '465'], correct: '456', emoji: '🔢' },
+      { question: 'How many tens in 234?', options: ['23', '3'], correct: '23', emoji: '🎯' },
+      { question: 'What is 234 + 567?', options: ['800', '801'], correct: '801', emoji: '➕' },
+      { question: 'What is 890 - 456?', options: ['433', '434'], correct: '434', emoji: '➖' },
+      { question: 'Which is greater: 789 or 798?', options: ['789', '798'], correct: '798', emoji: '🔢' },
+      { question: 'How many ones in 567?', options: ['5', '7'], correct: '7', emoji: '🎯' },
+      { question: 'What is 345 + 678?', options: ['1022', '1023'], correct: '1023', emoji: '➕' },
+      { question: 'What is 1000 - 234?', options: ['765', '766'], correct: '766', emoji: '➖' },
+      { question: 'Which is smaller: 1234 or 1243?', options: ['1234', '1243'], correct: '1234', emoji: '🔢' },
+      { question: 'How many hundreds in 1234?', options: ['12', '2'], correct: '12', emoji: '🎯' },
+      { question: 'What is 567 + 890?', options: ['1456', '1457'], correct: '1457', emoji: '➕' },
+      { question: 'What is 2000 - 567?', options: ['1432', '1433'], correct: '1433', emoji: '➖' },
+      { question: 'Which is greater: 2345 or 2354?', options: ['2345', '2354'], correct: '2354', emoji: '🔢' }
     ]
   };
 
@@ -846,7 +943,36 @@ Your Student 🌟
     { question: 'WHEN does the story happen?', answer: 'Setting', options: ['Characters', 'Setting', 'Problem'], emoji: '⏰' },
     { question: 'WHO is the main character?', answer: 'Characters', options: ['Characters', 'Setting', 'Problem'], emoji: '👤' },
     { question: 'WHAT happens at the beginning?', answer: 'Beginning', options: ['Beginning', 'Middle', 'End'], emoji: '🌅' },
-    { question: 'WHAT happens at the end?', answer: 'End', options: ['Beginning', 'Middle', 'End'], emoji: '🌅' }
+    { question: 'WHAT happens at the end?', answer: 'End', options: ['Beginning', 'Middle', 'End'], emoji: '🌅' },
+    { question: 'WHAT happens in the middle?', answer: 'Middle', options: ['Beginning', 'Middle', 'End'], emoji: '🌞' },
+    { question: 'WHO helps solve the problem?', answer: 'Characters', options: ['Characters', 'Setting', 'Problem'], emoji: '🦸' },
+    { question: 'WHERE does the character go?', answer: 'Setting', options: ['Characters', 'Setting', 'Problem'], emoji: '🚶' },
+    { question: 'WHY does the character feel sad?', answer: 'Problem', options: ['Characters', 'Setting', 'Problem'], emoji: '😢' },
+    { question: 'HOW does the character feel at the end?', answer: 'Solution', options: ['Characters', 'Setting', 'Solution'], emoji: '😊' },
+    { question: 'WHAT does the character learn?', answer: 'Solution', options: ['Characters', 'Setting', 'Solution'], emoji: '🧠' },
+    { question: 'WHO is the villain in the story?', answer: 'Characters', options: ['Characters', 'Setting', 'Problem'], emoji: '👹' },
+    { question: 'WHERE does the adventure take place?', answer: 'Setting', options: ['Characters', 'Setting', 'Problem'], emoji: '🗺️' },
+    { question: 'WHAT is the main conflict?', answer: 'Problem', options: ['Characters', 'Setting', 'Problem'], emoji: '⚔️' },
+    { question: 'HOW does the story end happily?', answer: 'Solution', options: ['Characters', 'Setting', 'Solution'], emoji: '🎉' },
+    { question: 'WHO is the hero in the story?', answer: 'Characters', options: ['Characters', 'Setting', 'Problem'], emoji: '🦸' },
+    { question: 'WHERE does the character live?', answer: 'Setting', options: ['Characters', 'Setting', 'Problem'], emoji: '🏡' },
+    { question: 'WHAT makes the character sad?', answer: 'Problem', options: ['Characters', 'Setting', 'Problem'], emoji: '😢' },
+    { question: 'HOW does the character solve the problem?', answer: 'Solution', options: ['Characters', 'Setting', 'Solution'], emoji: '💡' },
+    { question: 'WHO helps the main character?', answer: 'Characters', options: ['Characters', 'Setting', 'Problem'], emoji: '🤝' },
+    { question: 'WHERE does the adventure begin?', answer: 'Setting', options: ['Characters', 'Setting', 'Problem'], emoji: '🚀' },
+    { question: 'WHAT goes wrong in the story?', answer: 'Problem', options: ['Characters', 'Setting', 'Problem'], emoji: '⚠️' },
+    { question: 'HOW does the character feel better?', answer: 'Solution', options: ['Characters', 'Setting', 'Solution'], emoji: '😊' },
+    { question: 'WHO is the villain in the story?', answer: 'Characters', options: ['Characters', 'Setting', 'Problem'], emoji: '👹' },
+    { question: 'WHERE does the story take place?', answer: 'Setting', options: ['Characters', 'Setting', 'Problem'], emoji: '🌍' },
+    { question: 'WHAT is the main conflict?', answer: 'Problem', options: ['Characters', 'Setting', 'Problem'], emoji: '⚔️' },
+    { question: 'HOW does the story resolve?', answer: 'Solution', options: ['Characters', 'Setting', 'Solution'], emoji: '✅' },
+    { question: 'WHO tells the story?', answer: 'Characters', options: ['Characters', 'Setting', 'Problem'], emoji: '📖' },
+    { question: 'WHERE does the climax happen?', answer: 'Setting', options: ['Characters', 'Setting', 'Problem'], emoji: '🎭' },
+    { question: 'WHAT is the turning point?', answer: 'Problem', options: ['Characters', 'Setting', 'Problem'], emoji: '🔄' },
+    { question: 'HOW does the character grow?', answer: 'Solution', options: ['Characters', 'Setting', 'Solution'], emoji: '🌱' },
+    { question: 'WHO is the narrator?', answer: 'Characters', options: ['Characters', 'Setting', 'Problem'], emoji: '🎤' },
+    { question: 'WHERE does the resolution occur?', answer: 'Setting', options: ['Characters', 'Setting', 'Problem'], emoji: '🏁' },
+    { question: 'WHAT is the moral of the story?', answer: 'Solution', options: ['Characters', 'Setting', 'Solution'], emoji: '💎' }
   ];
 
   const spellingWords = [
@@ -864,7 +990,18 @@ Your Student 🌟
     { question: 'What do animals need to survive?', options: ['Food', 'Nothing'], correct: 'Food', emoji: '🍎', explanation: 'All animals need food to stay alive!' },
     { question: 'What happens to water when it gets cold?', options: ['It freezes', 'It disappears'], correct: 'It freezes', emoji: '❄️', explanation: 'Water turns to ice when it gets very cold!' },
     { question: 'What do we call the air around Earth?', options: ['Atmosphere', 'Space'], correct: 'Atmosphere', emoji: '🌍', explanation: 'The atmosphere is the air that surrounds our planet!' },
-    { question: 'What do we call water falling from clouds?', options: ['Rain', 'Snow'], correct: 'Rain', emoji: '🌧️', explanation: 'Rain is water that falls from clouds!' }
+    { question: 'What do we call water falling from clouds?', options: ['Rain', 'Snow'], correct: 'Rain', emoji: '🌧️', explanation: 'Rain is water that falls from clouds!' },
+    { question: 'What do plants need from the soil?', options: ['Water', 'Rocks'], correct: 'Water', emoji: '💧', explanation: 'Plants need water from the soil to grow!' },
+    { question: 'What do we call baby plants?', options: ['Seeds', 'Flowers'], correct: 'Seeds', emoji: '🌱', explanation: 'Seeds grow into baby plants!' },
+    { question: 'What do we call the hard covering on a tree?', options: ['Bark', 'Leaves'], correct: 'Bark', emoji: '🌳', explanation: 'Bark is the hard covering that protects trees!' },
+    { question: 'What do we call the green parts of plants?', options: ['Leaves', 'Roots'], correct: 'Leaves', emoji: '🍃', explanation: 'Leaves are the green parts that make food for plants!' },
+    { question: 'What do we call animals that eat plants?', options: ['Herbivores', 'Carnivores'], correct: 'Herbivores', emoji: '🐰', explanation: 'Herbivores are animals that eat plants!' },
+    { question: 'What do we call animals that eat meat?', options: ['Carnivores', 'Herbivores'], correct: 'Carnivores', emoji: '🦁', explanation: 'Carnivores are animals that eat meat!' },
+    { question: 'What do we call the hard outer covering of some animals?', options: ['Shell', 'Fur'], correct: 'Shell', emoji: '🐚', explanation: 'Some animals have hard shells to protect them!' },
+    { question: 'What do we call the white frozen water that falls from the sky?', options: ['Snow', 'Rain'], correct: 'Snow', emoji: '❄️', explanation: 'Snow is frozen water that falls from clouds!' },
+    { question: 'What do we call the big ball of fire in the sky?', options: ['Sun', 'Moon'], correct: 'Sun', emoji: '☀️', explanation: 'The Sun is a big ball of fire that gives us light and heat!' },
+    { question: 'What do we call the white light in the sky at night?', options: ['Moon', 'Star'], correct: 'Moon', emoji: '🌙', explanation: 'The Moon is the white light we see in the sky at night!' },
+    { question: 'What do we call the tiny lights in the sky at night?', options: ['Stars', 'Clouds'], correct: 'Stars', emoji: '⭐', explanation: 'Stars are tiny lights we see in the sky at night!' }
   ];
 
   const socialStudiesQuestions = [
@@ -874,7 +1011,17 @@ Your Student 🌟
     { question: 'What should you do with trash?', options: ['Throw it away', 'Leave it on the ground'], correct: 'Throw it away', emoji: '🗑️', explanation: 'Keep our community clean by throwing away trash!' },
     { question: 'What should you do when someone is talking?', options: ['Listen', 'Interrupt'], correct: 'Listen', emoji: '👂', explanation: 'Good citizens listen when others are speaking!' },
     { question: 'What should you do if you make a mistake?', options: ['Say sorry', 'Blame others'], correct: 'Say sorry', emoji: '😔', explanation: 'Good citizens take responsibility for their actions!' },
-    { question: 'What should you do if you see someone alone?', options: ['Include them', 'Ignore them'], correct: 'Include them', emoji: '🤗', explanation: 'Good citizens make sure everyone feels included!' }
+    { question: 'What should you do if you see someone alone?', options: ['Include them', 'Ignore them'], correct: 'Include them', emoji: '🤗', explanation: 'Good citizens make sure everyone feels included!' },
+    { question: 'What should you do if you see someone drop something?', options: ['Pick it up', 'Walk away'], correct: 'Pick it up', emoji: '🤲', explanation: 'Good citizens help others by picking up dropped items!' },
+    { question: 'What should you do if someone is crying?', options: ['Comfort them', 'Laugh at them'], correct: 'Comfort them', emoji: '🤗', explanation: 'Good citizens show kindness to those who are sad!' },
+    { question: 'What should you do if you see someone struggling?', options: ['Offer help', 'Ignore them'], correct: 'Offer help', emoji: '🆘', explanation: 'Good citizens offer help to those who need it!' },
+    { question: 'What should you do if you break something?', options: ['Tell the truth', 'Hide it'], correct: 'Tell the truth', emoji: '💬', explanation: 'Good citizens are honest about their mistakes!' },
+    { question: 'What should you do if you see someone being bullied?', options: ['Stand up for them', 'Join in'], correct: 'Stand up for them', emoji: '🛡️', explanation: 'Good citizens protect others from being hurt!' },
+    { question: 'What should you do if you find money?', options: ['Turn it in', 'Keep it'], correct: 'Turn it in', emoji: '💰', explanation: 'Good citizens return lost items to their owners!' },
+    { question: 'What should you do if you see someone fall down?', options: ['Help them up', 'Point and laugh'], correct: 'Help them up', emoji: '🤝', explanation: 'Good citizens help others when they fall down!' },
+    { question: 'What should you do if you see someone being left out?', options: ['Include them', 'Ignore them'], correct: 'Include them', emoji: '👥', explanation: 'Good citizens make sure everyone feels welcome!' },
+    { question: 'What should you do if you see someone being treated unfairly?', options: ['Speak up', 'Stay quiet'], correct: 'Speak up', emoji: '🗣️', explanation: 'Good citizens stand up for what is right!' },
+    { question: 'What should you do if you see someone being mean?', options: ['Be kind to them', 'Be mean back'], correct: 'Be kind to them', emoji: '💝', explanation: 'Good citizens show kindness even to those who are mean!' }
   ];
 
   const skipCountingQuestions = [
@@ -886,7 +1033,16 @@ Your Student 🌟
     { question: 'Count by 10s: 40, 50, 60, __', options: ['70', '65'], correct: '70', emoji: '🔟' },
     { question: 'Count by 2s: 14, 16, 18, __', options: ['20', '19'], correct: '20', emoji: '➕' },
     { question: 'Count by 5s: 35, 40, 45, __', options: ['50', '48'], correct: '50', emoji: '✋' },
-    { question: 'Count by 10s: 70, 80, 90, __', options: ['100', '95'], correct: '100', emoji: '🔟' }
+    { question: 'Count by 10s: 70, 80, 90, __', options: ['100', '95'], correct: '100', emoji: '🔟' },
+    { question: 'Count by 2s: 22, 24, 26, __', options: ['28', '27'], correct: '28', emoji: '➕' },
+    { question: 'Count by 5s: 50, 55, 60, __', options: ['65', '62'], correct: '65', emoji: '✋' },
+    { question: 'Count by 10s: 100, 110, 120, __', options: ['130', '125'], correct: '130', emoji: '🔟' },
+    { question: 'Count by 2s: 30, 32, 34, __', options: ['36', '35'], correct: '36', emoji: '➕' },
+    { question: 'Count by 5s: 65, 70, 75, __', options: ['80', '78'], correct: '80', emoji: '✋' },
+    { question: 'Count by 10s: 130, 140, 150, __', options: ['160', '155'], correct: '160', emoji: '🔟' },
+    { question: 'Count by 2s: 38, 40, 42, __', options: ['44', '43'], correct: '44', emoji: '➕' },
+    { question: 'Count by 5s: 80, 85, 90, __', options: ['95', '92'], correct: '95', emoji: '✋' },
+    { question: 'Count by 10s: 160, 170, 180, __', options: ['190', '185'], correct: '190', emoji: '🔟' }
   ];
 
   // New subjects: Art, Geography, History
@@ -898,7 +1054,17 @@ Your Student 🌟
     { question: 'What shape has 3 sides?', options: ['Triangle', 'Square'], correct: 'Triangle', emoji: '🔺', explanation: 'A triangle has exactly 3 sides!' },
     { question: 'What shape has 4 equal sides?', options: ['Square', 'Rectangle'], correct: 'Square', emoji: '⬜', explanation: 'A square has 4 equal sides and 4 right angles!' },
     { question: 'What do we call a picture of a person?', options: ['Portrait', 'Landscape'], correct: 'Portrait', emoji: '👤', explanation: 'A portrait is a picture of a person!' },
-    { question: 'What do we call a picture of nature?', options: ['Landscape', 'Portrait'], correct: 'Landscape', emoji: '🏞️', explanation: 'A landscape is a picture of nature like mountains, trees, or fields!' }
+    { question: 'What do we call a picture of nature?', options: ['Landscape', 'Portrait'], correct: 'Landscape', emoji: '🏞️', explanation: 'A landscape is a picture of nature like mountains, trees, or fields!' },
+    { question: 'What do we call the colors that are opposite on the color wheel?', options: ['Complementary', 'Primary'], correct: 'Complementary', emoji: '🌈', explanation: 'Complementary colors are opposite each other on the color wheel!' },
+    { question: 'What do we call a picture made with dots?', options: ['Pointillism', 'Abstract'], correct: 'Pointillism', emoji: '🔵', explanation: 'Pointillism is a technique using small dots to create pictures!' },
+    { question: 'What do we call a picture that doesn\'t look real?', options: ['Abstract', 'Realistic'], correct: 'Abstract', emoji: '🎭', explanation: 'Abstract art doesn\'t look like real things!' },
+    { question: 'What do we call a picture that looks very real?', options: ['Realistic', 'Abstract'], correct: 'Realistic', emoji: '🖼️', explanation: 'Realistic art looks very much like real things!' },
+    { question: 'What do we call the space around objects in art?', options: ['Negative space', 'Positive space'], correct: 'Negative space', emoji: '🌌', explanation: 'Negative space is the empty space around objects!' },
+    { question: 'What do we call the main objects in a picture?', options: ['Positive space', 'Negative space'], correct: 'Positive space', emoji: '🎯', explanation: 'Positive space is the main objects in a picture!' },
+    { question: 'What do we call the way lines go in art?', options: ['Direction', 'Color'], correct: 'Direction', emoji: '➡️', explanation: 'Direction is the way lines point in art!' },
+    { question: 'What do we call the lightness or darkness of a color?', options: ['Value', 'Hue'], correct: 'Value', emoji: '⚫', explanation: 'Value is how light or dark a color is!' },
+    { question: 'What do we call the actual color itself?', options: ['Hue', 'Value'], correct: 'Hue', emoji: '🎨', explanation: 'Hue is the actual color like red, blue, or green!' },
+    { question: 'What do we call the way something feels when you touch it?', options: ['Texture', 'Shape'], correct: 'Texture', emoji: '🤲', explanation: 'Texture is how something feels when you touch it!' }
   ];
 
   const geographyQuestions = [
@@ -909,7 +1075,17 @@ Your Student 🌟
     { question: 'What is the longest river?', options: ['Nile River', 'Amazon River'], correct: 'Nile River', emoji: '🌊', explanation: 'The Nile River in Africa is the longest river in the world!' },
     { question: 'What is the tallest mountain?', options: ['Mount Everest', 'Mount Kilimanjaro'], correct: 'Mount Everest', emoji: '🏔️', explanation: 'Mount Everest is the tallest mountain on Earth!' },
     { question: 'What is the biggest desert?', options: ['Sahara Desert', 'Gobi Desert'], correct: 'Sahara Desert', emoji: '🏜️', explanation: 'The Sahara Desert in Africa is the largest hot desert!' },
-    { question: 'What country has the most people?', options: ['China', 'India'], correct: 'China', emoji: '🇨🇳', explanation: 'China has the most people of any country in the world!' }
+    { question: 'What country has the most people?', options: ['China', 'India'], correct: 'China', emoji: '🇨🇳', explanation: 'China has the most people of any country in the world!' },
+    { question: 'What is the smallest continent?', options: ['Australia', 'Europe'], correct: 'Australia', emoji: '🇦🇺', explanation: 'Australia is the smallest continent on Earth!' },
+    { question: 'What is the biggest country?', options: ['Russia', 'Canada'], correct: 'Russia', emoji: '🇷🇺', explanation: 'Russia is the largest country in the world!' },
+    { question: 'What is the smallest country?', options: ['Vatican City', 'Monaco'], correct: 'Vatican City', emoji: '🇻🇦', explanation: 'Vatican City is the smallest country in the world!' },
+    { question: 'What is the biggest island?', options: ['Greenland', 'Australia'], correct: 'Greenland', emoji: '🇬🇱', explanation: 'Greenland is the largest island in the world!' },
+    { question: 'What is the deepest ocean?', options: ['Pacific Ocean', 'Atlantic Ocean'], correct: 'Pacific Ocean', emoji: '🌊', explanation: 'The Pacific Ocean is also the deepest ocean!' },
+    { question: 'What is the biggest lake?', options: ['Caspian Sea', 'Lake Superior'], correct: 'Caspian Sea', emoji: '🏞️', explanation: 'The Caspian Sea is the largest lake in the world!' },
+    { question: 'What is the biggest waterfall?', options: ['Angel Falls', 'Niagara Falls'], correct: 'Angel Falls', emoji: '💧', explanation: 'Angel Falls in Venezuela is the tallest waterfall!' },
+    { question: 'What is the biggest forest?', options: ['Amazon Rainforest', 'Congo Rainforest'], correct: 'Amazon Rainforest', emoji: '🌳', explanation: 'The Amazon Rainforest is the largest forest in the world!' },
+    { question: 'What is the biggest city?', options: ['Tokyo', 'New York'], correct: 'Tokyo', emoji: '🏙️', explanation: 'Tokyo, Japan is the largest city in the world!' },
+    { question: 'What is the biggest state in the USA?', options: ['Alaska', 'Texas'], correct: 'Alaska', emoji: '🇺🇸', explanation: 'Alaska is the largest state in the United States!' }
   ];
 
   const historyQuestions = [
@@ -920,7 +1096,17 @@ Your Student 🌟
     { question: 'Who wrote the Declaration of Independence?', options: ['Thomas Jefferson', 'George Washington'], correct: 'Thomas Jefferson', emoji: '📜', explanation: 'Thomas Jefferson wrote the Declaration of Independence!' },
     { question: 'What war was fought between the North and South in America?', options: ['Civil War', 'Revolutionary War'], correct: 'Civil War', emoji: '⚔️', explanation: 'The Civil War was fought between the North and South!' },
     { question: 'Who was the first person to walk on the moon?', options: ['Neil Armstrong', 'Buzz Aldrin'], correct: 'Neil Armstrong', emoji: '🌙', explanation: 'Neil Armstrong was the first person to walk on the moon!' },
-    { question: 'What year did World War II end?', options: ['1945', '1944'], correct: '1945', emoji: '✌️', explanation: 'World War II ended in 1945!' }
+    { question: 'What year did World War II end?', options: ['1945', '1944'], correct: '1945', emoji: '✌️', explanation: 'World War II ended in 1945!' },
+    { question: 'Who was the 16th president of the United States?', options: ['Abraham Lincoln', 'Andrew Jackson'], correct: 'Abraham Lincoln', emoji: '👨‍💼', explanation: 'Abraham Lincoln was the 16th president of the United States!' },
+    { question: 'What year did the American Revolution start?', options: ['1775', '1776'], correct: '1775', emoji: '🇺🇸', explanation: 'The American Revolution started in 1775!' },
+    { question: 'Who invented the telephone?', options: ['Alexander Graham Bell', 'Thomas Edison'], correct: 'Alexander Graham Bell', emoji: '📞', explanation: 'Alexander Graham Bell invented the telephone!' },
+    { question: 'What year did the United States become independent?', options: ['1776', '1775'], correct: '1776', emoji: '🇺🇸', explanation: 'The United States became independent in 1776!' },
+    { question: 'Who was the first woman to fly across the Atlantic Ocean?', options: ['Amelia Earhart', 'Bessie Coleman'], correct: 'Amelia Earhart', emoji: '✈️', explanation: 'Amelia Earhart was the first woman to fly across the Atlantic!' },
+    { question: 'What year did the Titanic sink?', options: ['1912', '1913'], correct: '1912', emoji: '🚢', explanation: 'The Titanic sank in 1912!' },
+    { question: 'Who was the first person to discover America?', options: ['Christopher Columbus', 'Leif Erikson'], correct: 'Christopher Columbus', emoji: '🗺️', explanation: 'Christopher Columbus was the first European to discover America!' },
+    { question: 'What year did the Civil War start?', options: ['1861', '1860'], correct: '1861', emoji: '⚔️', explanation: 'The Civil War started in 1861!' },
+    { question: 'Who was the first person to fly an airplane?', options: ['Orville Wright', 'Amelia Earhart'], correct: 'Orville Wright', emoji: '✈️', explanation: 'Orville Wright was the first person to fly an airplane!' },
+    { question: 'What year did World War I start?', options: ['1914', '1915'], correct: '1914', emoji: '🌍', explanation: 'World War I started in 1914!' }
   ];
 
   const studyGuides = {
