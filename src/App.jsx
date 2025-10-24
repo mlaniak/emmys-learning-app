@@ -1865,7 +1865,7 @@ Your Student 🌟
   }
     
   // Parent Mode - Full Interface
-    return (
+  return (
       <div className={`min-h-screen bg-gradient-to-br ${currentTheme.colors} p-4 md:p-8`}>
         {/* Mode Toggle - Top Left */}
         <div className="absolute top-4 left-4 z-30">
