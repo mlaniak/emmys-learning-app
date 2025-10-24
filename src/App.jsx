@@ -1633,6 +1633,8 @@ Your Student 🌟
     // Kid-friendly simplified interface
     if (!parentMode) {
     return (
+      <>
+        {questionSelectorModal}
       <div className={`min-h-screen bg-gradient-to-br ${currentTheme.colors} p-4 md:p-8`}>
           {/* Mode Toggle - Top Left */}
           <div className="absolute top-4 left-4 z-30">
@@ -1861,8 +1863,93 @@ Your Student 🌟
             </div>
           </div>
         </div>
+      </>
     );
     }
+    
+    // Question Count Selector Modal (rendered for both kids and parent modes)
+    const questionSelectorModal = showQuestionSelector && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-3xl p-8 max-w-md mx-4 shadow-2xl">
+          <div className="text-center mb-6">
+            <div className="text-6xl mb-4">🎯</div>
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">How many questions?</h3>
+            <p className="text-gray-600">Choose how many questions you want to practice!</p>
+          </div>
+          
+          <div className="space-y-4">
+            {/* Preset Options */}
+            <div className="grid grid-cols-2 gap-3">
+              {[5, 10, 20, 40].map(count => (
+                <button
+                  key={count}
+                  onClick={() => setSelectedQuestionCount(count)}
+                  className={`px-4 py-3 rounded-lg font-bold transition-all ${
+                    selectedQuestionCount === count
+                      ? 'bg-blue-500 text-white shadow-lg'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {count} Questions
+                </button>
+              ))}
+            </div>
+            
+            {/* Custom Option */}
+            <div className="border-t pt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Custom amount:</label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  value={customQuestionCount}
+                  onChange={(e) => {
+                    setCustomQuestionCount(e.target.value);
+                    setSelectedQuestionCount('custom');
+                  }}
+                  placeholder="Enter number (1-100)"
+                  min="1"
+                  max="100"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <button
+                  onClick={() => {
+                    setSelectedQuestionCount('custom');
+                    setCustomQuestionCount('');
+                  }}
+                  className={`px-3 py-2 rounded-lg font-medium transition-all ${
+                    selectedQuestionCount === 'custom'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  Custom
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex gap-3 mt-6">
+            <button
+              onClick={() => {
+                setShowQuestionSelector(false);
+                setPendingGame(null);
+                setCustomQuestionCount('');
+                setSelectedQuestionCount(10);
+              }}
+              className="flex-1 px-4 py-3 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={startGameWithCount}
+              className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg font-medium hover:from-blue-600 hover:to-purple-600 transition-all"
+            >
+              Start Game! 🎮
+            </button>
+          </div>
+        </div>
+      </div>
+    );
     
     // Parent Mode - Full Interface
     return (
@@ -2893,7 +2980,7 @@ Your Student 🌟
                 onClick={() => setShowShareModal(true)}
                 className="px-8 py-4 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-full font-bold text-lg hover:from-green-600 hover:to-blue-600 active:scale-95 transition-transform shadow-lg">
                 📧 Share Progress with Parents
-              </button>
+            </button>
           </div>
         </div>
         </div>
@@ -3574,90 +3661,6 @@ Your Student 🌟
         </button>
       </div>
       
-      {/* Question Count Selector Modal */}
-      {console.log('showQuestionSelector:', showQuestionSelector)}
-      {showQuestionSelector && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-3xl p-8 max-w-md mx-4 shadow-2xl">
-            <div className="text-center mb-6">
-              <div className="text-6xl mb-4">🎯</div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-2">How many questions?</h3>
-              <p className="text-gray-600">Choose how many questions you want to practice!</p>
-            </div>
-            
-            <div className="space-y-4">
-              {/* Preset Options */}
-              <div className="grid grid-cols-2 gap-3">
-                {[5, 10, 20, 40].map(count => (
-                  <button
-                    key={count}
-                    onClick={() => setSelectedQuestionCount(count)}
-                    className={`px-4 py-3 rounded-lg font-bold transition-all ${
-                      selectedQuestionCount === count
-                        ? 'bg-blue-500 text-white shadow-lg'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    {count} Questions
-                  </button>
-                ))}
-              </div>
-              
-              {/* Custom Option */}
-              <div className="border-t pt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Custom amount:</label>
-                <div className="flex gap-2">
-                  <input
-                    type="number"
-                    value={customQuestionCount}
-                    onChange={(e) => {
-                      setCustomQuestionCount(e.target.value);
-                      setSelectedQuestionCount('custom');
-                    }}
-                    placeholder="Enter number (1-100)"
-                    min="1"
-                    max="100"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                  <button
-                    onClick={() => {
-                      setSelectedQuestionCount('custom');
-                      setCustomQuestionCount('');
-                    }}
-                    className={`px-3 py-2 rounded-lg font-medium transition-all ${
-                      selectedQuestionCount === 'custom'
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    Custom
-                  </button>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex gap-3 mt-6">
-              <button
-                onClick={() => {
-                  setShowQuestionSelector(false);
-                  setPendingGame(null);
-                  setCustomQuestionCount('');
-                  setSelectedQuestionCount(10);
-                }}
-                className="flex-1 px-4 py-3 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={startGameWithCount}
-                className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg font-medium hover:from-blue-600 hover:to-purple-600 transition-all"
-              >
-                Start Game! 🎮
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
