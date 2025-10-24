@@ -3509,12 +3509,23 @@ Your Student 🌟
     history: historyQuestions
   };
   
-  // Get the full question set and slice it to the selected count
+  // Shuffle function to randomize questions
+  const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  // Get the full question set, shuffle it, then slice to the selected count
   const fullQuestionSet = questionSets[currentScreen] || [];
   const questionCount = selectedQuestionCount === 'custom' 
     ? parseInt(customQuestionCount) || 10
     : selectedQuestionCount;
-  const qs = fullQuestionSet.slice(0, questionCount);
+  const shuffledQuestions = shuffleArray(fullQuestionSet);
+  const qs = shuffledQuestions.slice(0, questionCount);
   const q = qs[currentQuestion] || {};
   const bgColors = {
     phonics: 'from-pink-200 to-pink-400', math: 'from-blue-200 to-blue-400',
