@@ -1522,6 +1522,7 @@ Your Student 🌟
       triggerHaptic('success');
       setShowFeedback('correct'); 
       setAnswerAnimation('correct-bounce');
+      console.log('Correct answer - showing feedback');
     } else { 
       playSound('incorrect');
       triggerHaptic('error');
@@ -1529,6 +1530,7 @@ Your Student 🌟
       setAnswerAnimation('incorrect-shake');
       setCorrectAnswer(cor);
       if (explanation) setTimeout(() => setShowExplanation(true), 800);
+      console.log('Incorrect answer - showing feedback');
     }
     
     setTimeout(() => {
@@ -3403,6 +3405,7 @@ Your Student 🌟
             <div className="text-center p-4">
               <div className="text-7xl md:text-9xl mb-4">{showFeedback==='correct'?'🎉':'😅'}</div>
               <p className="text-3xl md:text-5xl font-bold text-white mb-2">{showFeedback==='correct'?'Amazing!':'Try Again!'}</p>
+              {console.log('Rendering feedback:', showFeedback)}
               {showExplanation && correctAnswer && (
                 <div className="mt-4 bg-white bg-opacity-20 rounded-2xl p-4">
                   <p className="text-xl md:text-2xl font-bold text-white mb-2">Correct answer: {correctAnswer}</p>
