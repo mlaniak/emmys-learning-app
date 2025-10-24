@@ -1622,7 +1622,6 @@ Your Student 🌟
     navigateTo(pendingGame);
     setPendingGame(null);
     setCustomQuestionCount('');
-    setSelectedQuestionCount(10);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
