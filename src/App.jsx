@@ -1325,16 +1325,15 @@ const EmmyStudyGame = () => {
       // Only handle shortcuts when not in input fields
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
       
+      // Don't interfere with browser shortcuts (Cmd/Ctrl combinations)
+      if (e.metaKey || e.ctrlKey) return;
+      
       switch(e.key.toLowerCase()) {
         case 'h':
           navigateTo('home');
           break;
         case 'p':
-          if (e.ctrlKey || e.metaKey) {
-            setParentMode(!parentMode);
-          } else {
-            navigateTo('parent-reference');
-          }
+          navigateTo('parent-reference');
           break;
         case 'a':
           navigateTo('achievements');
@@ -1343,7 +1342,10 @@ const EmmyStudyGame = () => {
           navigateTo('customize');
           break;
         case 'r':
-          navigateTo('progress');
+          // Only trigger if not combined with shift (to avoid interfering with Cmd+Shift+R)
+          if (!e.shiftKey) {
+            navigateTo('progress');
+          }
           break;
         case 's':
           setShowSearch(true);
