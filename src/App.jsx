@@ -2669,6 +2669,7 @@ Your Student 🌟
     const baseScore = currentQuestion * 10; // Maximum possible base score
     const basePercentage = Math.round((baseScore / baseScore) * 100); // Always 100% if completed
     const bonusPoints = score - baseScore; // Any points above base score are bonus
+    const percentage = Math.round((score / (currentQuestion * 10)) * 100); // For display purposes
     
     const subjectName = {
       'phonics': 'Phonics',
