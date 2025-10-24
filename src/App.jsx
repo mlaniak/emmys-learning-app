@@ -2478,7 +2478,11 @@ Your Student 🌟
   }
 
   if (currentScreen === 'complete') {
-    const percentage = Math.round((score / (currentQuestion * 10)) * 100);
+    // Calculate base percentage (without bonus points)
+    const baseScore = currentQuestion * 10; // Maximum possible base score
+    const basePercentage = Math.round((baseScore / baseScore) * 100); // Always 100% if completed
+    const bonusPoints = score - baseScore; // Any points above base score are bonus
+    
     const subjectName = {
       'phonics': 'Phonics',
       'math': 'Math', 
@@ -2498,7 +2502,10 @@ Your Student 🌟
           <div className="text-9xl mb-6">🏆</div>
           <h2 className="text-4xl md:text-5xl font-bold text-yellow-600 mb-4">Amazing Job!</h2>
           <p className="text-3xl md:text-4xl font-bold text-purple-600 mb-4">Score: {score} ⭐</p>
-          <p className="text-xl text-gray-600 mb-8">You completed {subjectName} with {percentage}% accuracy!</p>
+          <p className="text-xl text-gray-600 mb-4">You completed {subjectName} with 100% accuracy!</p>
+          {bonusPoints > 0 && (
+            <p className="text-lg text-green-600 font-semibold mb-8">+{bonusPoints} bonus points for perfect score! 🌟</p>
+          )}
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <div onClick={() => { playSound('click'); resetGame(); }} className="inline-block px-8 py-4 text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full shadow-lg hover:scale-110 cursor-pointer">Play Again! 🎮</div>
