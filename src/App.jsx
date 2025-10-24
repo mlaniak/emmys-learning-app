@@ -1510,11 +1510,19 @@ Your Student 🌟
     updateLearningStreak();
     
     // Update stats
+    const currentStats = progress.stats || {
+      totalQuestionsAnswered: 0,
+      correctAnswers: 0,
+      perfectScores: 0,
+      timeSpent: 0,
+      favoriteSubject: null
+    };
+    
     const updatedStats = {
-      ...progress.stats,
-      totalQuestionsAnswered: progress.stats.totalQuestionsAnswered + 1,
-      correctAnswers: progress.stats.correctAnswers + (ok ? 1 : 0),
-      timeSpent: progress.stats.timeSpent + 1 // Simple time tracking
+      ...currentStats,
+      totalQuestionsAnswered: currentStats.totalQuestionsAnswered + 1,
+      correctAnswers: currentStats.correctAnswers + (ok ? 1 : 0),
+      timeSpent: currentStats.timeSpent + 1 // Simple time tracking
     };
     
     if (ok) { 
@@ -1563,6 +1571,7 @@ Your Student 🌟
         
         // Update perfect scores count
         if (isPerfectScore) {
+          newProgress.stats = newProgress.stats || {};
           newProgress.stats.perfectScores = (newProgress.stats.perfectScores || 0) + 1;
         }
         
@@ -2627,7 +2636,7 @@ Your Student 🌟
     const currentTheme = themes[progress.selectedTheme] || themes.default;
     const completedSubjects = Object.keys(progress.completedSubjects).length;
     const totalSubjects = 10;
-    const accuracy = progress.stats.totalQuestionsAnswered > 0 
+    const accuracy = (progress.stats && progress.stats.totalQuestionsAnswered > 0) 
       ? Math.round((progress.stats.correctAnswers / progress.stats.totalQuestionsAnswered) * 100) 
       : 0;
     const averageScore = completedSubjects > 0 
@@ -2751,15 +2760,15 @@ Your Student 🌟
               <div className="space-y-4">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Questions Answered:</span>
-                  <span className="font-bold">{progress.stats.totalQuestionsAnswered}</span>
+                  <span className="font-bold">{progress.stats?.totalQuestionsAnswered || 0}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Correct Answers:</span>
-                  <span className="font-bold text-green-600">{progress.stats.correctAnswers}</span>
+                  <span className="font-bold text-green-600">{progress.stats?.correctAnswers || 0}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Perfect Scores:</span>
-                  <span className="font-bold text-yellow-600">{progress.stats.perfectScores}</span>
+                  <span className="font-bold text-yellow-600">{progress.stats?.perfectScores || 0}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Average Score:</span>
@@ -2896,7 +2905,7 @@ Your Student 🌟
                     <p>• Total Points: {progress.totalScore}</p>
                     <p>• Subjects Completed: {completedSubjects}/{totalSubjects}</p>
                     <p>• Overall Accuracy: {accuracy}%</p>
-                    <p>• Questions Answered: {progress.stats.totalQuestionsAnswered}</p>
+                    <p>• Questions Answered: {progress.stats?.totalQuestionsAnswered || 0}</p>
                     <p>• Achievements Earned: {progress.achievements.length}</p>
                     <p>• Learning Streak: {learningStreak} days</p>
                     {favoriteSubject && <p>• Favorite Subject: {favoriteSubject.name}</p>}
@@ -2923,7 +2932,7 @@ I wanted to share my amazing learning progress in Emmy's Learning Adventure!
 • Total Points: ${progress.totalScore}
 • Subjects Completed: ${completedSubjects}/${totalSubjects}
 • Overall Accuracy: ${accuracy}%
-• Questions Answered: ${progress.stats.totalQuestionsAnswered}
+• Questions Answered: ${progress.stats?.totalQuestionsAnswered || 0}
 • Achievements Earned: ${progress.achievements.length}
 • Learning Streak: ${learningStreak} days
 ${favoriteSubject ? `• Favorite Subject: ${favoriteSubject.name}` : ''}
