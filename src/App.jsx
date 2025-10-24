@@ -1864,7 +1864,7 @@ Your Student 🌟
     );
   }
     
-    // Parent Mode - Full Interface
+  // Parent Mode - Full Interface
     return (
       <div className={`min-h-screen bg-gradient-to-br ${currentTheme.colors} p-4 md:p-8`}>
         {/* Mode Toggle - Top Left */}
