@@ -1600,6 +1600,7 @@ Your Student 🌟
 
   // Handle game selection with question count
   const handleGameSelection = (gameType) => {
+    console.log('Game selected:', gameType);
     setPendingGame(gameType);
     setShowQuestionSelector(true);
   };
@@ -1788,7 +1789,7 @@ Your Student 🌟
                   { name: 'geography', title: 'Geography', icon: '🌍', color: 'from-emerald-400 to-emerald-600' },
                   { name: 'history', title: 'History', icon: '📜', color: 'from-amber-400 to-amber-600' }
                 ].map(game => (
-                  <div key={game.name} onClick={() => { handleGameSelection(game.name); }}
+                  <div key={game.name} onClick={() => { console.log('Button clicked:', game.name); handleGameSelection(game.name); }}
                     className={`bg-gradient-to-br ${game.color} p-4 rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform relative hover:wiggle`}>
                     <div className="text-3xl md:text-4xl mb-2 sparkle">{game.icon}</div>
                     <h2 className="text-sm md:text-base font-bold text-white mb-1">{game.title}</h2>
@@ -3574,6 +3575,7 @@ Your Student 🌟
       </div>
       
       {/* Question Count Selector Modal */}
+      {console.log('showQuestionSelector:', showQuestionSelector)}
       {showQuestionSelector && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-3xl p-8 max-w-md mx-4 shadow-2xl">
