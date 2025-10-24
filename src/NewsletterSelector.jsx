@@ -8,7 +8,7 @@ const NewsletterSelector = ({ onSelectNewsletter, onBack }) => {
       date: "October 20th-24th", 
       description: "First Grade Newsletter - Week 10",
       icon: "📰",
-      pdfPath: "./newsletters/1st_grade_Newsletter_Week__10.pdf"
+      pdfPath: "https://mlaniak.github.io/emmys-learning-app/newsletters/1st_grade_Newsletter_Week__10.pdf"
     },
     {
       week: 9,
@@ -16,7 +16,7 @@ const NewsletterSelector = ({ onSelectNewsletter, onBack }) => {
       date: "October 13th-17th",
       description: "First Grade Newsletter - Week 9",
       icon: "📰",
-      pdfPath: "./newsletters/1st_grade_Newsletter_week__9.pdf"
+      pdfPath: "https://mlaniak.github.io/emmys-learning-app/newsletters/1st_grade_Newsletter_week__9.pdf"
     },
     {
       week: 8,
@@ -24,7 +24,7 @@ const NewsletterSelector = ({ onSelectNewsletter, onBack }) => {
       date: "October 6th-10th",
       description: "First Grade Newsletter - Week 8",
       icon: "📰",
-      pdfPath: "./newsletters/1st_Grade_Newsletter_week__8.pdf"
+      pdfPath: "https://mlaniak.github.io/emmys-learning-app/newsletters/1st_Grade_Newsletter_week__8.pdf"
     }
   ];
 
