@@ -48,6 +48,10 @@ const EmmyStudyGame = () => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareEmail, setShareEmail] = useState('');
   const [shareMessage, setShareMessage] = useState('');
+  const [showQuestionSelector, setShowQuestionSelector] = useState(false);
+  const [selectedQuestionCount, setSelectedQuestionCount] = useState(10);
+  const [customQuestionCount, setCustomQuestionCount] = useState('');
+  const [pendingGame, setPendingGame] = useState(null);
   const [progress, setProgress] = useState(() => {
     const saved = localStorage.getItem('emmy-learning-progress');
     return saved ? JSON.parse(saved) : {
@@ -1549,7 +1553,7 @@ Your Student 🌟
         setCurrentQuestion(currentQuestion + 1);
       } else {
         // Mark subject as completed
-        const subjectScore = Math.round((newScore / (qs.length * 10)) * 100);
+        const subjectScore = Math.round((newScore / (questionCount * 10)) * 100);
         const isPerfectScore = subjectScore === 100;
         
         let newProgress = {
@@ -1563,7 +1567,7 @@ Your Student 🌟
               completed: true,
               score: subjectScore,
               completedAt: new Date().toISOString(),
-              questionsAnswered: qs.length,
+              questionsAnswered: questionCount,
               correctAnswers: Math.floor(newScore / 10)
             }
           }
@@ -1591,6 +1595,33 @@ Your Student 🌟
     setCurrentQuestion(0); 
     setScore(0); 
     navigateTo('home');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Handle game selection with question count
+  const handleGameSelection = (gameType) => {
+    setPendingGame(gameType);
+    setShowQuestionSelector(true);
+  };
+
+  // Start game with selected question count
+  const startGameWithCount = () => {
+    const questionCount = selectedQuestionCount === 'custom' 
+      ? parseInt(customQuestionCount) 
+      : selectedQuestionCount;
+    
+    if (questionCount < 1 || questionCount > 100) {
+      alert('Please enter a number between 1 and 100');
+      return;
+    }
+    
+    setShowQuestionSelector(false);
+    setCurrentQuestion(0);
+    setScore(0);
+    navigateTo(pendingGame);
+    setPendingGame(null);
+    setCustomQuestionCount('');
+    setSelectedQuestionCount(10);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -1757,7 +1788,7 @@ Your Student 🌟
                   { name: 'geography', title: 'Geography', icon: '🌍', color: 'from-emerald-400 to-emerald-600' },
                   { name: 'history', title: 'History', icon: '📜', color: 'from-amber-400 to-amber-600' }
                 ].map(game => (
-                  <div key={game.name} onClick={() => { navigateTo(game.name); setCurrentQuestion(0); }}
+                  <div key={game.name} onClick={() => { handleGameSelection(game.name); }}
                     className={`bg-gradient-to-br ${game.color} p-4 rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform relative hover:wiggle`}>
                     <div className="text-3xl md:text-4xl mb-2 sparkle">{game.icon}</div>
                     <h2 className="text-sm md:text-base font-bold text-white mb-1">{game.title}</h2>
@@ -1829,8 +1860,93 @@ Your Student 🌟
             </div>
           </div>
         </div>
-      );
-    }
+
+        {/* Question Count Selector Modal */}
+        {showQuestionSelector && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-3xl p-8 max-w-md mx-4 shadow-2xl">
+              <div className="text-center mb-6">
+                <div className="text-6xl mb-4">🎯</div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-2">How many questions?</h3>
+                <p className="text-gray-600">Choose how many questions you want to practice!</p>
+              </div>
+              
+              <div className="space-y-4">
+                {/* Preset Options */}
+                <div className="grid grid-cols-2 gap-3">
+                  {[5, 10, 20, 40].map(count => (
+                    <button
+                      key={count}
+                      onClick={() => setSelectedQuestionCount(count)}
+                      className={`px-4 py-3 rounded-lg font-bold transition-all ${
+                        selectedQuestionCount === count
+                          ? 'bg-blue-500 text-white shadow-lg'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {count} Questions
+                    </button>
+                  ))}
+                </div>
+                
+                {/* Custom Option */}
+                <div className="border-t pt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Custom amount:</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="number"
+                      value={customQuestionCount}
+                      onChange={(e) => {
+                        setCustomQuestionCount(e.target.value);
+                        setSelectedQuestionCount('custom');
+                      }}
+                      placeholder="Enter number (1-100)"
+                      min="1"
+                      max="100"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    <button
+                      onClick={() => {
+                        setSelectedQuestionCount('custom');
+                        setCustomQuestionCount('');
+                      }}
+                      className={`px-3 py-2 rounded-lg font-medium transition-all ${
+                        selectedQuestionCount === 'custom'
+                          ? 'bg-blue-500 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      Custom
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => {
+                    setShowQuestionSelector(false);
+                    setPendingGame(null);
+                    setCustomQuestionCount('');
+                    setSelectedQuestionCount(10);
+                  }}
+                  className="flex-1 px-4 py-3 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={startGameWithCount}
+                  className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg font-medium hover:from-blue-600 hover:to-purple-600 transition-all"
+                >
+                  Start Game! 🎮
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
     
     // Parent Mode - Full Interface
     return (
@@ -3390,7 +3506,13 @@ Your Student 🌟
     skipcounting: skipCountingQuestions, art: artQuestions, geography: geographyQuestions, 
     history: historyQuestions
   };
-  const qs = questionSets[currentScreen] || [];
+  
+  // Get the full question set and slice it to the selected count
+  const fullQuestionSet = questionSets[currentScreen] || [];
+  const questionCount = selectedQuestionCount === 'custom' 
+    ? parseInt(customQuestionCount) || 10
+    : selectedQuestionCount;
+  const qs = fullQuestionSet.slice(0, questionCount);
   const q = qs[currentQuestion] || {};
   const bgColors = {
     phonics: 'from-pink-200 to-pink-400', math: 'from-blue-200 to-blue-400',
@@ -3438,7 +3560,7 @@ Your Student 🌟
           ))}
         </div>
         <div className="mt-8 text-center">
-          <p className="text-xl md:text-2xl text-gray-600">Question {currentQuestion+1} of {qs.length}</p>
+          <p className="text-xl md:text-2xl text-gray-600">Question {currentQuestion+1} of {questionCount}</p>
           <p className="text-2xl md:text-3xl font-bold mt-2">Score: {score} ⭐</p>
         </div>
       </div>
