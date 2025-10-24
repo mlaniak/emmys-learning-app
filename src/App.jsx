@@ -45,6 +45,9 @@ const EmmyStudyGame = () => {
   const [parentMode, setParentMode] = useState(false);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [selectedNewsletter, setSelectedNewsletter] = useState(null);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [shareEmail, setShareEmail] = useState('');
+  const [shareMessage, setShareMessage] = useState('');
   const [progress, setProgress] = useState(() => {
     const saved = localStorage.getItem('emmy-learning-progress');
     return saved ? JSON.parse(saved) : {
@@ -85,6 +88,84 @@ const EmmyStudyGame = () => {
   const saveProgress = (newProgress) => {
     setProgress(newProgress);
     localStorage.setItem('emmy-learning-progress', JSON.stringify(newProgress));
+  };
+
+  // Share results functionality
+  const shareResults = (subject, score, questionsAnswered, correctAnswers) => {
+    const subjectNames = {
+      'phonics': 'Phonics',
+      'math': 'Math',
+      'reading': 'Reading',
+      'spelling': 'Spelling',
+      'science': 'Science',
+      'social': 'Social Studies',
+      'skipcounting': 'Skip Counting',
+      'art': 'Art',
+      'geography': 'Geography',
+      'history': 'History'
+    };
+
+    const subjectName = subjectNames[subject] || subject;
+    const percentage = Math.round((score / (questionsAnswered * 10)) * 100);
+    const completionTime = new Date().toLocaleString();
+    
+    const shareData = {
+      subject: subjectName,
+      score: score,
+      percentage: percentage,
+      questionsAnswered: questionsAnswered,
+      correctAnswers: correctAnswers,
+      completedAt: completionTime,
+      message: shareMessage || `I just completed ${subjectName} with a score of ${percentage}%! 🎉`
+    };
+
+    return shareData;
+  };
+
+  const handleEmailShare = () => {
+    const subjectName = {
+      'phonics': 'Phonics',
+      'math': 'Math',
+      'reading': 'Reading',
+      'spelling': 'Spelling',
+      'science': 'Science',
+      'social': 'Social Studies',
+      'skipcounting': 'Skip Counting',
+      'art': 'Art',
+      'geography': 'Geography',
+      'history': 'History'
+    }[currentScreen] || currentScreen;
+
+    const percentage = Math.round((score / (currentQuestion * 10)) * 100);
+    const completionTime = new Date().toLocaleString();
+    
+    const emailSubject = `🎉 ${subjectName} Completion - Great Job!`;
+    const emailBody = `
+Hi! 
+
+I just completed the ${subjectName} module in Emmy's Learning Adventure! 
+
+📊 My Results:
+• Subject: ${subjectName}
+• Score: ${score} points
+• Percentage: ${percentage}%
+• Questions Answered: ${currentQuestion}
+• Correct Answers: ${Math.floor(score / 10)}
+• Completed: ${completionTime}
+
+${shareMessage || "I'm so proud of my progress! 🎉"}
+
+Keep encouraging my learning journey! 
+
+Love,
+Your Student 🌟
+    `.trim();
+
+    const mailtoLink = `mailto:${shareEmail}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+    window.open(mailtoLink);
+    setShowShareModal(false);
+    setShareEmail('');
+    setShareMessage('');
   };
 
   // Breadcrumb navigation helper
@@ -2270,14 +2351,96 @@ const EmmyStudyGame = () => {
   }
 
   if (currentScreen === 'complete') {
+    const percentage = Math.round((score / (currentQuestion * 10)) * 100);
+    const subjectName = {
+      'phonics': 'Phonics',
+      'math': 'Math', 
+      'reading': 'Reading',
+      'spelling': 'Spelling',
+      'science': 'Science',
+      'social': 'Social Studies',
+      'skipcounting': 'Skip Counting',
+      'art': 'Art',
+      'geography': 'Geography',
+      'history': 'History'
+    }[currentScreen] || currentScreen;
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-yellow-200 to-orange-300 p-8 flex items-center justify-center">
         <div className="max-w-2xl bg-white rounded-3xl shadow-2xl p-12 text-center">
           <div className="text-9xl mb-6">🏆</div>
           <h2 className="text-4xl md:text-5xl font-bold text-yellow-600 mb-4">Amazing Job!</h2>
-          <p className="text-3xl md:text-4xl font-bold text-purple-600 mb-8">Score: {score} ⭐</p>
-          <div onClick={() => { playSound('click'); resetGame(); }} className="inline-block px-12 py-6 text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full shadow-lg hover:scale-110 cursor-pointer">Play Again! 🎮</div>
+          <p className="text-3xl md:text-4xl font-bold text-purple-600 mb-4">Score: {score} ⭐</p>
+          <p className="text-xl text-gray-600 mb-8">You completed {subjectName} with {percentage}% accuracy!</p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div onClick={() => { playSound('click'); resetGame(); }} className="inline-block px-8 py-4 text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full shadow-lg hover:scale-110 cursor-pointer">Play Again! 🎮</div>
+            <div onClick={() => { playSound('click'); setShowShareModal(true); }} className="inline-block px-8 py-4 text-lg font-bold bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-full shadow-lg hover:scale-110 cursor-pointer">Share with Parents! 📧</div>
+          </div>
         </div>
+
+        {/* Share Modal */}
+        {showShareModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-3xl p-8 max-w-md mx-4 shadow-2xl">
+              <div className="text-center mb-6">
+                <div className="text-6xl mb-4">📧</div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-2">Share Your Success!</h3>
+                <p className="text-gray-600">Let your parents know about your amazing progress!</p>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Parent's Email</label>
+                  <input
+                    type="email"
+                    value={shareEmail}
+                    onChange={(e) => setShareEmail(e.target.value)}
+                    placeholder="mom@example.com or dad@example.com"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Personal Message (Optional)</label>
+                  <textarea
+                    value={shareMessage}
+                    onChange={(e) => setShareMessage(e.target.value)}
+                    placeholder="Add a personal message..."
+                    rows={3}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h4 className="font-semibold text-blue-800 mb-2">📊 Your Results:</h4>
+                  <div className="text-sm text-blue-700 space-y-1">
+                    <p>• Subject: {subjectName}</p>
+                    <p>• Score: {score} points</p>
+                    <p>• Accuracy: {percentage}%</p>
+                    <p>• Questions: {currentQuestion}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setShowShareModal(false)}
+                  className="flex-1 px-4 py-3 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleEmailShare}
+                  disabled={!shareEmail}
+                  className="flex-1 px-4 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-lg font-medium hover:from-green-600 hover:to-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                  Send Email 📧
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -2677,15 +2840,117 @@ const EmmyStudyGame = () => {
             </div>
           </div>
           
-          {/* Print Report Button */}
-          <div className="text-center mt-8">
-            <button 
-              onClick={() => window.print()}
-              className="px-8 py-4 bg-purple-500 text-white rounded-full font-bold text-lg hover:bg-purple-600 active:scale-95 transition-transform shadow-lg">
-              🖨️ Print Progress Report
-            </button>
+          {/* Print Report and Share Buttons */}
+          <div className="text-center mt-8 space-y-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button 
+                onClick={() => window.print()}
+                className="px-8 py-4 bg-purple-500 text-white rounded-full font-bold text-lg hover:bg-purple-600 active:scale-95 transition-transform shadow-lg">
+                🖨️ Print Progress Report
+              </button>
+              <button 
+                onClick={() => setShowShareModal(true)}
+                className="px-8 py-4 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-full font-bold text-lg hover:from-green-600 hover:to-blue-600 active:scale-95 transition-transform shadow-lg">
+                📧 Share Progress with Parents
+              </button>
+            </div>
           </div>
         </div>
+
+        {/* Progress Share Modal */}
+        {showShareModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-3xl p-8 max-w-lg mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+              <div className="text-center mb-6">
+                <div className="text-6xl mb-4">📊</div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-2">Share Learning Progress!</h3>
+                <p className="text-gray-600">Let parents know about your amazing learning journey!</p>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Parent's Email</label>
+                  <input
+                    type="email"
+                    value={shareEmail}
+                    onChange={(e) => setShareEmail(e.target.value)}
+                    placeholder="mom@example.com or dad@example.com"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Personal Message (Optional)</label>
+                  <textarea
+                    value={shareMessage}
+                    onChange={(e) => setShareMessage(e.target.value)}
+                    placeholder="Add a personal message about your learning..."
+                    rows={3}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h4 className="font-semibold text-blue-800 mb-2">📊 Overall Progress Summary:</h4>
+                  <div className="text-sm text-blue-700 space-y-1">
+                    <p>• Total Points: {progress.totalScore}</p>
+                    <p>• Subjects Completed: {completedSubjects}/{totalSubjects}</p>
+                    <p>• Overall Accuracy: {accuracy}%</p>
+                    <p>• Questions Answered: {progress.stats.totalQuestionsAnswered}</p>
+                    <p>• Achievements Earned: {progress.achievements.length}</p>
+                    <p>• Learning Streak: {learningStreak} days</p>
+                    {favoriteSubject && <p>• Favorite Subject: {favoriteSubject.name}</p>}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setShowShareModal(false)}
+                  className="flex-1 px-4 py-3 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    const emailSubject = `🎉 Learning Progress Update - Great Job!`;
+                    const emailBody = `
+Hi! 
+
+I wanted to share my amazing learning progress in Emmy's Learning Adventure! 
+
+📊 My Overall Progress:
+• Total Points: ${progress.totalScore}
+• Subjects Completed: ${completedSubjects}/${totalSubjects}
+• Overall Accuracy: ${accuracy}%
+• Questions Answered: ${progress.stats.totalQuestionsAnswered}
+• Achievements Earned: ${progress.achievements.length}
+• Learning Streak: ${learningStreak} days
+${favoriteSubject ? `• Favorite Subject: ${favoriteSubject.name}` : ''}
+
+${shareMessage || "I'm so proud of my learning journey! 🎉"}
+
+Keep encouraging my education! 
+
+Love,
+Your Student 🌟
+                    `.trim();
+
+                    const mailtoLink = `mailto:${shareEmail}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+                    window.open(mailtoLink);
+                    setShowShareModal(false);
+                    setShareEmail('');
+                    setShareMessage('');
+                  }}
+                  disabled={!shareEmail}
+                  className="flex-1 px-4 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-lg font-medium hover:from-green-600 hover:to-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                >
+                  Send Email 📧
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
