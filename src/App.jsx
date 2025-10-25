@@ -251,7 +251,55 @@ const EmmyStudyGame = () => {
     return shareData;
   };
 
-  const handleEmailShare = () => {
+  const handleProgressEmailShare = (service = 'mailto') => {
+    const emailSubject = `🎉 Learning Progress Update - Great Job!`;
+    const emailBody = `
+Hi! 
+
+I wanted to share my amazing learning progress in Emmy's Learning Adventure! 
+
+📊 My Overall Progress:
+• Total Points: ${progress.totalScore}
+• Subjects Completed: ${completedSubjects}/${totalSubjects}
+• Overall Accuracy: ${accuracy}%
+• Questions Answered: ${progress.stats?.totalQuestionsAnswered || 0}
+• Achievements Earned: ${progress.achievements.length}
+• Learning Streak: ${learningStreak} days
+${favoriteSubject ? `• Favorite Subject: ${favoriteSubject.name}` : ''}
+
+${shareMessage || "I'm so proud of my learning journey! 🎉"}
+
+Keep encouraging my education! 
+
+Love,
+Your Student 🌟
+    `.trim();
+
+    let shareUrl;
+    
+    switch (service) {
+      case 'gmail':
+        shareUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(shareEmail)}&su=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+        break;
+      case 'outlook':
+        shareUrl = `https://outlook.live.com/mail/0/deeplink/compose?to=${encodeURIComponent(shareEmail)}&subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+        break;
+      case 'yahoo':
+        shareUrl = `https://compose.mail.yahoo.com/?to=${encodeURIComponent(shareEmail)}&subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+        break;
+      case 'mailto':
+      default:
+        shareUrl = `mailto:${shareEmail}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+        break;
+    }
+    
+    window.open(shareUrl, '_blank');
+    setShowShareModal(false);
+    setShareEmail('');
+    setShareMessage('');
+  };
+
+  const handleEmailShare = (service = 'mailto') => {
     const subjectName = {
       'phonics': 'Phonics',
       'math': 'Math',
@@ -291,8 +339,25 @@ Love,
 Your Student 🌟
     `.trim();
 
-    const mailtoLink = `mailto:${shareEmail}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-    window.open(mailtoLink);
+    let shareUrl;
+    
+    switch (service) {
+      case 'gmail':
+        shareUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(shareEmail)}&su=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+        break;
+      case 'outlook':
+        shareUrl = `https://outlook.live.com/mail/0/deeplink/compose?to=${encodeURIComponent(shareEmail)}&subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+        break;
+      case 'yahoo':
+        shareUrl = `https://compose.mail.yahoo.com/?to=${encodeURIComponent(shareEmail)}&subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+        break;
+      case 'mailto':
+      default:
+        shareUrl = `mailto:${shareEmail}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+        break;
+    }
+    
+    window.open(shareUrl, '_blank');
     setShowShareModal(false);
     setShareEmail('');
     setShareMessage('');
@@ -3115,20 +3180,46 @@ Your Student 🌟
                 </div>
               </div>
               
-              <div className="flex gap-3 mt-6">
-                <button
-                  onClick={() => setShowShareModal(false)}
-                  className="flex-1 px-4 py-3 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleEmailShare}
-                  disabled={!shareEmail}
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-lg font-medium hover:from-green-600 hover:to-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                >
-                  Send Email 📧
-                </button>
+              <div className="space-y-3 mt-6">
+                <div className="text-sm font-medium text-gray-700 mb-2">Choose Email Service:</div>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => handleEmailShare('gmail')}
+                    disabled={!shareEmail}
+                    className="px-3 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
+                  >
+                    📧 Gmail
+                  </button>
+                  <button
+                    onClick={() => handleEmailShare('outlook')}
+                    disabled={!shareEmail}
+                    className="px-3 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
+                  >
+                    📧 Outlook
+                  </button>
+                  <button
+                    onClick={() => handleEmailShare('yahoo')}
+                    disabled={!shareEmail}
+                    className="px-3 py-2 bg-purple-500 text-white rounded-lg font-medium hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
+                  >
+                    📧 Yahoo
+                  </button>
+                  <button
+                    onClick={() => handleEmailShare('mailto')}
+                    disabled={!shareEmail}
+                    className="px-3 py-2 bg-gray-500 text-white rounded-lg font-medium hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
+                  >
+                    📧 Default
+                  </button>
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <button
+                    onClick={() => setShowShareModal(false)}
+                    className="flex-1 px-4 py-3 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -3603,42 +3694,39 @@ Your Student 🌟
                 >
                   Cancel
                 </button>
-                <button
-                  onClick={() => {
-                    const emailSubject = `🎉 Learning Progress Update - Great Job!`;
-                    const emailBody = `
-Hi! 
-
-I wanted to share my amazing learning progress in Emmy's Learning Adventure! 
-
-📊 My Overall Progress:
-• Total Points: ${progress.totalScore}
-• Subjects Completed: ${completedSubjects}/${totalSubjects}
-• Overall Accuracy: ${accuracy}%
-• Questions Answered: ${progress.stats?.totalQuestionsAnswered || 0}
-• Achievements Earned: ${progress.achievements.length}
-• Learning Streak: ${learningStreak} days
-${favoriteSubject ? `• Favorite Subject: ${favoriteSubject.name}` : ''}
-
-${shareMessage || "I'm so proud of my learning journey! 🎉"}
-
-Keep encouraging my education! 
-
-Love,
-Your Student 🌟
-                    `.trim();
-
-                    const mailtoLink = `mailto:${shareEmail}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-                    window.open(mailtoLink);
-                    setShowShareModal(false);
-                    setShareEmail('');
-                    setShareMessage('');
-                  }}
-                  disabled={!shareEmail}
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-lg font-medium hover:from-green-600 hover:to-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                >
-                  Send Email 📧
-                </button>
+                <div className="space-y-3">
+                  <div className="text-sm font-medium text-gray-700 mb-2">Choose Email Service:</div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => handleProgressEmailShare('gmail')}
+                      disabled={!shareEmail}
+                      className="px-3 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
+                    >
+                      📧 Gmail
+                    </button>
+                    <button
+                      onClick={() => handleProgressEmailShare('outlook')}
+                      disabled={!shareEmail}
+                      className="px-3 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
+                    >
+                      📧 Outlook
+                    </button>
+                    <button
+                      onClick={() => handleProgressEmailShare('yahoo')}
+                      disabled={!shareEmail}
+                      className="px-3 py-2 bg-purple-500 text-white rounded-lg font-medium hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
+                    >
+                      📧 Yahoo
+                    </button>
+                    <button
+                      onClick={() => handleProgressEmailShare('mailto')}
+                      disabled={!shareEmail}
+                      className="px-3 py-2 bg-gray-500 text-white rounded-lg font-medium hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
+                    >
+                      📧 Default
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
