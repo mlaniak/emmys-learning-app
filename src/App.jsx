@@ -262,15 +262,10 @@ const EmmyStudyGame = () => {
     setEmailSent(false);
     
     try {
-      // EmailJS configuration - you'll need to set up your own EmailJS account
-      // 1. Go to https://www.emailjs.com/ and create a free account
-      // 2. Create an email service (Gmail, Outlook, etc.)
-      // 3. Create an email template with variables: {{to_email}}, {{subject}}, {{message}}, {{from_name}}, {{student_name}}
-      // 4. Get your Service ID, Template ID, and Public Key from EmailJS dashboard
-      // 5. Replace the values below with your actual EmailJS credentials
-      const serviceId = 'service_emmy_learning'; // Replace with your EmailJS service ID
-      const templateId = 'template_emmy_learning'; // Replace with your EmailJS template ID
-      const publicKey = 'your_public_key'; // Replace with your EmailJS public key
+      // EmailJS configuration - using your actual EmailJS credentials
+      const serviceId = 'service_gb588mf'; // Your Gmail service ID
+      const templateId = 'template_emmy_learning'; // You'll need to create this template
+      const publicKey = '26x_rZp9m4ZPVymvg'; // You'll need to get this from EmailJS dashboard
       
       const templateParams = {
         to_email: shareEmail,
