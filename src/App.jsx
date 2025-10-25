@@ -264,13 +264,8 @@ const EmmyStudyGame = () => {
     try {
       // EmailJS configuration - using your actual EmailJS credentials
       const serviceId = 'service_gb588mf'; // Your Gmail service ID
-      const templateId = 'template_emmy_learning'; // You need to create this template in EmailJS dashboard
+      const templateId = 'template_3rem6dk'; // Your existing EmailJS template
       const publicKey = '26x_rZp9m4ZPVymvg'; // Your EmailJS public key
-      
-      // Check if template exists, if not, show helpful error
-      if (!templateId || templateId === 'template_emmy_learning') {
-        throw new Error('Email template not found. Please create a template called "template_emmy_learning" in your EmailJS dashboard with variables: {{to_email}}, {{subject}}, {{message}}, {{from_name}}, {{student_name}}');
-      }
       
       const templateParams = {
         to_email: shareEmail,
