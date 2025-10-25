@@ -275,6 +275,13 @@ const EmmyStudyGame = () => {
         student_name: 'Emmy'
       };
       
+      console.log('Sending email with params:', {
+        serviceId,
+        templateId,
+        publicKey,
+        templateParams
+      });
+      
       const result = await emailjs.send(serviceId, templateId, templateParams, publicKey);
       
       if (result.status === 200) {
@@ -288,12 +295,22 @@ const EmmyStudyGame = () => {
       }
     } catch (error) {
       console.error('Email sending failed:', error);
+      console.error('Error details:', {
+        status: error.status,
+        text: error.text,
+        message: error.message,
+        fullError: error
+      });
       
       // Check if it's a template error and provide helpful message
       if (error.text && error.text.includes('template ID not found')) {
         alert('Email template not found! Please create a template called "template_emmy_learning" in your EmailJS dashboard. For now, please use Gmail, Outlook, or Yahoo options.');
+      } else if (error.text && error.text.includes('Public Key is invalid')) {
+        alert('EmailJS Public Key is invalid. Please check your EmailJS dashboard for the correct public key.');
+      } else if (error.text && error.text.includes('Service ID')) {
+        alert('EmailJS Service ID is invalid. Please check your EmailJS dashboard for the correct service ID.');
       } else {
-        alert('Failed to send email. Please try using one of the email service options instead.');
+        alert(`Failed to send email: ${error.text || error.message || 'Unknown error'}. Please try using one of the email service options instead.`);
       }
     } finally {
       setIsSendingEmail(false);
