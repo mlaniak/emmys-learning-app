@@ -5,6 +5,9 @@ import Week9Newsletter from './Week9Newsletter';
 import Week8Newsletter from './Week8Newsletter';
 import NewsletterSelector from './NewsletterSelector';
 
+// EmailJS for direct email sending
+import emailjs from '@emailjs/browser';
+
 const EmmyStudyGame = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -52,6 +55,8 @@ const EmmyStudyGame = () => {
   const [selectedQuestionCount, setSelectedQuestionCount] = useState(10);
   const [customQuestionCount, setCustomQuestionCount] = useState('');
   const [pendingGame, setPendingGame] = useState(null);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
   const [progress, setProgress] = useState(() => {
     const saved = localStorage.getItem('emmy-learning-progress');
     return saved ? JSON.parse(saved) : {
@@ -251,6 +256,49 @@ const EmmyStudyGame = () => {
     return shareData;
   };
 
+  // Direct email sending using EmailJS
+  const sendDirectEmail = async (emailData) => {
+    setIsSendingEmail(true);
+    setEmailSent(false);
+    
+    try {
+      // EmailJS configuration - you'll need to set up your own EmailJS account
+      // 1. Go to https://www.emailjs.com/ and create a free account
+      // 2. Create an email service (Gmail, Outlook, etc.)
+      // 3. Create an email template with variables: {{to_email}}, {{subject}}, {{message}}, {{from_name}}, {{student_name}}
+      // 4. Get your Service ID, Template ID, and Public Key from EmailJS dashboard
+      // 5. Replace the values below with your actual EmailJS credentials
+      const serviceId = 'service_emmy_learning'; // Replace with your EmailJS service ID
+      const templateId = 'template_emmy_learning'; // Replace with your EmailJS template ID
+      const publicKey = 'your_public_key'; // Replace with your EmailJS public key
+      
+      const templateParams = {
+        to_email: shareEmail,
+        subject: emailData.subject,
+        message: emailData.body,
+        from_name: 'Emmy\'s Learning Adventure',
+        student_name: 'Emmy'
+      };
+      
+      const result = await emailjs.send(serviceId, templateId, templateParams, publicKey);
+      
+      if (result.status === 200) {
+        setEmailSent(true);
+        setTimeout(() => {
+          setShowShareModal(false);
+          setShareEmail('');
+          setShareMessage('');
+          setEmailSent(false);
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('Email sending failed:', error);
+      alert('Failed to send email. Please try using one of the email service options instead.');
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
+
   const handleProgressEmailShare = (service = 'mailto') => {
     const emailSubject = `🎉 Learning Progress Update - Great Job!`;
     const emailBody = `
@@ -274,6 +322,12 @@ Keep encouraging my education!
 Love,
 Your Student 🌟
     `.trim();
+
+    // Handle direct email sending
+    if (service === 'direct') {
+      sendDirectEmail({ subject: emailSubject, body: emailBody });
+      return;
+    }
 
     let shareUrl;
     
@@ -338,6 +392,12 @@ Keep encouraging my learning journey!
 Love,
 Your Student 🌟
     `.trim();
+
+    // Handle direct email sending
+    if (service === 'direct') {
+      sendDirectEmail({ subject: emailSubject, body: emailBody });
+      return;
+    }
 
     let shareUrl;
     
@@ -3183,9 +3243,16 @@ Your Student 🌟
               <div className="space-y-3 mt-6">
                 <div className="text-sm font-medium text-gray-700 mb-2">Choose Email Service:</div>
                 <div className="grid grid-cols-2 gap-2">
-                  <button
+                <button
+                    onClick={() => handleEmailShare('direct')}
+                    disabled={!shareEmail || isSendingEmail}
+                    className="px-3 py-2 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
+                >
+                    {isSendingEmail ? '⏳ Sending...' : '📧 Send Direct'}
+                </button>
+                <button
                     onClick={() => handleEmailShare('gmail')}
-                    disabled={!shareEmail}
+                  disabled={!shareEmail}
                     className="px-3 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
                   >
                     📧 Gmail
@@ -3210,8 +3277,14 @@ Your Student 🌟
                     className="px-3 py-2 bg-gray-500 text-white rounded-lg font-medium hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
                   >
                     📧 Default
-                  </button>
-                </div>
+                </button>
+              </div>
+                
+                {emailSent && (
+                  <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
+                    ✅ Email sent successfully!
+                  </div>
+                )}
                 <div className="flex gap-3 pt-2">
                   <button
                     onClick={() => setShowShareModal(false)}
@@ -3697,9 +3770,16 @@ Your Student 🌟
                 <div className="space-y-3">
                   <div className="text-sm font-medium text-gray-700 mb-2">Choose Email Service:</div>
                   <div className="grid grid-cols-2 gap-2">
+                <button
+                      onClick={() => handleProgressEmailShare('direct')}
+                      disabled={!shareEmail || isSendingEmail}
+                      className="px-3 py-2 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
+                    >
+                      {isSendingEmail ? '⏳ Sending...' : '📧 Send Direct'}
+                    </button>
                     <button
                       onClick={() => handleProgressEmailShare('gmail')}
-                      disabled={!shareEmail}
+                  disabled={!shareEmail}
                       className="px-3 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
                     >
                       📧 Gmail
@@ -3724,8 +3804,14 @@ Your Student 🌟
                       className="px-3 py-2 bg-gray-500 text-white rounded-lg font-medium hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
                     >
                       📧 Default
-                    </button>
-                  </div>
+                </button>
+              </div>
+                  
+                  {emailSent && (
+                    <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
+                      ✅ Email sent successfully!
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
