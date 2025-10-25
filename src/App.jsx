@@ -100,9 +100,9 @@ const EmmyStudyGame = () => {
     const newProgress = {
       ...progress,
       questionHistory: {
-        ...progress.questionHistory,
+        ...(progress.questionHistory || {}),
         [subject]: {
-          ...progress.questionHistory[subject],
+          ...(progress.questionHistory?.[subject] || {}),
           [questionId]: Date.now()
         }
       }
@@ -116,14 +116,23 @@ const EmmyStudyGame = () => {
     const oneWeek = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
     const cleanedHistory = {};
     
+    // Check if questionHistory exists and is an object
+    if (!progress.questionHistory || typeof progress.questionHistory !== 'object') {
+      return;
+    }
+    
     Object.keys(progress.questionHistory).forEach(subject => {
       const subjectHistory = progress.questionHistory[subject];
+      if (!subjectHistory || typeof subjectHistory !== 'object') {
+        return;
+      }
+      
       const cleanedSubject = {};
       
       Object.keys(subjectHistory).forEach(questionId => {
         const lastAsked = subjectHistory[questionId];
         // Keep questions asked within the last week
-        if (currentTime - lastAsked < oneWeek) {
+        if (lastAsked && currentTime - lastAsked < oneWeek) {
           cleanedSubject[questionId] = lastAsked;
         }
       });
@@ -157,8 +166,8 @@ const EmmyStudyGame = () => {
     const oneDay = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
     const oneWeek = 7 * oneDay; // 7 days in milliseconds
     
-    // Get question history for this subject
-    const subjectHistory = progress.questionHistory[subject] || {};
+    // Get question history for this subject with null check
+    const subjectHistory = (progress.questionHistory && progress.questionHistory[subject]) || {};
     
     // Separate questions into categories
     const recentQuestions = []; // Asked within last 24 hours
@@ -544,8 +553,10 @@ Your Student 🌟
 
   // Clean up question history on app start
   useEffect(() => {
-    cleanupQuestionHistory();
-  }, []);
+    if (progress && progress.questionHistory) {
+      cleanupQuestionHistory();
+    }
+  }, [progress]);
 
   // Daily Challenge System
   const generateDailyChallenge = () => {
