@@ -64,6 +64,7 @@ const EmmyStudyGame = () => {
       selectedTheme: 'default',
       avatar: 'default',
       certificates: [],
+      questionHistory: {}, // Track previously asked questions by subject
       stats: {
         totalQuestionsAnswered: 0,
         correctAnswers: 0,
@@ -92,6 +93,121 @@ const EmmyStudyGame = () => {
   const saveProgress = (newProgress) => {
     setProgress(newProgress);
     localStorage.setItem('emmy-learning-progress', JSON.stringify(newProgress));
+  };
+
+  // Track question history to avoid repeats
+  const trackQuestionHistory = (subject, questionId) => {
+    const newProgress = {
+      ...progress,
+      questionHistory: {
+        ...progress.questionHistory,
+        [subject]: {
+          ...progress.questionHistory[subject],
+          [questionId]: Date.now()
+        }
+      }
+    };
+    saveProgress(newProgress);
+  };
+
+  // Clean up old question history to prevent storage bloat
+  const cleanupQuestionHistory = () => {
+    const currentTime = Date.now();
+    const oneWeek = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+    const cleanedHistory = {};
+    
+    Object.keys(progress.questionHistory).forEach(subject => {
+      const subjectHistory = progress.questionHistory[subject];
+      const cleanedSubject = {};
+      
+      Object.keys(subjectHistory).forEach(questionId => {
+        const lastAsked = subjectHistory[questionId];
+        // Keep questions asked within the last week
+        if (currentTime - lastAsked < oneWeek) {
+          cleanedSubject[questionId] = lastAsked;
+        }
+      });
+      
+      // Only keep subjects that have questions
+      if (Object.keys(cleanedSubject).length > 0) {
+        cleanedHistory[subject] = cleanedSubject;
+      }
+    });
+    
+    if (JSON.stringify(cleanedHistory) !== JSON.stringify(progress.questionHistory)) {
+      const newProgress = {
+        ...progress,
+        questionHistory: cleanedHistory
+      };
+      saveProgress(newProgress);
+    }
+  };
+
+  // Get question ID for tracking (create a unique identifier)
+  const getQuestionId = (question) => {
+    if (question.word) {
+      return `${question.word}-${question.question}`;
+    }
+    return question.question || question.answer || JSON.stringify(question);
+  };
+
+  // Enhanced shuffle function that avoids recent questions
+  const smartShuffle = (questions, subject, questionCount) => {
+    const currentTime = Date.now();
+    const oneDay = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+    const oneWeek = 7 * oneDay; // 7 days in milliseconds
+    
+    // Get question history for this subject
+    const subjectHistory = progress.questionHistory[subject] || {};
+    
+    // Separate questions into categories
+    const recentQuestions = []; // Asked within last 24 hours
+    const oldQuestions = []; // Asked more than 24 hours ago
+    const newQuestions = []; // Never asked
+    
+    questions.forEach((question, index) => {
+      const questionId = getQuestionId(question);
+      const lastAsked = subjectHistory[questionId];
+      
+      if (!lastAsked) {
+        newQuestions.push({ question, index });
+      } else if (currentTime - lastAsked < oneDay) {
+        recentQuestions.push({ question, index });
+      } else {
+        oldQuestions.push({ question, index });
+      }
+    });
+    
+    // Prioritize new questions, then old questions, avoid recent ones
+    const prioritizedQuestions = [
+      ...newQuestions,
+      ...oldQuestions,
+      ...recentQuestions // Only include recent ones if we don't have enough
+    ];
+    
+    // Shuffle within each category to maintain some randomness
+    const shuffleCategory = (category) => {
+      const shuffled = [...category];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    };
+    
+    const shuffledNew = shuffleCategory(newQuestions);
+    const shuffledOld = shuffleCategory(oldQuestions);
+    const shuffledRecent = shuffleCategory(recentQuestions);
+    
+    // Combine with priority: new > old > recent
+    const finalQuestions = [
+      ...shuffledNew,
+      ...shuffledOld,
+      ...shuffledRecent
+    ];
+    
+    // Take only the requested number of questions
+    return finalQuestions.slice(0, questionCount).map(item => item.question);
   };
 
   // Share results functionality
@@ -426,6 +542,11 @@ Your Student 🌟
     return newConfidence;
   };
 
+  // Clean up question history on app start
+  useEffect(() => {
+    cleanupQuestionHistory();
+  }, []);
+
   // Daily Challenge System
   const generateDailyChallenge = () => {
     const today = new Date().toDateString();
@@ -708,7 +829,16 @@ Your Student 🌟
       { word: 'rich', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '💰' },
       { word: 'wish', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '🌟' },
       { word: 'much', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '📏' },
-      { word: 'rush', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '🏃' }
+      { word: 'rush', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '🏃' },
+      { word: 'bath', question: 'Does this word have TH or T?', options: ['TH', 'T'], correct: 'TH', image: '🛁' },
+      { word: 'lunch', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '🍽️' },
+      { word: 'brush', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '🪥' },
+      { word: 'catch', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '⚾' },
+      { word: 'flash', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '⚡' },
+      { word: 'match', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '🔥' },
+      { word: 'crash', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '💥' },
+      { word: 'patch', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '🩹' },
+      { word: 'smash', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '💥' }
     ],
     medium: [
     { word: 'when', question: 'Does this word have WH or TH?', options: ['WH', 'TH'], correct: 'WH', image: '🕐' },
@@ -726,7 +856,16 @@ Your Student 🌟
       { word: 'elephant', question: 'Does this word have PH or F?', options: ['PH', 'F'], correct: 'PH', image: '🐘' },
       { word: 'whale', question: 'Does this word have WH or W?', options: ['WH', 'W'], correct: 'WH', image: '🐋' },
       { word: 'alphabet', question: 'Does this word have PH or F?', options: ['PH', 'F'], correct: 'PH', image: '🔤' },
-      { word: 'wheel', question: 'Does this word have WH or W?', options: ['WH', 'W'], correct: 'WH', image: '🎡' }
+      { word: 'wheel', question: 'Does this word have WH or W?', options: ['WH', 'W'], correct: 'WH', image: '🎡' },
+      { word: 'throw', question: 'Does this word have TH or T?', options: ['TH', 'T'], correct: 'TH', image: '🎯' },
+      { word: 'phrase', question: 'Does this word have PH or F?', options: ['PH', 'F'], correct: 'PH', image: '💬' },
+      { word: 'three', question: 'Does this word have TH or T?', options: ['TH', 'T'], correct: 'TH', image: '3️⃣' },
+      { word: 'whisper', question: 'Does this word have WH or W?', options: ['WH', 'W'], correct: 'WH', image: '🤫' },
+      { word: 'phrase', question: 'Does this word have PH or F?', options: ['PH', 'F'], correct: 'PH', image: '💬' },
+      { word: 'through', question: 'Does this word have TH or T?', options: ['TH', 'T'], correct: 'TH', image: '🚪' },
+      { word: 'whistle', question: 'Does this word have WH or W?', options: ['WH', 'W'], correct: 'WH', image: '🔊' },
+      { word: 'physics', question: 'Does this word have PH or F?', options: ['PH', 'F'], correct: 'PH', image: '⚗️' },
+      { word: 'thunder', question: 'Does this word have TH or T?', options: ['TH', 'T'], correct: 'TH', image: '⛈️' }
     ],
     hard: [
       { word: 'photo', question: 'Does this word have PH or F?', options: ['PH', 'F'], correct: 'PH', image: '📷' },
@@ -753,7 +892,22 @@ Your Student 🌟
       { word: 'sheriff', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '👮' },
       { word: 'pharmacy', question: 'Does this word have PH or F?', options: ['PH', 'F'], correct: 'PH', image: '💊' },
       { word: 'whichever', question: 'Does this word have WH or W?', options: ['WH', 'W'], correct: 'WH', image: '🔄' },
-      { word: 'champion', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '🏆' }
+      { word: 'champion', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '🏆' },
+      { word: 'sheriff', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '👮' },
+      { word: 'pharmacy', question: 'Does this word have PH or F?', options: ['PH', 'F'], correct: 'PH', image: '💊' },
+      { word: 'whichever', question: 'Does this word have WH or W?', options: ['WH', 'W'], correct: 'WH', image: '🔄' },
+      { word: 'chocolate', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '🍫' },
+      { word: 'sherbet', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '🍧' },
+      { word: 'philosophy', question: 'Does this word have PH or F?', options: ['PH', 'F'], correct: 'PH', image: '🤔' },
+      { word: 'whisper', question: 'Does this word have WH or W?', options: ['WH', 'W'], correct: 'WH', image: '🤫' },
+      { word: 'chemistry', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '🧪' },
+      { word: 'shampoo', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '🧴' },
+      { word: 'phantom', question: 'Does this word have PH or F?', options: ['PH', 'F'], correct: 'PH', image: '👻' },
+      { word: 'whistle', question: 'Does this word have WH or W?', options: ['WH', 'W'], correct: 'WH', image: '🔊' },
+      { word: 'challenge', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '🎯' },
+      { word: 'sheriff', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '👮' },
+      { word: 'pharmacy', question: 'Does this word have PH or F?', options: ['PH', 'F'], correct: 'PH', image: '💊' },
+      { word: 'whichever', question: 'Does this word have WH or W?', options: ['WH', 'W'], correct: 'WH', image: '🔄' }
     ]
   };
 
@@ -809,7 +963,22 @@ Your Student 🌟
       { question: 'How many sides does a circle have?', options: ['0', '1'], correct: '0', emoji: '⭕' },
       { question: 'What is 2 + 5?', options: ['6', '7'], correct: '7', emoji: '➕' },
       { question: 'What is 9 - 3?', options: ['5', '6'], correct: '6', emoji: '➖' },
-      { question: 'How many wheels on a tricycle?', options: ['2', '3'], correct: '3', emoji: '🚲' }
+      { question: 'How many wheels on a tricycle?', options: ['2', '3'], correct: '3', emoji: '🚲' },
+      { question: 'What is 3 + 1?', options: ['3', '4'], correct: '4', emoji: '➕' },
+      { question: 'What is 5 - 1?', options: ['3', '4'], correct: '4', emoji: '➖' },
+      { question: 'How many legs does a spider have?', options: ['6', '8'], correct: '8', emoji: '🕷️' },
+      { question: 'What is 2 + 1?', options: ['2', '3'], correct: '3', emoji: '➕' },
+      { question: 'What is 4 - 1?', options: ['2', '3'], correct: '3', emoji: '➖' },
+      { question: 'How many sides does a pentagon have?', options: ['4', '5'], correct: '5', emoji: '⬟' },
+      { question: 'What is 1 + 2?', options: ['2', '3'], correct: '3', emoji: '➕' },
+      { question: 'What is 6 - 3?', options: ['2', '3'], correct: '3', emoji: '➖' },
+      { question: 'How many wheels on a unicycle?', options: ['1', '2'], correct: '1', emoji: '🚲' },
+      { question: 'What is 4 + 0?', options: ['3', '4'], correct: '4', emoji: '➕' },
+      { question: 'What is 7 - 4?', options: ['2', '3'], correct: '3', emoji: '➖' },
+      { question: 'How many corners does a triangle have?', options: ['3', '4'], correct: '3', emoji: '🔺' },
+      { question: 'What is 0 + 3?', options: ['2', '3'], correct: '3', emoji: '➕' },
+      { question: 'What is 5 - 2?', options: ['2', '3'], correct: '3', emoji: '➖' },
+      { question: 'How many wheels on a motorcycle?', options: ['1', '2'], correct: '2', emoji: '🏍️' }
     ],
     medium: [
     { question: 'Which number is GREATER?', options: ['47', '52'], correct: '52', emoji: '🔢' },
@@ -870,7 +1039,22 @@ Your Student 🌟
       { question: 'Which is smaller: 39 or 93?', options: ['39', '93'], correct: '39', emoji: '🔢' },
       { question: 'What is 6 + 8?', options: ['13', '14'], correct: '14', emoji: '➕' },
       { question: 'What is 18 - 5?', options: ['12', '13'], correct: '13', emoji: '➖' },
-      { question: 'How many tens in 96?', options: ['9', '6'], correct: '9', emoji: '🎯' }
+      { question: 'How many tens in 96?', options: ['9', '6'], correct: '9', emoji: '🎯' },
+      { question: 'What is 2 × 3?', options: ['5', '6'], correct: '6', emoji: '✖️' },
+      { question: 'What is 4 × 2?', options: ['7', '8'], correct: '8', emoji: '✖️' },
+      { question: 'What is 3 × 3?', options: ['8', '9'], correct: '9', emoji: '✖️' },
+      { question: 'What is 5 × 2?', options: ['9', '10'], correct: '10', emoji: '✖️' },
+      { question: 'What is 2 × 4?', options: ['7', '8'], correct: '8', emoji: '✖️' },
+      { question: 'What is 3 × 2?', options: ['5', '6'], correct: '6', emoji: '✖️' },
+      { question: 'What is 4 × 3?', options: ['11', '12'], correct: '12', emoji: '✖️' },
+      { question: 'What is 5 × 3?', options: ['14', '15'], correct: '15', emoji: '✖️' },
+      { question: 'What is 2 × 5?', options: ['9', '10'], correct: '10', emoji: '✖️' },
+      { question: 'What is 6 ÷ 2?', options: ['2', '3'], correct: '3', emoji: '➗' },
+      { question: 'What is 8 ÷ 2?', options: ['3', '4'], correct: '4', emoji: '➗' },
+      { question: 'What is 9 ÷ 3?', options: ['2', '3'], correct: '3', emoji: '➗' },
+      { question: 'What is 10 ÷ 2?', options: ['4', '5'], correct: '5', emoji: '➗' },
+      { question: 'What is 12 ÷ 3?', options: ['3', '4'], correct: '4', emoji: '➗' },
+      { question: 'What is 15 ÷ 3?', options: ['4', '5'], correct: '5', emoji: '➗' }
     ],
     hard: [
       { question: 'Which is greater: 67 or 76?', options: ['67', '76'], correct: '76', emoji: '🔢' },
@@ -932,7 +1116,21 @@ Your Student 🌟
       { question: 'How many hundreds in 1234?', options: ['12', '2'], correct: '12', emoji: '🎯' },
       { question: 'What is 567 + 890?', options: ['1456', '1457'], correct: '1457', emoji: '➕' },
       { question: 'What is 2000 - 567?', options: ['1432', '1433'], correct: '1433', emoji: '➖' },
-      { question: 'Which is greater: 2345 or 2354?', options: ['2345', '2354'], correct: '2354', emoji: '🔢' }
+      { question: 'Which is greater: 2345 or 2354?', options: ['2345', '2354'], correct: '2354', emoji: '🔢' },
+      { question: 'What is 6 × 7?', options: ['41', '42'], correct: '42', emoji: '✖️' },
+      { question: 'What is 8 × 4?', options: ['31', '32'], correct: '32', emoji: '✖️' },
+      { question: 'What is 7 × 6?', options: ['41', '42'], correct: '42', emoji: '✖️' },
+      { question: 'What is 9 × 5?', options: ['44', '45'], correct: '45', emoji: '✖️' },
+      { question: 'What is 6 × 8?', options: ['47', '48'], correct: '48', emoji: '✖️' },
+      { question: 'What is 7 × 7?', options: ['48', '49'], correct: '49', emoji: '✖️' },
+      { question: 'What is 8 × 6?', options: ['47', '48'], correct: '48', emoji: '✖️' },
+      { question: 'What is 9 × 4?', options: ['35', '36'], correct: '36', emoji: '✖️' },
+      { question: 'What is 42 ÷ 6?', options: ['6', '7'], correct: '7', emoji: '➗' },
+      { question: 'What is 32 ÷ 4?', options: ['7', '8'], correct: '8', emoji: '➗' },
+      { question: 'What is 45 ÷ 5?', options: ['8', '9'], correct: '9', emoji: '➗' },
+      { question: 'What is 48 ÷ 6?', options: ['7', '8'], correct: '8', emoji: '➗' },
+      { question: 'What is 36 ÷ 4?', options: ['8', '9'], correct: '9', emoji: '➗' },
+      { question: 'What is 49 ÷ 7?', options: ['6', '7'], correct: '7', emoji: '➗' }
     ]
   };
 
@@ -973,7 +1171,26 @@ Your Student 🌟
     { question: 'HOW does the character grow?', answer: 'Solution', options: ['Characters', 'Setting', 'Solution'], emoji: '🌱' },
     { question: 'WHO is the narrator?', answer: 'Characters', options: ['Characters', 'Setting', 'Problem'], emoji: '🎤' },
     { question: 'WHERE does the resolution occur?', answer: 'Setting', options: ['Characters', 'Setting', 'Problem'], emoji: '🏁' },
-    { question: 'WHAT is the moral of the story?', answer: 'Solution', options: ['Characters', 'Setting', 'Solution'], emoji: '💎' }
+    { question: 'WHAT is the moral of the story?', answer: 'Solution', options: ['Characters', 'Setting', 'Solution'], emoji: '💎' },
+    { question: 'WHO is the hero in the story?', answer: 'Characters', options: ['Characters', 'Setting', 'Problem'], emoji: '🦸' },
+    { question: 'WHERE does the adventure begin?', answer: 'Setting', options: ['Characters', 'Setting', 'Problem'], emoji: '🚀' },
+    { question: 'WHAT makes the character happy?', answer: 'Solution', options: ['Characters', 'Setting', 'Solution'], emoji: '😊' },
+    { question: 'WHO helps the main character?', answer: 'Characters', options: ['Characters', 'Setting', 'Problem'], emoji: '🤝' },
+    { question: 'WHERE does the character live?', answer: 'Setting', options: ['Characters', 'Setting', 'Problem'], emoji: '🏡' },
+    { question: 'WHAT is the character afraid of?', answer: 'Problem', options: ['Characters', 'Setting', 'Problem'], emoji: '😨' },
+    { question: 'HOW does the character solve the problem?', answer: 'Solution', options: ['Characters', 'Setting', 'Solution'], emoji: '💡' },
+    { question: 'WHO is the character\'s best friend?', answer: 'Characters', options: ['Characters', 'Setting', 'Problem'], emoji: '👫' },
+    { question: 'WHERE does the character go on vacation?', answer: 'Setting', options: ['Characters', 'Setting', 'Problem'], emoji: '✈️' },
+    { question: 'WHAT does the character learn?', answer: 'Solution', options: ['Characters', 'Setting', 'Solution'], emoji: '📚' },
+    { question: 'WHO teaches the character something new?', answer: 'Characters', options: ['Characters', 'Setting', 'Problem'], emoji: '👨‍🏫' },
+    { question: 'WHERE does the character find the treasure?', answer: 'Setting', options: ['Characters', 'Setting', 'Problem'], emoji: '🏴‍☠️' },
+    { question: 'WHAT is the character\'s favorite food?', answer: 'Characters', options: ['Characters', 'Setting', 'Problem'], emoji: '🍕' },
+    { question: 'HOW does the character feel at the end?', answer: 'Solution', options: ['Characters', 'Setting', 'Solution'], emoji: '😄' },
+    { question: 'WHO is the character\'s family?', answer: 'Characters', options: ['Characters', 'Setting', 'Problem'], emoji: '👨‍👩‍👧‍👦' },
+    { question: 'WHERE does the character go to school?', answer: 'Setting', options: ['Characters', 'Setting', 'Problem'], emoji: '🏫' },
+    { question: 'WHAT is the character\'s hobby?', answer: 'Characters', options: ['Characters', 'Setting', 'Problem'], emoji: '🎨' },
+    { question: 'HOW does the character make friends?', answer: 'Solution', options: ['Characters', 'Setting', 'Solution'], emoji: '🤗' },
+    { question: 'WHO is the character\'s pet?', answer: 'Characters', options: ['Characters', 'Setting', 'Problem'], emoji: '🐕' }
   ];
 
   const spellingWords = [
@@ -1021,7 +1238,26 @@ Your Student 🌟
     { question: 'What do we call the process of animals changing color to match their surroundings?', options: ['Camouflage', 'Migration'], correct: 'Camouflage', emoji: '🦎', explanation: 'Camouflage helps animals hide by changing color to match their environment!' },
     { question: 'What do we call the process of animals making copies of themselves?', options: ['Reproduction', 'Growth'], correct: 'Reproduction', emoji: '👶', explanation: 'Reproduction is how animals make babies or copies of themselves!' },
     { question: 'What do we call the process of animals finding and eating food?', options: ['Foraging', 'Hunting'], correct: 'Foraging', emoji: '🔍', explanation: 'Foraging is how animals search for and find food in nature!' },
-    { question: 'What do we call the process of animals building homes?', options: ['Nesting', 'Hunting'], correct: 'Nesting', emoji: '🏠', explanation: 'Nesting is how animals build homes or nests for their families!' }
+    { question: 'What do we call the process of animals building homes?', options: ['Nesting', 'Hunting'], correct: 'Nesting', emoji: '🏠', explanation: 'Nesting is how animals build homes or nests for their families!' },
+    { question: 'What do we call the process of water moving in a cycle?', options: ['Water cycle', 'Rain cycle'], correct: 'Water cycle', emoji: '🌊', explanation: 'The water cycle is how water moves from oceans to clouds to rain and back!' },
+    { question: 'What do we call the process of a plant making seeds?', options: ['Pollination', 'Germination'], correct: 'Pollination', emoji: '🌸', explanation: 'Pollination is how plants make seeds with help from bees and other insects!' },
+    { question: 'What do we call the process of a plant growing toward the sun?', options: ['Phototropism', 'Gravitropism'], correct: 'Phototropism', emoji: '☀️', explanation: 'Phototropism is how plants grow toward sunlight to get energy!' },
+    { question: 'What do we call the process of animals changing with the seasons?', options: ['Adaptation', 'Migration'], correct: 'Adaptation', emoji: '🦌', explanation: 'Adaptation is how animals change their behavior or appearance to survive different seasons!' },
+    { question: 'What do we call the process of a plant making its own food?', options: ['Photosynthesis', 'Respiration'], correct: 'Photosynthesis', emoji: '🌱', explanation: 'Photosynthesis is how plants use sunlight, water, and air to make their own food!' },
+    { question: 'What do we call the process of water turning into ice?', options: ['Freezing', 'Melting'], correct: 'Freezing', emoji: '❄️', explanation: 'Freezing is when water gets so cold it turns into ice!' },
+    { question: 'What do we call the process of ice turning into water?', options: ['Melting', 'Freezing'], correct: 'Melting', emoji: '💧', explanation: 'Melting is when ice gets warm and turns back into water!' },
+    { question: 'What do we call the process of a seed growing into a plant?', options: ['Germination', 'Pollination'], correct: 'Germination', emoji: '🌱', explanation: 'Germination is when a seed starts to grow and becomes a new plant!' },
+    { question: 'What do we call the process of animals sleeping through winter?', options: ['Hibernation', 'Migration'], correct: 'Hibernation', emoji: '🐻', explanation: 'Hibernation is when animals sleep through the cold winter months to save energy!' },
+    { question: 'What do we call the process of animals moving to find food?', options: ['Migration', 'Hibernation'], correct: 'Migration', emoji: '🦅', explanation: 'Migration is when animals travel long distances to find food or warmer weather!' },
+    { question: 'What do we call the process of water moving through a plant?', options: ['Transpiration', 'Photosynthesis'], correct: 'Transpiration', emoji: '💧', explanation: 'Transpiration is how water moves through a plant from roots to leaves!' },
+    { question: 'What do we call the process of a plant responding to gravity?', options: ['Gravitropism', 'Phototropism'], correct: 'Gravitropism', emoji: '⬇️', explanation: 'Gravitropism is how plant roots grow down toward gravity!' },
+    { question: 'What do we call the process of animals changing color to hide?', options: ['Camouflage', 'Migration'], correct: 'Camouflage', emoji: '🦎', explanation: 'Camouflage helps animals hide by changing color to match their surroundings!' },
+    { question: 'What do we call the process of animals making babies?', options: ['Reproduction', 'Growth'], correct: 'Reproduction', emoji: '👶', explanation: 'Reproduction is how animals make babies to continue their species!' },
+    { question: 'What do we call the process of animals searching for food?', options: ['Foraging', 'Hunting'], correct: 'Foraging', emoji: '🔍', explanation: 'Foraging is how animals search for and find food in nature!' },
+    { question: 'What do we call the process of animals building homes?', options: ['Nesting', 'Hunting'], correct: 'Nesting', emoji: '🏠', explanation: 'Nesting is how animals build homes or nests for their families!' },
+    { question: 'What do we call the process of water turning into vapor?', options: ['Evaporation', 'Condensation'], correct: 'Evaporation', emoji: '💨', explanation: 'Evaporation is when water gets warm and turns into invisible water vapor!' },
+    { question: 'What do we call the process of water vapor turning into clouds?', options: ['Condensation', 'Evaporation'], correct: 'Condensation', emoji: '☁️', explanation: 'Condensation is when water vapor cools down and turns into clouds!' },
+    { question: 'What do we call the process of a caterpillar becoming a butterfly?', options: ['Metamorphosis', 'Growth'], correct: 'Metamorphosis', emoji: '🦋', explanation: 'Metamorphosis is the amazing process of a caterpillar changing into a butterfly!' }
   ];
 
   const socialStudiesQuestions = [
@@ -1122,7 +1358,26 @@ Your Student 🌟
     { question: 'What do we call the way lines go in art?', options: ['Direction', 'Color'], correct: 'Direction', emoji: '➡️', explanation: 'Direction is the way lines point in art!' },
     { question: 'What do we call the lightness or darkness of a color?', options: ['Value', 'Hue'], correct: 'Value', emoji: '⚫', explanation: 'Value is how light or dark a color is!' },
     { question: 'What do we call the actual color itself?', options: ['Hue', 'Value'], correct: 'Hue', emoji: '🎨', explanation: 'Hue is the actual color like red, blue, or green!' },
-    { question: 'What do we call the way something feels when you touch it?', options: ['Texture', 'Shape'], correct: 'Texture', emoji: '🤲', explanation: 'Texture is how something feels when you touch it!' }
+    { question: 'What do we call the way something feels when you touch it?', options: ['Texture', 'Shape'], correct: 'Texture', emoji: '🤲', explanation: 'Texture is how something feels when you touch it!' },
+    { question: 'What do we call a picture made with paint?', options: ['Painting', 'Drawing'], correct: 'Painting', emoji: '🎨', explanation: 'A painting is made with paint and brushes!' },
+    { question: 'What do we call a picture made with pencils?', options: ['Drawing', 'Painting'], correct: 'Drawing', emoji: '✏️', explanation: 'A drawing is made with pencils, crayons, or markers!' },
+    { question: 'What do we call a picture made with clay?', options: ['Sculpture', 'Painting'], correct: 'Sculpture', emoji: '🏺', explanation: 'A sculpture is a 3D artwork made with clay or other materials!' },
+    { question: 'What do we call the colors that are next to each other on the color wheel?', options: ['Analogous', 'Complementary'], correct: 'Analogous', emoji: '🌈', explanation: 'Analogous colors are next to each other on the color wheel!' },
+    { question: 'What do we call a picture that shows movement?', options: ['Dynamic', 'Static'], correct: 'Dynamic', emoji: '💫', explanation: 'Dynamic art shows movement and energy!' },
+    { question: 'What do we call a picture that shows calmness?', options: ['Static', 'Dynamic'], correct: 'Static', emoji: '😌', explanation: 'Static art shows calmness and stillness!' },
+    { question: 'What do we call the way light and dark areas are used in art?', options: ['Chiaroscuro', 'Color'], correct: 'Chiaroscuro', emoji: '🌓', explanation: 'Chiaroscuro is the use of light and dark in art!' },
+    { question: 'What do we call a picture made with small pieces of colored material?', options: ['Mosaic', 'Collage'], correct: 'Mosaic', emoji: '🧩', explanation: 'A mosaic is made with small pieces of colored material!' },
+    { question: 'What do we call a picture made with cut-out pieces of paper?', options: ['Collage', 'Mosaic'], correct: 'Collage', emoji: '✂️', explanation: 'A collage is made with cut-out pieces of paper!' },
+    { question: 'What do we call the way lines create patterns in art?', options: ['Rhythm', 'Balance'], correct: 'Rhythm', emoji: '🎵', explanation: 'Rhythm in art is created by repeating lines and patterns!' },
+    { question: 'What do we call the way colors are arranged in art?', options: ['Harmony', 'Contrast'], correct: 'Harmony', emoji: '🎼', explanation: 'Harmony is when colors work well together in art!' },
+    { question: 'What do we call the way shapes are balanced in art?', options: ['Balance', 'Rhythm'], correct: 'Balance', emoji: '⚖️', explanation: 'Balance is how shapes are arranged to create stability in art!' },
+    { question: 'What do we call the way colors create excitement in art?', options: ['Contrast', 'Harmony'], correct: 'Contrast', emoji: '⚡', explanation: 'Contrast is when colors create excitement and energy!' },
+    { question: 'What do we call the way lines create movement in art?', options: ['Direction', 'Texture'], correct: 'Direction', emoji: '➡️', explanation: 'Direction is how lines guide the eye through art!' },
+    { question: 'What do we call the way shapes create depth in art?', options: ['Perspective', 'Proportion'], correct: 'Perspective', emoji: '🔍', explanation: 'Perspective is how shapes create the illusion of depth!' },
+    { question: 'What do we call the way sizes are compared in art?', options: ['Proportion', 'Perspective'], correct: 'Proportion', emoji: '📏', explanation: 'Proportion is how sizes are compared in art!' },
+    { question: 'What do we call the way colors create mood in art?', options: ['Atmosphere', 'Texture'], correct: 'Atmosphere', emoji: '🌅', explanation: 'Atmosphere is how colors create mood and feeling in art!' },
+    { question: 'What do we call the way lines create energy in art?', options: ['Movement', 'Stillness'], correct: 'Movement', emoji: '💨', explanation: 'Movement is how lines create energy and flow in art!' },
+    { question: 'What do we call the way shapes create unity in art?', options: ['Unity', 'Variety'], correct: 'Unity', emoji: '🔗', explanation: 'Unity is how shapes work together to create harmony in art!' }
   ];
 
   const geographyQuestions = [
@@ -1143,7 +1398,26 @@ Your Student 🌟
     { question: 'What is the biggest waterfall?', options: ['Angel Falls', 'Niagara Falls'], correct: 'Angel Falls', emoji: '💧', explanation: 'Angel Falls in Venezuela is the tallest waterfall!' },
     { question: 'What is the biggest forest?', options: ['Amazon Rainforest', 'Congo Rainforest'], correct: 'Amazon Rainforest', emoji: '🌳', explanation: 'The Amazon Rainforest is the largest forest in the world!' },
     { question: 'What is the biggest city?', options: ['Tokyo', 'New York'], correct: 'Tokyo', emoji: '🏙️', explanation: 'Tokyo, Japan is the largest city in the world!' },
-    { question: 'What is the biggest state in the USA?', options: ['Alaska', 'Texas'], correct: 'Alaska', emoji: '🇺🇸', explanation: 'Alaska is the largest state in the United States!' }
+    { question: 'What is the biggest state in the USA?', options: ['Alaska', 'Texas'], correct: 'Alaska', emoji: '🇺🇸', explanation: 'Alaska is the largest state in the United States!' },
+    { question: 'What is the smallest state in the USA?', options: ['Rhode Island', 'Delaware'], correct: 'Rhode Island', emoji: '🇺🇸', explanation: 'Rhode Island is the smallest state in the United States!' },
+    { question: 'What is the biggest country in South America?', options: ['Brazil', 'Argentina'], correct: 'Brazil', emoji: '🇧🇷', explanation: 'Brazil is the largest country in South America!' },
+    { question: 'What is the biggest country in Africa?', options: ['Algeria', 'Nigeria'], correct: 'Algeria', emoji: '🇩🇿', explanation: 'Algeria is the largest country in Africa!' },
+    { question: 'What is the biggest country in Europe?', options: ['Russia', 'Germany'], correct: 'Russia', emoji: '🇷🇺', explanation: 'Russia is the largest country in Europe!' },
+    { question: 'What is the biggest country in Asia?', options: ['China', 'India'], correct: 'China', emoji: '🇨🇳', explanation: 'China is the largest country in Asia!' },
+    { question: 'What is the biggest country in North America?', options: ['Canada', 'United States'], correct: 'Canada', emoji: '🇨🇦', explanation: 'Canada is the largest country in North America!' },
+    { question: 'What is the biggest country in Oceania?', options: ['Australia', 'New Zealand'], correct: 'Australia', emoji: '🇦🇺', explanation: 'Australia is the largest country in Oceania!' },
+    { question: 'What is the biggest desert?', options: ['Sahara Desert', 'Antarctic Desert'], correct: 'Antarctic Desert', emoji: '🏜️', explanation: 'The Antarctic Desert is the largest desert in the world!' },
+    { question: 'What is the biggest mountain range?', options: ['Himalayas', 'Andes'], correct: 'Himalayas', emoji: '🏔️', explanation: 'The Himalayas are the largest mountain range in the world!' },
+    { question: 'What is the biggest river in the world?', options: ['Nile River', 'Amazon River'], correct: 'Nile River', emoji: '🌊', explanation: 'The Nile River is the longest river in the world!' },
+    { question: 'What is the biggest river in South America?', options: ['Amazon River', 'Paraná River'], correct: 'Amazon River', emoji: '🌊', explanation: 'The Amazon River is the largest river in South America!' },
+    { question: 'What is the biggest river in North America?', options: ['Mississippi River', 'Missouri River'], correct: 'Mississippi River', emoji: '🌊', explanation: 'The Mississippi River is the largest river in North America!' },
+    { question: 'What is the biggest river in Europe?', options: ['Volga River', 'Danube River'], correct: 'Volga River', emoji: '🌊', explanation: 'The Volga River is the largest river in Europe!' },
+    { question: 'What is the biggest river in Asia?', options: ['Yangtze River', 'Ganges River'], correct: 'Yangtze River', emoji: '🌊', explanation: 'The Yangtze River is the largest river in Asia!' },
+    { question: 'What is the biggest river in Africa?', options: ['Nile River', 'Congo River'], correct: 'Nile River', emoji: '🌊', explanation: 'The Nile River is the largest river in Africa!' },
+    { question: 'What is the biggest lake in North America?', options: ['Lake Superior', 'Lake Michigan'], correct: 'Lake Superior', emoji: '🏞️', explanation: 'Lake Superior is the largest lake in North America!' },
+    { question: 'What is the biggest lake in Africa?', options: ['Lake Victoria', 'Lake Tanganyika'], correct: 'Lake Victoria', emoji: '🏞️', explanation: 'Lake Victoria is the largest lake in Africa!' },
+    { question: 'What is the biggest lake in Europe?', options: ['Lake Ladoga', 'Lake Onega'], correct: 'Lake Ladoga', emoji: '🏞️', explanation: 'Lake Ladoga is the largest lake in Europe!' },
+    { question: 'What is the biggest lake in Asia?', options: ['Caspian Sea', 'Lake Baikal'], correct: 'Caspian Sea', emoji: '🏞️', explanation: 'The Caspian Sea is the largest lake in Asia!' }
   ];
 
   const historyQuestions = [
@@ -1164,7 +1438,27 @@ Your Student 🌟
     { question: 'Who was the first person to discover America?', options: ['Christopher Columbus', 'Leif Erikson'], correct: 'Christopher Columbus', emoji: '🗺️', explanation: 'Christopher Columbus was the first European to discover America!' },
     { question: 'What year did the Civil War start?', options: ['1861', '1860'], correct: '1861', emoji: '⚔️', explanation: 'The Civil War started in 1861!' },
     { question: 'Who was the first person to fly an airplane?', options: ['Orville Wright', 'Amelia Earhart'], correct: 'Orville Wright', emoji: '✈️', explanation: 'Orville Wright was the first person to fly an airplane!' },
-    { question: 'What year did World War I start?', options: ['1914', '1915'], correct: '1914', emoji: '🌍', explanation: 'World War I started in 1914!' }
+    { question: 'What year did World War I start?', options: ['1914', '1915'], correct: '1914', emoji: '🌍', explanation: 'World War I started in 1914!' },
+    { question: 'What year did World War I end?', options: ['1918', '1919'], correct: '1918', emoji: '✌️', explanation: 'World War I ended in 1918!' },
+    { question: 'What year did World War II start?', options: ['1939', '1940'], correct: '1939', emoji: '🌍', explanation: 'World War II started in 1939!' },
+    { question: 'What year did World War II end?', options: ['1945', '1946'], correct: '1945', emoji: '✌️', explanation: 'World War II ended in 1945!' },
+    { question: 'Who was the first person to fly an airplane?', options: ['Orville Wright', 'Amelia Earhart'], correct: 'Orville Wright', emoji: '✈️', explanation: 'Orville Wright was the first person to fly an airplane!' },
+    { question: 'What year did the Wright brothers fly their first airplane?', options: ['1903', '1904'], correct: '1903', emoji: '✈️', explanation: 'The Wright brothers flew their first airplane in 1903!' },
+    { question: 'Who was the first person to discover America?', options: ['Christopher Columbus', 'Leif Erikson'], correct: 'Christopher Columbus', emoji: '🗺️', explanation: 'Christopher Columbus was the first European to discover America!' },
+    { question: 'What year did the American Revolution start?', options: ['1775', '1776'], correct: '1775', emoji: '🇺🇸', explanation: 'The American Revolution started in 1775!' },
+    { question: 'What year did the American Revolution end?', options: ['1783', '1784'], correct: '1783', emoji: '🇺🇸', explanation: 'The American Revolution ended in 1783!' },
+    { question: 'Who was the first person to walk on the moon?', options: ['Neil Armstrong', 'Buzz Aldrin'], correct: 'Neil Armstrong', emoji: '🌙', explanation: 'Neil Armstrong was the first person to walk on the moon!' },
+    { question: 'What year did the first person walk on the moon?', options: ['1969', '1970'], correct: '1969', emoji: '🌙', explanation: 'The first person walked on the moon in 1969!' },
+    { question: 'Who invented the telephone?', options: ['Alexander Graham Bell', 'Thomas Edison'], correct: 'Alexander Graham Bell', emoji: '📞', explanation: 'Alexander Graham Bell invented the telephone!' },
+    { question: 'What year was the telephone invented?', options: ['1876', '1877'], correct: '1876', emoji: '📞', explanation: 'The telephone was invented in 1876!' },
+    { question: 'Who invented the light bulb?', options: ['Thomas Edison', 'Benjamin Franklin'], correct: 'Thomas Edison', emoji: '💡', explanation: 'Thomas Edison invented the light bulb!' },
+    { question: 'What year was the light bulb invented?', options: ['1879', '1880'], correct: '1879', emoji: '💡', explanation: 'The light bulb was invented in 1879!' },
+    { question: 'Who was the first woman to fly across the Atlantic Ocean?', options: ['Amelia Earhart', 'Bessie Coleman'], correct: 'Amelia Earhart', emoji: '✈️', explanation: 'Amelia Earhart was the first woman to fly across the Atlantic!' },
+    { question: 'What year did Amelia Earhart fly across the Atlantic?', options: ['1928', '1929'], correct: '1928', emoji: '✈️', explanation: 'Amelia Earhart flew across the Atlantic in 1928!' },
+    { question: 'Who was the first person to discover electricity?', options: ['Benjamin Franklin', 'Thomas Edison'], correct: 'Benjamin Franklin', emoji: '⚡', explanation: 'Benjamin Franklin discovered electricity!' },
+    { question: 'What year did Benjamin Franklin discover electricity?', options: ['1752', '1753'], correct: '1752', emoji: '⚡', explanation: 'Benjamin Franklin discovered electricity in 1752!' },
+    { question: 'Who was the first person to discover gravity?', options: ['Isaac Newton', 'Galileo Galilei'], correct: 'Isaac Newton', emoji: '🍎', explanation: 'Isaac Newton discovered gravity!' },
+    { question: 'What year did Isaac Newton discover gravity?', options: ['1687', '1688'], correct: '1687', emoji: '🍎', explanation: 'Isaac Newton discovered gravity in 1687!' }
   ];
 
   const studyGuides = {
@@ -1749,6 +2043,13 @@ Your Student 🌟
     const ok = sel === cor;
     const newScore = score + (ok ? 10 : 0);
       setScore(newScore);
+    
+    // Track this question in history to avoid repeats
+    const currentQ = qs[currentQuestion];
+    if (currentQ) {
+      const questionId = getQuestionId(currentQ);
+      trackQuestionHistory(currentScreen, questionId);
+    }
     
     // Update confidence tracking
     const responseTime = Date.now() - startTime;
@@ -3762,7 +4063,7 @@ Your Student 🌟
     history: historyQuestions
   };
   
-  // Shuffle function to randomize questions
+  // Shuffle function to randomize questions (fallback for simple cases)
   const shuffleArray = (array) => {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -3772,13 +4073,14 @@ Your Student 🌟
     return shuffled;
   };
 
-  // Get the full question set, shuffle it, then slice to the selected count
+  // Get the full question set, use smart shuffle to avoid repeats
   const fullQuestionSet = questionSets[currentScreen] || [];
   const questionCount = selectedQuestionCount === 'custom' 
     ? parseInt(customQuestionCount) || 10
     : selectedQuestionCount;
-  const shuffledQuestions = shuffleArray(fullQuestionSet);
-  const qs = shuffledQuestions.slice(0, questionCount);
+  
+  // Use smart shuffle to avoid recent questions
+  const qs = smartShuffle(fullQuestionSet, currentScreen, questionCount);
   const q = qs[currentQuestion] || {};
   const bgColors = {
     phonics: 'from-pink-200 to-pink-400', math: 'from-blue-200 to-blue-400',
