@@ -3491,71 +3491,9 @@ Your Student 🌟
 
               {/* Legend/Glossary */}
               <div onClick={() => { 
-                console.log('Legend button clicked!'); 
                 playSound('click'); 
                 triggerHaptic('light'); 
                 setShowLegendModal(true); 
-                console.log('showLegendModal set to true');
-                
-                // Direct DOM manipulation as backup
-                const modal = document.createElement('div');
-                modal.style.cssText = `
-                  position: fixed;
-                  top: 0;
-                  left: 0;
-                  width: 100%;
-                  height: 100%;
-                  background-color: rgba(0,0,0,0.8);
-                  z-index: 99999;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                `;
-                
-                const content = document.createElement('div');
-                content.style.cssText = `
-                  background: white;
-                  padding: 40px;
-                  border-radius: 20px;
-                  max-width: 600px;
-                  max-height: 80vh;
-                  overflow-y: auto;
-                  text-align: center;
-                `;
-                
-                content.innerHTML = `
-                  <h2 style="color: purple; font-size: 24px; margin-bottom: 20px;">📖 Educational Terms & Acronyms</h2>
-                  <p style="margin-bottom: 20px;">A guide to help parents understand school terminology</p>
-                  
-                  <div style="text-align: left; margin-bottom: 20px;">
-                    <h3 style="color: green;">📊 Grading Scores</h3>
-                    <p><strong>PG:</strong> Proficient Grade</p>
-                    <p><strong>PF:</strong> Pass/Fail</p>
-                    <p><strong>DAV:</strong> Developmental Assessment Value</p>
-                    <p><strong>A, B, C, D, F:</strong> Standard letter grades</p>
-                  </div>
-                  
-                  <div style="text-align: left; margin-bottom: 20px;">
-                    <h3 style="color: blue;">🎒 First Grade Terms</h3>
-                    <p><strong>ELA:</strong> English Language Arts</p>
-                    <p><strong>CVC:</strong> Consonant-Vowel-Consonant words</p>
-                    <p><strong>Sight Words:</strong> Common words learned by sight</p>
-                    <p><strong>Phonics:</strong> Letter sounds and blending</p>
-                  </div>
-                  
-                  <button onclick="this.parentElement.parentElement.remove()" style="
-                    background: purple;
-                    color: white;
-                    padding: 10px 20px;
-                    border: none;
-                    border-radius: 10px;
-                    font-size: 16px;
-                    cursor: pointer;
-                  ">Close</button>
-                `;
-                
-                modal.appendChild(content);
-                document.body.appendChild(modal);
               }} 
                 className="bg-gradient-to-br from-indigo-400 to-purple-500 p-4 rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
                 <div className="text-3xl mb-1">📖</div>
