@@ -1548,11 +1548,15 @@ Your Student 🌟
   // Calendar Events Data (based on Smore newsletters and typical school events)
   const calendarEvents = {
     9: [ // October
+      { date: 29, title: 'Science Test', type: 'test', description: 'Science assessment' },
+      { date: 31, title: 'Character Book Parade', type: 'event', description: 'Halloween character book parade' },
+      { date: 31, title: 'Social Studies Test', type: 'test', description: 'Social studies assessment' },
       { date: 31, title: 'Halloween Spelling Test', type: 'test', description: 'October spelling words test' },
       { date: 31, title: 'Halloween Party', type: 'event', description: 'Class Halloween celebration' }
     ],
     10: [ // November
       { date: 11, title: 'Veterans Day', type: 'holiday', description: 'School closed - Veterans Day' },
+      { date: 18, title: 'Field Trip: Children\'s Museum', type: 'event', description: 'Educational field trip to Children\'s Museum' },
       { date: 24, title: 'Thanksgiving Break Starts', type: 'holiday', description: 'Early dismissal for Thanksgiving break' },
       { date: 25, title: 'Thanksgiving Day', type: 'holiday', description: 'School closed - Thanksgiving Day' },
       { date: 26, title: 'Thanksgiving Break', type: 'holiday', description: 'School closed - Thanksgiving break' }
