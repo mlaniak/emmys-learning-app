@@ -3892,7 +3892,7 @@ Your Student 🌟
             {calendarDays.map((dayData, index) => (
               <div
                 key={index}
-                className={`min-h-[80px] p-2 border rounded-lg ${
+                className={`min-h-[120px] p-2 border rounded-lg flex flex-col ${
                   dayData.isEmpty 
                     ? 'bg-gray-50' 
                     : dayData.isToday 
@@ -3902,22 +3902,24 @@ Your Student 🌟
               >
                 {!dayData.isEmpty && (
                   <>
-                    <div className={`text-sm font-bold mb-1 ${
+                    <div className={`text-sm font-bold mb-2 ${
                       dayData.isToday ? 'text-teal-700' : 'text-gray-700'
                     }`}>
                       {dayData.day}
                     </div>
                     
-                    {dayData.events.map((event, eventIndex) => (
-                      <div
-                        key={eventIndex}
-                        className={`text-xs p-1 rounded mb-1 border ${getEventTypeColor(event.type)}`}
-                        title={event.description}
-                      >
-                        <span className="mr-1">{getEventTypeIcon(event.type)}</span>
-                        <span className="truncate">{event.title}</span>
-                      </div>
-                    ))}
+                    <div className="flex-1 flex flex-col gap-1 overflow-hidden">
+                      {dayData.events.map((event, eventIndex) => (
+                        <div
+                          key={eventIndex}
+                          className={`text-xs p-1 rounded border ${getEventTypeColor(event.type)} flex-shrink-0`}
+                          title={event.description}
+                        >
+                          <span className="mr-1">{getEventTypeIcon(event.type)}</span>
+                          <span className="break-words leading-tight">{event.title}</span>
+                        </div>
+                      ))}
+                    </div>
                   </>
                 )}
               </div>
