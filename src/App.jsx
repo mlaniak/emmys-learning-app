@@ -654,7 +654,7 @@ Your Student 🌟
     if (gameScreens.includes(screen)) {
       // Add small delay for game screens to ensure proper mobile scrolling
       setTimeout(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
       }, 150);
     } else {
       // Immediate scroll for non-game screens
@@ -2333,7 +2333,7 @@ Your Student 🌟
     
     // Extra scroll delay for question selector flow to ensure proper mobile experience
     setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     }, 200);
   };
 
@@ -3134,11 +3134,11 @@ Your Student 🌟
       <div className="min-h-screen bg-gradient-to-br from-purple-200 to-purple-400 p-2 sm:p-4 md:p-8">
         <div onClick={() => { navigateTo('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="bg-white px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-lg inline-flex gap-2 hover:scale-105 cursor-pointer mb-3 sm:mb-4">← Back</div>
         <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl p-4 sm:p-6 md:p-12">
-          <div className="text-center mb-6 sm:mb-8">
+          <div key={`word-section-${currentQuestion}`} className="text-center mb-6 sm:mb-8">
             <div className="text-3xl sm:text-4xl md:text-5xl mb-3">✏️</div>
             <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-2">Word #{currentQuestion + 1} of {spellingWords.length}</p>
-            <div className="text-3xl sm:text-4xl md:text-6xl font-bold text-purple-700 mb-4 sm:mb-6">{word.word}</div>
-            <p className="text-base sm:text-lg md:text-xl text-gray-600 italic">Hint: {word.hint}</p>
+            <div className="text-3xl sm:text-4xl md:text-6xl font-bold text-purple-700 mb-4 sm:mb-6">{word?.word || 'Loading...'}</div>
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 italic">Hint: {word?.hint || 'Loading...'}</p>
           </div>
           
           <div className="mb-6 sm:mb-8">
@@ -3155,7 +3155,7 @@ Your Student 🌟
             </div>
           </div>
           
-          <div className="bg-gradient-to-br from-yellow-50 to-pink-50 p-3 sm:p-4 md:p-8 rounded-2xl border-4 border-purple-300">
+          <div key={`canvas-section-${currentQuestion}`} className="bg-gradient-to-br from-yellow-50 to-pink-50 p-3 sm:p-4 md:p-8 rounded-2xl border-4 border-purple-300">
             <p className="text-lg md:text-xl text-center text-purple-700 font-bold mb-4 sm:mb-6">✍️ Write 5 times!</p>
             <div className="space-y-4 sm:space-y-5">
               {[0,1,2,3,4].map(i => (
