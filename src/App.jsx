@@ -53,6 +53,9 @@ const EmmyStudyGame = () => {
   };
 
   const [selectedSpellingMonth, setSelectedSpellingMonth] = useState(getCurrentMonth());
+  const [selectedPhonicsDifficulty, setSelectedPhonicsDifficulty] = useState('medium');
+  const [selectedMathDifficulty, setSelectedMathDifficulty] = useState('medium');
+  const [selectedReadingCategory, setSelectedReadingCategory] = useState('all');
   const [lastLearningDate, setLastLearningDate] = useState(null);
   const [dailyChallenge, setDailyChallenge] = useState(null);
   const [confidenceLevels, setConfidenceLevels] = useState({});
@@ -641,6 +644,25 @@ Your Student 🌟
     if (!range) return spellingWords;
     
     return spellingWords.slice(range.start, range.end);
+  };
+
+  // Filter phonics questions by difficulty
+  const getPhonicsQuestionsByDifficulty = (difficulty) => {
+    return phonicsQuestions[difficulty] || phonicsQuestions.medium;
+  };
+
+  // Filter math questions by difficulty
+  const getMathQuestionsByDifficulty = (difficulty) => {
+    return mathQuestions[difficulty] || mathQuestions.medium;
+  };
+
+  // Filter reading questions by category
+  const getReadingQuestionsByCategory = (category) => {
+    if (category === 'all') return readingQuestions;
+    
+    // For now, return all reading questions since they're not categorized
+    // In the future, we could add categories like 'story-elements', 'comprehension', etc.
+    return readingQuestions;
   };
 
   // Calculate total questions for each subject
@@ -4802,10 +4824,14 @@ Your Student 🌟
   }
 
   const questionSets = {
-    phonics: phonicsQuestions[difficulty] || phonicsQuestions.medium, 
-    math: mathQuestions[difficulty] || mathQuestions.medium, 
-    reading: readingQuestions, science: scienceQuestions, social: socialStudiesQuestions, 
-    skipcounting: skipCountingQuestions, art: artQuestions, geography: geographyQuestions, 
+    phonics: getPhonicsQuestionsByDifficulty(selectedPhonicsDifficulty), 
+    math: getMathQuestionsByDifficulty(selectedMathDifficulty), 
+    reading: getReadingQuestionsByCategory(selectedReadingCategory), 
+    science: scienceQuestions, 
+    social: socialStudiesQuestions, 
+    skipcounting: skipCountingQuestions, 
+    art: artQuestions, 
+    geography: geographyQuestions, 
     history: historyQuestions
   };
   
@@ -4842,6 +4868,90 @@ Your Student 🌟
         <div onClick={() => { navigateTo('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="bg-white px-4 md:px-6 py-2 md:py-3 rounded-full shadow-lg hover:scale-105 cursor-pointer">← Back</div>
         <div onClick={() => setCurrentQuestion(0)} className="bg-orange-500 px-4 md:px-6 py-2 md:py-3 rounded-full shadow-lg text-white font-bold hover:scale-105 cursor-pointer">🔄 Restart</div>
       </div>
+
+      {/* Difficulty/Category Selectors */}
+      {currentScreen === 'phonics' && (
+        <div className="mb-6">
+          <h2 className="text-lg md:text-xl font-bold text-center mb-4">📚 Choose Difficulty Level</h2>
+          <div className="flex justify-center gap-3">
+            {['easy', 'medium', 'hard'].map(level => (
+              <button
+                key={level}
+                onClick={() => {
+                  setSelectedPhonicsDifficulty(level);
+                  setCurrentQuestion(0);
+                  playSound('click');
+                  triggerHaptic('light');
+                }}
+                className={`px-4 py-2 rounded-xl font-bold text-sm md:text-base transition-all transform hover:scale-105 active:scale-95 ${
+                  selectedPhonicsDifficulty === level
+                    ? 'bg-pink-500 text-white shadow-lg'
+                    : 'bg-pink-100 text-pink-700 hover:bg-pink-200'
+                }`}
+              >
+                {level.charAt(0).toUpperCase() + level.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {currentScreen === 'math' && (
+        <div className="mb-6">
+          <h2 className="text-lg md:text-xl font-bold text-center mb-4">🔢 Choose Difficulty Level</h2>
+          <div className="flex justify-center gap-3">
+            {['easy', 'medium', 'hard'].map(level => (
+              <button
+                key={level}
+                onClick={() => {
+                  setSelectedMathDifficulty(level);
+                  setCurrentQuestion(0);
+                  playSound('click');
+                  triggerHaptic('light');
+                }}
+                className={`px-4 py-2 rounded-xl font-bold text-sm md:text-base transition-all transform hover:scale-105 active:scale-95 ${
+                  selectedMathDifficulty === level
+                    ? 'bg-blue-500 text-white shadow-lg'
+                    : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                }`}
+              >
+                {level.charAt(0).toUpperCase() + level.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {currentScreen === 'reading' && (
+        <div className="mb-6">
+          <h2 className="text-lg md:text-xl font-bold text-center mb-4">📖 Choose Reading Focus</h2>
+          <div className="flex justify-center gap-3">
+            {[
+              { value: 'all', label: 'All Questions' },
+              { value: 'story-elements', label: 'Story Elements' },
+              { value: 'comprehension', label: 'Comprehension' }
+            ].map(option => (
+              <button
+                key={option.value}
+                onClick={() => {
+                  setSelectedReadingCategory(option.value);
+                  setCurrentQuestion(0);
+                  playSound('click');
+                  triggerHaptic('light');
+                }}
+                className={`px-4 py-2 rounded-xl font-bold text-sm md:text-base transition-all transform hover:scale-105 active:scale-95 ${
+                  selectedReadingCategory === option.value
+                    ? 'bg-green-500 text-white shadow-lg'
+                    : 'bg-green-100 text-green-700 hover:bg-green-200'
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl p-6 md:p-12 relative">
         {showFeedback && (
           <div className={`absolute inset-0 flex items-center justify-center z-50 rounded-3xl ${showFeedback==='correct'?'bg-green-500':'bg-red-500'} bg-opacity-90`}>
