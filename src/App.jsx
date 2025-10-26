@@ -3972,14 +3972,15 @@ Your Student 🌟
             <div className="text-6xl mb-4">📰</div>
             <h1 className="text-3xl md:text-4xl font-bold text-orange-700 mb-2">Smore Scopes</h1>
             <p className="text-lg text-gray-600">Monthly school scopes and updates for 2025</p>
+            <p className="text-sm text-gray-500 mt-2">Updated: January 2025</p>
           </div>
 
-          {/* Current Month Newsletter */}
+          {/* Current Month Scope */}
           <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl p-6 mb-8 border-2 border-orange-200">
             <h2 className="text-2xl font-bold text-orange-700 mb-4">📅 Current Month</h2>
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <h3 className="text-xl font-bold text-gray-800 mb-3">October 2025 Scope</h3>
-              <p className="text-gray-600 mb-4">Stay updated with the latest school news, events, and important dates.</p>
+              <p className="text-gray-600 mb-4">Stay updated with the latest school news, events, and important dates for the 2025-2026 school year.</p>
               <a
                 href="https://app.smore.com/n/9tvrj"
                 target="_blank"
