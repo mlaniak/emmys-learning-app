@@ -5309,26 +5309,30 @@ Your Student 🌟
       {/* Debug log for modal state */}
       {console.log('Current showLegendModal state before rendering:', showLegendModal)}
       
+      {/* Simple text test */}
+      {showLegendModal && <div style={{position: 'fixed', top: '10px', left: '10px', backgroundColor: 'yellow', padding: '10px', zIndex: 99999}}>MODAL STATE IS TRUE!</div>}
+      
       {/* Simple Test Modal */}
       {showLegendModal && (
         <div style={{
           position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
+          top: '50px',
+          left: '50px',
+          width: '300px',
+          height: '200px',
           backgroundColor: 'red',
           zIndex: 99999,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '50px',
-          color: 'white'
+          fontSize: '20px',
+          color: 'white',
+          border: '5px solid yellow'
         }}>
-          TEST MODAL IS WORKING!
+          TEST MODAL!
           <button 
             onClick={() => setShowLegendModal(false)}
-            style={{marginLeft: '20px', padding: '10px', fontSize: '20px'}}
+            style={{marginLeft: '10px', padding: '5px', fontSize: '16px'}}
           >
             Close
           </button>
