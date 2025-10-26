@@ -5366,7 +5366,16 @@ Your Student 🌟
         </div>
       )}
 
-
+      {/* Legend/Glossary Modal */}
+      {showLegendModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 md:p-8">
+              <div className="text-center mb-6">
+                <div className="text-6xl mb-4">📖</div>
+                <h2 className="text-2xl md:text-3xl font-bold text-purple-600 mb-2">Educational Terms & Acronyms</h2>
+                <p className="text-gray-600">A guide to help parents understand school terminology</p>
+              </div>
               <div className="space-y-6">
                 {/* Grading Scores */}
                 <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border-2 border-green-200">
