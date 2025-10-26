@@ -3978,7 +3978,7 @@ Your Student 🌟
           <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl p-6 mb-8 border-2 border-orange-200">
             <h2 className="text-2xl font-bold text-orange-700 mb-4">📅 Current Month</h2>
             <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h3 className="text-xl font-bold text-gray-800 mb-3">October 2024 Scope</h3>
+              <h3 className="text-xl font-bold text-gray-800 mb-3">October 2025 Scope</h3>
               <p className="text-gray-600 mb-4">Stay updated with the latest school news, events, and important dates.</p>
               <a
                 href="https://app.smore.com/n/9tvrj"
@@ -3995,9 +3995,9 @@ Your Student 🌟
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 mb-8 border-2 border-blue-200">
             <h2 className="text-2xl font-bold text-blue-700 mb-4">📚 Scope Archive</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {/* September 2024 */}
+              {/* September 2025 */}
               <div className="bg-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow">
-                <h3 className="font-bold text-gray-800 mb-2">September 2024</h3>
+                <h3 className="font-bold text-gray-800 mb-2">September 2025</h3>
                 <p className="text-sm text-gray-600 mb-3">Back to school scope with welcome information and September events.</p>
                 <a
                   href="https://app.smore.com/n/a4hu8n"
@@ -4009,9 +4009,9 @@ Your Student 🌟
                 </a>
               </div>
 
-              {/* August 2024 */}
+              {/* August 2025 */}
               <div className="bg-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow">
-                <h3 className="font-bold text-gray-800 mb-2">August 2024</h3>
+                <h3 className="font-bold text-gray-800 mb-2">August 2025</h3>
                 <p className="text-sm text-gray-600 mb-3">Summer wrap-up and preparation for the new school year.</p>
                 <a
                   href="https://app.smore.com/n/9tvrj"
@@ -4023,9 +4023,9 @@ Your Student 🌟
                 </a>
               </div>
 
-              {/* July 2024 */}
+              {/* July 2025 */}
               <div className="bg-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow">
-                <h3 className="font-bold text-gray-800 mb-2">July 2024</h3>
+                <h3 className="font-bold text-gray-800 mb-2">July 2025</h3>
                 <p className="text-sm text-gray-600 mb-3">Summer activities and important dates for the upcoming school year.</p>
                 <a
                   href="https://app.smore.com/n/9tvrj"
