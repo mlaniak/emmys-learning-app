@@ -3399,7 +3399,7 @@ Your Student 🌟
           </div>
           
           
-            {/* Main Action Buttons - Streamlined */}
+            {/* Main Action Buttons - Child-Focused */}
             <div className="mt-6 flex justify-center gap-3 flex-wrap">
               <div onClick={() => navigateTo('achievements')} 
                 className="px-6 py-3 bg-yellow-500 text-white rounded-full font-bold cursor-pointer hover:bg-yellow-600 active:scale-95 transition-transform">
@@ -3409,45 +3409,14 @@ Your Student 🌟
                 className="px-6 py-3 bg-green-500 text-white rounded-full font-bold cursor-pointer hover:bg-green-600 active:scale-95 transition-transform">
                 🎨 Customize
               </div>
-              <div onClick={() => navigateTo('progress')} 
-                className="px-6 py-3 bg-indigo-500 text-white rounded-full font-bold cursor-pointer hover:bg-indigo-600 active:scale-95 transition-transform">
-                📊 Progress
-              </div>
-              <div onClick={() => navigateTo('calendar')} 
-                className="px-6 py-3 bg-teal-500 text-white rounded-full font-bold cursor-pointer hover:bg-teal-600 active:scale-95 transition-transform">
-                📅 Calendar
-              </div>
               <div onClick={() => setShowSearch(true)} 
                 className="px-6 py-3 bg-orange-500 text-white rounded-full font-bold cursor-pointer hover:bg-orange-600 active:scale-95 transition-transform">
                 🔍 Search
-              </div>
-              <div onClick={() => navigateTo('feedback')} 
-                className="px-6 py-3 bg-pink-500 text-white rounded-full font-bold cursor-pointer hover:bg-pink-600 active:scale-95 transition-transform">
-                💬 Feedback
-              </div>
-              <div onClick={() => navigateTo('newsletter')} 
-                className="px-6 py-3 bg-blue-500 text-white rounded-full font-bold cursor-pointer hover:bg-blue-600 active:scale-95 transition-transform">
-                📰 Newsletter
               </div>
               <div onClick={() => { playSound('click'); triggerHaptic('light'); toggleMusic(); }} 
                 className={`px-6 py-3 text-white rounded-full font-bold cursor-pointer hover:opacity-80 active:scale-95 transition-transform ${isMusicPlaying ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'}`}>
                 {isMusicPlaying ? '🔇 Music Off' : '🎵 Music On'}
               </div>
-            </div>
-            
-            {/* Difficulty Selector - More Compact */}
-            <div className="mt-4 flex justify-center gap-2">
-              {['easy', 'medium', 'hard'].map(level => (
-                <div key={level} 
-                  onClick={() => { playSound('click'); triggerHaptic('light'); setDifficulty(level); }}
-                  className={`px-4 py-2 rounded-full font-bold cursor-pointer transition-transform hover:scale-105 active:scale-95 text-sm ${
-                    difficulty === level 
-                      ? 'bg-purple-500 text-white' 
-                      : 'bg-white text-gray-700 hover:bg-gray-100'
-                  }`}>
-                  {level === 'easy' ? '😊 Easy' : level === 'medium' ? '😐 Medium' : '😤 Hard'}
-                </div>
-              ))}
             </div>
           </div>
           
