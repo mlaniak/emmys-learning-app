@@ -4221,57 +4221,28 @@ Your Student ✨
               </div>
               
               <div className="space-y-3 mt-6">
-                <div className="text-sm font-medium text-gray-700 mb-2">Choose Email Service:</div>
-                <div className="grid grid-cols-2 gap-2">
-                <button
+                <div className="text-center">
+                  <button
                     onClick={() => handleEmailShare('direct')}
                     disabled={!shareEmail || isSendingEmail}
-                    className="px-3 py-2 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
-                >
-                    {isSendingEmail ? '⏳ Sending...' : '📧 Send Direct'}
-                </button>
-                <button
-                    onClick={() => handleEmailShare('gmail')}
-                  disabled={!shareEmail}
-                    className="px-3 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
+                    className="px-8 py-4 bg-green-500 text-white rounded-full font-bold text-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg transform hover:scale-105 active:scale-95"
                   >
-                    📧 Gmail
+                    {isSendingEmail ? '⏳ Sending...' : '📧 Send Now'}
                   </button>
-                  <button
-                    onClick={() => handleEmailShare('outlook')}
-                    disabled={!shareEmail}
-                    className="px-3 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
-                  >
-                    📧 Outlook
-                  </button>
-                  <button
-                    onClick={() => handleEmailShare('yahoo')}
-                    disabled={!shareEmail}
-                    className="px-3 py-2 bg-purple-500 text-white rounded-lg font-medium hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
-                  >
-                    📧 Yahoo
-                  </button>
-                  <button
-                    onClick={() => handleEmailShare('mailto')}
-                    disabled={!shareEmail}
-                    className="px-3 py-2 bg-gray-500 text-white rounded-lg font-medium hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
-                  >
-                    📧 Default
-                </button>
-              </div>
+                </div>
                 
                 {emailSent && (
-                  <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
+                  <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg text-center">
                     ✅ Email sent successfully!
                   </div>
                 )}
                 <div className="flex gap-3 pt-2">
-                  <button
-                    onClick={() => setShowShareModal(false)}
-                    className="flex-1 px-4 py-3 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400 transition-colors"
-                  >
-                    Cancel
-                  </button>
+                <button
+                  onClick={() => setShowShareModal(false)}
+                  className="flex-1 px-4 py-3 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400 transition-colors"
+                >
+                  Cancel
+                </button>
                 </div>
               </div>
             </div>
@@ -4747,52 +4718,22 @@ Your Student ✨
                 >
                   Cancel
                 </button>
-                <div className="space-y-3">
-                  <div className="text-sm font-medium text-gray-700 mb-2">Choose Email Service:</div>
-                  <div className="grid grid-cols-2 gap-2">
+                <div className="text-center">
                 <button
-                      onClick={() => handleProgressEmailShare('direct')}
-                      disabled={!shareEmail || isSendingEmail}
-                      className="px-3 py-2 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
-                    >
-                      {isSendingEmail ? '⏳ Sending...' : '📧 Send Direct'}
-                    </button>
-                    <button
-                      onClick={() => handleProgressEmailShare('gmail')}
-                  disabled={!shareEmail}
-                      className="px-3 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
-                    >
-                      📧 Gmail
-                    </button>
-                    <button
-                      onClick={() => handleProgressEmailShare('outlook')}
-                      disabled={!shareEmail}
-                      className="px-3 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
-                    >
-                      📧 Outlook
-                    </button>
-                    <button
-                      onClick={() => handleProgressEmailShare('yahoo')}
-                      disabled={!shareEmail}
-                      className="px-3 py-2 bg-purple-500 text-white rounded-lg font-medium hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
-                    >
-                      📧 Yahoo
-                    </button>
-                    <button
-                      onClick={() => handleProgressEmailShare('mailto')}
-                      disabled={!shareEmail}
-                      className="px-3 py-2 bg-gray-500 text-white rounded-lg font-medium hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm"
-                    >
-                      📧 Default
+                    onClick={() => handleProgressEmailShare('direct')}
+                    disabled={!shareEmail || isSendingEmail}
+                    className="px-8 py-4 bg-green-500 text-white rounded-full font-bold text-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg transform hover:scale-105 active:scale-95"
+                  >
+                    {isSendingEmail ? '⏳ Sending...' : '📧 Send Now'}
                 </button>
               </div>
-                  
-                  {emailSent && (
-                    <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
-                      ✅ Email sent successfully!
-                    </div>
-                  )}
-                </div>
+                
+                {emailSent && (
+                  <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg text-center mt-3">
+                    ✅ Email sent successfully!
+                  </div>
+                )}
+              </div>
               </div>
             </div>
           </div>
