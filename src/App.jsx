@@ -607,6 +607,34 @@ Your Student 🌟
   }, [location.pathname]);
 
   // Navigation helper with breadcrumb updates and URL updates
+  // Calculate total questions for each subject
+  const getQuestionCount = (subject) => {
+    switch (subject) {
+      case 'phonics':
+        return phonicsQuestions.easy.length + phonicsQuestions.medium.length + phonicsQuestions.hard.length;
+      case 'math':
+        return mathQuestions.easy.length + mathQuestions.medium.length + mathQuestions.hard.length;
+      case 'reading':
+        return readingQuestions.length;
+      case 'spelling':
+        return spellingWords.length;
+      case 'science':
+        return scienceQuestions.length;
+      case 'art':
+        return artQuestions.length;
+      case 'geography':
+        return geographyQuestions.length;
+      case 'history':
+        return historyQuestions.length;
+      case 'social':
+        return skipCountingQuestions.length; // Using skip counting for social/citizenship
+      case 'skipcounting':
+        return skipCountingQuestions.length;
+      default:
+        return 0;
+    }
+  };
+
   const navigateTo = (screen, additionalInfo = '', params = {}) => {
     playSound('click');
     triggerHaptic('light');
@@ -2689,6 +2717,7 @@ Your Student 🌟
                     className={`bg-gradient-to-br ${game.color} p-4 rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform relative hover:wiggle`}>
                     <div className="text-3xl md:text-4xl mb-2 sparkle">{game.icon}</div>
                     <h2 className="text-sm md:text-base font-bold text-white mb-1">{game.title}</h2>
+                    <div className="text-xs text-white/80 mb-1">{getQuestionCount(game.name)} questions</div>
                     {progress.completedSubjects[game.name] && (
                       <div className="absolute top-1 right-1 text-lg sparkle">🏆</div>
                     )}
