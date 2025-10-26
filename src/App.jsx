@@ -5306,6 +5306,35 @@ Your Student 🌟
         </div>
       )}
 
+      {/* Debug log for modal state */}
+      {console.log('Current showLegendModal state before rendering:', showLegendModal)}
+      
+      {/* Simple Test Modal */}
+      {showLegendModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'red',
+          zIndex: 99999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '50px',
+          color: 'white'
+        }}>
+          TEST MODAL IS WORKING!
+          <button 
+            onClick={() => setShowLegendModal(false)}
+            style={{marginLeft: '20px', padding: '10px', fontSize: '20px'}}
+          >
+            Close
+          </button>
+        </div>
+      )}
+      
       {/* Legend/Glossary Modal */}
       {showLegendModal && (
         <div className="fixed inset-0 bg-red-500 bg-opacity-80 flex items-center justify-center z-[9999] p-4" style={{zIndex: 9999}}>
