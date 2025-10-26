@@ -68,6 +68,7 @@ const EmmyStudyGame = () => {
   const [feedbackRating, setFeedbackRating] = useState(5);
   const [showWrongAnswerModal, setShowWrongAnswerModal] = useState(false);
   const [wrongAnswerData, setWrongAnswerData] = useState(null);
+  const [showLegendModal, setShowLegendModal] = useState(false);
   const [parentMode, setParentMode] = useState(false);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [selectedNewsletter, setSelectedNewsletter] = useState(null);
@@ -3553,7 +3554,7 @@ Your Student 🌟
           {/* Parent Tools & Reference */}
           <div className="mb-6">
             <h2 className="text-xl md:text-2xl font-bold text-center text-purple-800 mb-3">📚 Parent Tools</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               {/* Word Lists & Quiz */}
               <div onClick={() => navigateTo('parent-reference')} 
                 className="bg-gradient-to-br from-purple-400 to-indigo-500 p-4 rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
@@ -3592,6 +3593,14 @@ Your Student 🌟
                 <div className="text-3xl mb-1">📰</div>
                 <h3 className="text-sm font-bold text-white">Newsletter</h3>
                 <p className="text-xs text-blue-100">Week 10</p>
+              </div>
+
+              {/* Legend/Glossary */}
+              <div onClick={() => { playSound('click'); triggerHaptic('light'); setShowLegendModal(true); }} 
+                className="bg-gradient-to-br from-indigo-400 to-purple-500 p-4 rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
+                <div className="text-3xl mb-1">📖</div>
+                <h3 className="text-sm font-bold text-white">Legend</h3>
+                <p className="text-xs text-indigo-100">Terms & acronyms</p>
               </div>
             </div>
           </div>
@@ -5420,6 +5429,188 @@ Your Student 🌟
               >
                 Got It! Continue →
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Legend/Glossary Modal */}
+      {showLegendModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 md:p-8">
+              <div className="text-center mb-6">
+                <div className="text-6xl mb-4">📖</div>
+                <h2 className="text-2xl md:text-3xl font-bold text-purple-600 mb-2">Educational Terms & Acronyms</h2>
+                <p className="text-gray-600">A guide to help parents understand school terminology</p>
+              </div>
+
+              <div className="space-y-6">
+                {/* Grading Scores */}
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border-2 border-green-200">
+                  <h3 className="text-xl font-bold text-green-700 mb-4">📊 Grading Scores</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="bg-white p-3 rounded-lg shadow-sm">
+                      <span className="font-bold text-green-600">A, B, C, D, F:</span>
+                      <p className="text-sm text-gray-600">Standard letter grades</p>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg shadow-sm">
+                      <span className="font-bold text-green-600">P:</span>
+                      <p className="text-sm text-gray-600">Pass</p>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg shadow-sm">
+                      <span className="font-bold text-green-600">NP:</span>
+                      <p className="text-sm text-gray-600">Not Passing</p>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg shadow-sm">
+                      <span className="font-bold text-green-600">I:</span>
+                      <p className="text-sm text-gray-600">Incomplete</p>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg shadow-sm">
+                      <span className="font-bold text-green-600">W:</span>
+                      <p className="text-sm text-gray-600">Withdrawal</p>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg shadow-sm">
+                      <span className="font-bold text-green-600">GPA:</span>
+                      <p className="text-sm text-gray-600">Grade Point Average</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Educational Acronyms */}
+                <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-6 border-2 border-blue-200">
+                  <h3 className="text-xl font-bold text-blue-700 mb-4">🏫 Educational Acronyms</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-blue-600">IEP:</span>
+                        <p className="text-sm text-gray-600">Individualized Education Program</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-blue-600">ELL:</span>
+                        <p className="text-sm text-gray-600">English Language Learner</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-blue-600">ESL:</span>
+                        <p className="text-sm text-gray-600">English as a Second Language</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-blue-600">PTA:</span>
+                        <p className="text-sm text-gray-600">Parent-Teacher Association</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-blue-600">504 Plan:</span>
+                        <p className="text-sm text-gray-600">Accommodation plan for students with disabilities</p>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-blue-600">FERPA:</span>
+                        <p className="text-sm text-gray-600">Family Educational Rights and Privacy Act</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-blue-600">ADA:</span>
+                        <p className="text-sm text-gray-600">Americans with Disabilities Act</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-blue-600">AP:</span>
+                        <p className="text-sm text-gray-600">Advanced Placement</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-blue-600">SAT:</span>
+                        <p className="text-sm text-gray-600">Scholastic Aptitude Test</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-blue-600">ACT:</span>
+                        <p className="text-sm text-gray-600">American College Testing</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Specific Terms */}
+                <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border-2 border-purple-200">
+                  <h3 className="text-xl font-bold text-purple-700 mb-4">🎯 Specific Terms</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-purple-600">PG:</span>
+                        <p className="text-sm text-gray-600">Proficient Grade</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-purple-600">PF:</span>
+                        <p className="text-sm text-gray-600">Pass/Fail</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-purple-600">DAV:</span>
+                        <p className="text-sm text-gray-600">Developmental Assessment Value</p>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-purple-600">CVC:</span>
+                        <p className="text-sm text-gray-600">Consonant-Vowel-Consonant words</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-purple-600">ELA:</span>
+                        <p className="text-sm text-gray-600">English Language Arts</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-purple-600">STEM:</span>
+                        <p className="text-sm text-gray-600">Science, Technology, Engineering, Math</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* App-Specific Terms */}
+                <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 border-2 border-yellow-200">
+                  <h3 className="text-xl font-bold text-yellow-700 mb-4">📱 App-Specific Terms</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-yellow-600">Perfect Score:</span>
+                        <p className="text-sm text-gray-600">100% on any subject game</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-yellow-600">Confidence Level:</span>
+                        <p className="text-sm text-gray-600">How confident Emmy feels about each subject</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-yellow-600">Learning Streak:</span>
+                        <p className="text-sm text-gray-600">Consecutive days of learning</p>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-yellow-600">Achievement:</span>
+                        <p className="text-sm text-gray-600">Special rewards earned for milestones</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-yellow-600">Smart Shuffle:</span>
+                        <p className="text-sm text-gray-600">Algorithm that reduces repeat questions</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-yellow-600">Question History:</span>
+                        <p className="text-sm text-gray-600">Tracks previously asked questions</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-center mt-8">
+                <button
+                  onClick={() => {
+                    setShowLegendModal(false);
+                    playSound('click');
+                    triggerHaptic('light');
+                  }}
+                  className="bg-purple-500 hover:bg-purple-600 text-white px-8 py-3 rounded-full font-bold text-lg transition-colors transform hover:scale-105 active:scale-95"
+                >
+                  Got It! Close
+                </button>
+              </div>
             </div>
           </div>
         </div>
