@@ -37,6 +37,7 @@ const EmmyStudyGame = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [breadcrumbs, setBreadcrumbs] = useState(['Home']);
   const [learningStreak, setLearningStreak] = useState(0);
+  const [selectedSpellingMonth, setSelectedSpellingMonth] = useState('all');
   const [lastLearningDate, setLastLearningDate] = useState(null);
   const [dailyChallenge, setDailyChallenge] = useState(null);
   const [confidenceLevels, setConfidenceLevels] = useState({});
@@ -607,6 +608,26 @@ Your Student 🌟
   }, [location.pathname]);
 
   // Navigation helper with breadcrumb updates and URL updates
+  // Filter spelling words by month
+  const getSpellingWordsByMonth = (month) => {
+    if (month === 'all') return spellingWords;
+    
+    const monthRanges = {
+      'october': { start: 0, end: 10 },
+      'november': { start: 10, end: 20 },
+      'december': { start: 20, end: 30 },
+      'january': { start: 30, end: 40 },
+      'february': { start: 40, end: 50 },
+      'march': { start: 50, end: 60 },
+      'additional': { start: 60, end: spellingWords.length }
+    };
+    
+    const range = monthRanges[month];
+    if (!range) return spellingWords;
+    
+    return spellingWords.slice(range.start, range.end);
+  };
+
   // Calculate total questions for each subject
   const getQuestionCount = (subject) => {
     switch (subject) {
@@ -3542,22 +3563,62 @@ Your Student 🌟
   }
 
   if (currentScreen === 'spelling') {
-    const word = spellingWords[currentQuestion];
-    console.log('Spelling game render:', { currentQuestion, word, spellingWordsLength: spellingWords.length });
+    const filteredWords = getSpellingWordsByMonth(selectedSpellingMonth);
+    const word = filteredWords[currentQuestion];
+    console.log('Spelling game render:', { currentQuestion, word, filteredWordsLength: filteredWords.length, selectedMonth: selectedSpellingMonth });
     
     const colors = [
       { name: 'Purple', value: '#8B5CF6' }, { name: 'Pink', value: '#EC4899' },
       { name: 'Blue', value: '#3B82F6' }, { name: 'Green', value: '#10B981' },
       { name: 'Red', value: '#EF4444' }, { name: 'Orange', value: '#F97316' }
     ];
+
+    const monthOptions = [
+      { value: 'all', label: 'All Words', count: spellingWords.length },
+      { value: 'october', label: 'October', count: 10 },
+      { value: 'november', label: 'November', count: 10 },
+      { value: 'december', label: 'December', count: 10 },
+      { value: 'january', label: 'January', count: 10 },
+      { value: 'february', label: 'February', count: 10 },
+      { value: 'march', label: 'March', count: 10 },
+      { value: 'additional', label: 'Extra Words', count: spellingWords.length - 60 }
+    ];
     
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-200 to-purple-400 p-2 sm:p-4 md:p-8">
         <div onClick={() => { navigateTo('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="bg-white px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-lg inline-flex gap-2 hover:scale-105 cursor-pointer mb-3 sm:mb-4">← Back</div>
         <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl p-4 sm:p-6 md:p-12">
+          
+          {/* Month Selector */}
+          <div className="mb-6 sm:mb-8">
+            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-purple-700 mb-4 text-center">📅 Choose Your Word List</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+              {monthOptions.map(option => (
+                <button
+                  key={option.value}
+                  onClick={() => {
+                    setSelectedSpellingMonth(option.value);
+                    setCurrentQuestion(0);
+                    playSound('click');
+                    triggerHaptic('light');
+                  }}
+                  className={`p-3 sm:p-4 rounded-xl font-bold text-sm sm:text-base transition-all transform hover:scale-105 active:scale-95 ${
+                    selectedSpellingMonth === option.value
+                      ? 'bg-purple-500 text-white shadow-lg'
+                      : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+                  }`}
+                >
+                  <div className="font-bold">{option.label}</div>
+                  <div className="text-xs opacity-80">{option.count} words</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Word Display */}
           <div key={`word-section-${currentQuestion}`} className="text-center mb-6 sm:mb-8">
             <div className="text-3xl sm:text-4xl md:text-5xl mb-3">✏️</div>
-            <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-2">Word #{currentQuestion + 1} of {spellingWords.length}</p>
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-2">Word #{currentQuestion + 1} of {filteredWords.length}</p>
             <div className="text-3xl sm:text-4xl md:text-6xl font-bold text-purple-700 mb-4 sm:mb-6">{word?.word || 'Loading...'}</div>
             <p className="text-base sm:text-lg md:text-xl text-gray-600 italic">Hint: {word?.hint || 'Loading...'}</p>
           </div>
@@ -3615,8 +3676,8 @@ Your Student 🌟
             }} 
               className={`px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-bold bg-gray-300 rounded-full cursor-pointer active:scale-95 transition-transform ${currentQuestion===0?'opacity-50':''}`}>← Prev</div>
             <div onClick={() => { 
-              console.log('Next button clicked!', { currentQuestion, spellingWordsLength: spellingWords.length });
-              if(currentQuestion<spellingWords.length-1) { 
+              console.log('Next button clicked!', { currentQuestion, filteredWordsLength: filteredWords.length });
+              if(currentQuestion<filteredWords.length-1) { 
                 console.log('Moving to next question');
                 setCurrentQuestion(currentQuestion+1); 
                 playSound('click');
@@ -3634,7 +3695,7 @@ Your Student 🌟
               } 
             }} 
               className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-bold bg-purple-500 text-white rounded-full cursor-pointer active:scale-95 transition-transform">
-              {currentQuestion < spellingWords.length-1 ? 'Next →' : 'Done 🎉'}
+              {currentQuestion < filteredWords.length-1 ? 'Next →' : 'Done 🎉'}
             </div>
           </div>
         </div>
