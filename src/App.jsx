@@ -2418,6 +2418,7 @@ Your Student 🌟
   };
 
   const playSound = (type) => {
+    console.log('playSound called:', type);
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
       
@@ -2745,6 +2746,7 @@ Your Student 🌟
   };
 
   const handleAnswer = (sel, cor, qs, explanation) => {
+    console.log('handleAnswer called:', { sel, cor, currentScreen, explanation });
     const startTime = Date.now();
     const ok = sel === cor;
     const newScore = score + (ok ? 10 : 0);
