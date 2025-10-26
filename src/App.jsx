@@ -296,7 +296,9 @@ const EmmyStudyGame = () => {
         subject: emailData.subject,
         message: emailData.body,
         from_name: 'Emmy\'s Learning Adventure',
-        student_name: 'Emmy'
+        student_name: 'Emmy',
+        subject_line: emailData.subject, // Additional parameter to ensure subject is captured
+        email_body: emailData.body // Additional parameter to ensure body is captured
       };
       
       console.log('Sending email with params:', {
@@ -342,7 +344,7 @@ const EmmyStudyGame = () => {
   };
 
   const handleProgressEmailShare = (service = 'mailto') => {
-    const emailSubject = `🎉 Learning Progress Update - Great Job!`;
+    const emailSubject = `📚 Emmy's Learning Progress Update - ${completedSubjects}/${totalSubjects} Subjects Complete!`;
     const emailBody = `
 Hi! 
 
@@ -357,12 +359,14 @@ I wanted to share my amazing learning progress in Emmy's Learning Adventure!
 • Learning Streak: ${learningStreak} days
 ${favoriteSubject ? `• Favorite Subject: ${favoriteSubject.name}` : ''}
 
+${completedSubjects >= 8 ? "I'm almost done with all subjects! 🎓" : completedSubjects >= 5 ? "I'm making great progress! 🌟" : "I'm building my learning foundation! 💪"}
+
 ${shareMessage || "I'm so proud of my learning journey! 🎉"}
 
 Keep encouraging my education! 
 
 Love,
-Your Student 🌟
+Your Student ✨
     `.trim();
 
     // Handle direct email sending
@@ -413,7 +417,7 @@ Your Student 🌟
     const percentage = Math.round((score / (questionsAnswered * 10)) * 100);
     const completionTime = new Date().toLocaleString();
     
-    const emailSubject = `🎉 ${subjectName} Completion - Great Job!`;
+    const emailSubject = `🎉 Emmy Completed ${subjectName} Module - ${percentage}% Score!`;
     const emailBody = `
 Hi! 
 
@@ -427,12 +431,14 @@ I just completed the ${subjectName} module in Emmy's Learning Adventure!
 • Correct Answers: ${Math.floor(score / 10)}
 • Completed: ${completionTime}
 
+${percentage >= 90 ? "I got almost everything right! 🌟" : percentage >= 70 ? "I did really well! 😊" : "I'm learning and getting better! 💪"}
+
 ${shareMessage || "I'm so proud of my progress! 🎉"}
 
 Keep encouraging my learning journey! 
 
 Love,
-Your Student 🌟
+Your Student ✨
     `.trim();
 
     // Handle direct email sending
