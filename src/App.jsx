@@ -3482,7 +3482,7 @@ Your Student 🌟
                 className="bg-gradient-to-br from-orange-400 to-red-500 p-4 rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
                 <div className="text-3xl mb-1">📰</div>
                 <h3 className="text-sm font-bold text-white">Smore</h3>
-                <p className="text-xs text-orange-100">Newsletters</p>
+                <p className="text-xs text-orange-100">Scopes</p>
               </div>
 
               {/* Legend/Glossary */}
@@ -3942,12 +3942,12 @@ Your Student 🌟
           {/* Quick Links */}
           <div className="mt-8 bg-gradient-to-r from-teal-500 to-teal-600 rounded-2xl p-6 text-white text-center">
             <h3 className="text-xl font-bold mb-2">🔗 Quick Links</h3>
-            <p className="mb-4">For newsletters and additional school information:</p>
+            <p className="mb-4">For scopes and additional school information:</p>
             <button
               onClick={() => navigateTo('smore')}
               className="inline-block bg-white text-teal-600 px-6 py-3 rounded-full font-bold hover:bg-teal-50 transition-colors transform hover:scale-105 active:scale-95 mr-4"
             >
-              📰 Smore Newsletters
+              📰 Smore Scopes
             </button>
             <button
               onClick={() => navigateTo('newsletter')}
@@ -3970,15 +3970,15 @@ Your Student 🌟
         <div className="max-w-6xl mx-auto bg-white rounded-3xl shadow-2xl p-6 md:p-12">
           <div className="text-center mb-8">
             <div className="text-6xl mb-4">📰</div>
-            <h1 className="text-3xl md:text-4xl font-bold text-orange-700 mb-2">Smore Newsletters</h1>
-            <p className="text-lg text-gray-600">Monthly school newsletters and updates</p>
+            <h1 className="text-3xl md:text-4xl font-bold text-orange-700 mb-2">Smore Scopes</h1>
+            <p className="text-lg text-gray-600">Monthly school scopes and updates</p>
           </div>
 
           {/* Current Month Newsletter */}
           <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl p-6 mb-8 border-2 border-orange-200">
             <h2 className="text-2xl font-bold text-orange-700 mb-4">📅 Current Month</h2>
             <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h3 className="text-xl font-bold text-gray-800 mb-3">October 2024 Newsletter</h3>
+              <h3 className="text-xl font-bold text-gray-800 mb-3">October 2024 Scope</h3>
               <p className="text-gray-600 mb-4">Stay updated with the latest school news, events, and important dates.</p>
               <a
                 href="https://app.smore.com/n/9tvrj"
@@ -3986,26 +3986,26 @@ Your Student 🌟
                 rel="noopener noreferrer"
                 className="inline-block bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-full font-bold transition-colors transform hover:scale-105 active:scale-95"
               >
-                📖 Read Current Newsletter
+                📖 Read Current Scope
               </a>
             </div>
           </div>
 
-          {/* Newsletter Archive */}
+          {/* Scope Archive */}
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 mb-8 border-2 border-blue-200">
-            <h2 className="text-2xl font-bold text-blue-700 mb-4">📚 Newsletter Archive</h2>
+            <h2 className="text-2xl font-bold text-blue-700 mb-4">📚 Scope Archive</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* September 2024 */}
               <div className="bg-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow">
                 <h3 className="font-bold text-gray-800 mb-2">September 2024</h3>
-                <p className="text-sm text-gray-600 mb-3">Back to school newsletter with welcome information and September events.</p>
+                <p className="text-sm text-gray-600 mb-3">Back to school scope with welcome information and September events.</p>
                 <a
                   href="https://app.smore.com/n/9tvrj"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:text-blue-800 text-sm font-semibold underline"
                 >
-                  View Newsletter →
+                  View Scope →
                 </a>
               </div>
 
@@ -4019,7 +4019,7 @@ Your Student 🌟
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:text-blue-800 text-sm font-semibold underline"
                 >
-                  View Newsletter →
+                  View Scope →
                 </a>
               </div>
 
@@ -4033,7 +4033,7 @@ Your Student 🌟
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:text-blue-800 text-sm font-semibold underline"
                 >
-                  View Newsletter →
+                  View Scope →
                 </a>
               </div>
             </div>
@@ -4069,7 +4069,7 @@ Your Student 🌟
           {/* Direct Smore Link */}
           <div className="mt-8 bg-gradient-to-r from-orange-500 to-red-600 rounded-2xl p-6 text-white text-center">
             <h3 className="text-xl font-bold mb-2">🌐 Visit Smore Website</h3>
-            <p className="mb-4">For the most up-to-date newsletters and school information, visit the official Smore page:</p>
+            <p className="mb-4">For the most up-to-date scopes and school information, visit the official Smore page:</p>
             <a
               href="https://app.smore.com/n/9tvrj"
               target="_blank"
