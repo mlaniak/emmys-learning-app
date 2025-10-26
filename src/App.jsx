@@ -3522,6 +3522,25 @@ Your Student 🌟
                 `;
                 
                 content.innerHTML = `
+                  <div style="position: relative;">
+                    <button onclick="this.parentElement.parentElement.parentElement.remove()" style="
+                      position: absolute;
+                      top: 10px;
+                      right: 10px;
+                      background: #ef4444;
+                      color: white;
+                      border: none;
+                      border-radius: 50%;
+                      width: 30px;
+                      height: 30px;
+                      font-size: 16px;
+                      cursor: pointer;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      font-weight: bold;
+                    ">×</button>
+                  </div>
                   <h2 style="color: purple; font-size: 24px; margin-bottom: 20px;">📖 Educational Terms & Acronyms</h2>
                   <p style="margin-bottom: 30px;">A guide to help parents understand school terminology</p>
                   
