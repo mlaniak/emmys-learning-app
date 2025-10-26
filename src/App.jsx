@@ -4000,7 +4000,7 @@ Your Student 🌟
                 <h3 className="font-bold text-gray-800 mb-2">September 2024</h3>
                 <p className="text-sm text-gray-600 mb-3">Back to school scope with welcome information and September events.</p>
                 <a
-                  href="https://app.smore.com/n/9tvrj"
+                  href="https://app.smore.com/n/a4hu8n"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:text-blue-800 text-sm font-semibold underline"
