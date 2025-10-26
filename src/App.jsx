@@ -3116,22 +3116,22 @@ Your Student 🌟
     ];
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-200 to-purple-400 p-4 md:p-8">
-        <div onClick={() => { navigateTo('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="bg-white px-6 py-3 rounded-full shadow-lg inline-flex gap-2 hover:scale-105 cursor-pointer mb-4">← Back</div>
-        <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl p-6 md:p-12">
-          <div className="text-center mb-6">
-            <div className="text-4xl md:text-5xl mb-3">✏️</div>
-            <p className="text-lg md:text-xl text-gray-600 mb-2">Word #{currentQuestion + 1} of {spellingWords.length}</p>
-            <div className="text-4xl md:text-6xl font-bold text-purple-700 mb-4">{word.word}</div>
-            <p className="text-lg md:text-xl text-gray-600 italic">Hint: {word.hint}</p>
+      <div className="min-h-screen bg-gradient-to-br from-purple-200 to-purple-400 p-2 sm:p-4 md:p-8">
+        <div onClick={() => { navigateTo('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="bg-white px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-lg inline-flex gap-2 hover:scale-105 cursor-pointer mb-3 sm:mb-4">← Back</div>
+        <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl p-4 sm:p-6 md:p-12">
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="text-3xl sm:text-4xl md:text-5xl mb-3">✏️</div>
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-2">Word #{currentQuestion + 1} of {spellingWords.length}</p>
+            <div className="text-3xl sm:text-4xl md:text-6xl font-bold text-purple-700 mb-4 sm:mb-6">{word.word}</div>
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 italic">Hint: {word.hint}</p>
           </div>
           
-          <div className="mb-6">
-            <p className="text-center text-base md:text-lg font-bold text-purple-700 mb-3">🌈 Choose Rainbow Color!</p>
-            <div className="flex justify-center gap-2 flex-wrap">
+          <div className="mb-6 sm:mb-8">
+            <p className="text-center text-sm sm:text-base md:text-lg font-bold text-purple-700 mb-3 sm:mb-4">🌈 Choose Rainbow Color!</p>
+            <div className="flex justify-center gap-2 sm:gap-3 flex-wrap">
               {colors.map(color => (
                 <div key={color.value} onClick={() => { setDrawColor(color.value); triggerHaptic('light'); }}
-                  className={`w-10 h-10 md:w-12 md:h-12 rounded-full cursor-pointer hover:scale-110 active:scale-95 transition-transform ${drawColor === color.value ? 'ring-4 ring-yellow-400' : ''}`}
+                  className={`w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full cursor-pointer hover:scale-110 active:scale-95 transition-transform ${drawColor === color.value ? 'ring-4 ring-yellow-400' : ''}`}
                   style={{ backgroundColor: color.value }}
                   role="button"
                   aria-label={`Select ${color.name} color`}
@@ -3140,21 +3140,21 @@ Your Student 🌟
             </div>
           </div>
           
-          <div className="bg-gradient-to-br from-yellow-50 to-pink-50 p-4 md:p-8 rounded-2xl border-4 border-purple-300">
-            <p className="text-lg md:text-xl text-center text-purple-700 font-bold mb-4">✍️ Write 5 times!</p>
-            <div className="space-y-3">
+          <div className="bg-gradient-to-br from-yellow-50 to-pink-50 p-3 sm:p-4 md:p-8 rounded-2xl border-4 border-purple-300">
+            <p className="text-lg md:text-xl text-center text-purple-700 font-bold mb-4 sm:mb-6">✍️ Write 5 times!</p>
+            <div className="space-y-4 sm:space-y-5">
               {[0,1,2,3,4].map(i => (
                 <div key={i}>
                   <div className="flex items-center mb-2">
                     <span className="text-xl font-bold text-purple-600 mr-3">{i+1}.</span>
                     <div onClick={() => { clearCanvas(i); triggerHaptic('light'); }} className="ml-auto px-3 py-1 bg-red-400 text-white rounded-full text-sm font-bold cursor-pointer hover:bg-red-500 active:scale-95 transition-transform">Clear</div>
                   </div>
-                  <canvas ref={canvasRefs[i]} width={600} height={80}
+                  <canvas ref={canvasRefs[i]} width={600} height={120}
                     onMouseDown={(e) => startDrawing(e, i)} onMouseMove={(e) => draw(e, i)} 
                     onMouseUp={() => { setIsDrawing(false); setCurrentCanvas(null); }}
                     onTouchStart={(e) => startDrawing(e, i)} onTouchMove={(e) => draw(e, i)} 
                     onTouchEnd={() => { setIsDrawing(false); setCurrentCanvas(null); }}
-                    className="w-full border-4 border-dashed border-purple-300 rounded-xl bg-white cursor-crosshair touch-none select-none"
+                    className="w-full h-24 sm:h-28 md:h-32 border-4 border-dashed border-purple-300 rounded-xl bg-white cursor-crosshair touch-none select-none"
                     style={{touchAction: 'none'}}
                     role="img"
                     aria-label={`Drawing canvas ${i+1} for spelling practice`}
@@ -3163,11 +3163,11 @@ Your Student 🌟
               ))}
             </div>
           </div>
-          <div className="mt-6 flex justify-between gap-4">
+          <div className="mt-6 sm:mt-8 flex justify-between gap-3 sm:gap-4">
             <div onClick={() => { if(currentQuestion>0) { setCurrentQuestion(currentQuestion-1); triggerHaptic('light'); } }} 
-              className={`px-6 py-3 font-bold bg-gray-300 rounded-full cursor-pointer active:scale-95 transition-transform ${currentQuestion===0?'opacity-50':''}`}>← Prev</div>
+              className={`px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-bold bg-gray-300 rounded-full cursor-pointer active:scale-95 transition-transform ${currentQuestion===0?'opacity-50':''}`}>← Prev</div>
             <div onClick={() => { if(currentQuestion<spellingWords.length-1) { setCurrentQuestion(currentQuestion+1); triggerHaptic('light'); } else { navigateTo('home'); triggerHaptic('success'); window.scrollTo({ top: 0, behavior: 'smooth' }); } }} 
-              className="px-6 py-3 font-bold bg-purple-500 text-white rounded-full cursor-pointer active:scale-95 transition-transform">
+              className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-bold bg-purple-500 text-white rounded-full cursor-pointer active:scale-95 transition-transform">
               {currentQuestion < spellingWords.length-1 ? 'Next →' : 'Done 🎉'}
             </div>
           </div>
