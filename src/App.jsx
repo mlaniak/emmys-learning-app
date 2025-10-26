@@ -3494,6 +3494,90 @@ Your Student 🌟
                 playSound('click'); 
                 triggerHaptic('light'); 
                 setShowLegendModal(true); 
+                
+                // Direct DOM manipulation with updated Standards-Based Grading info
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                  position: fixed;
+                  top: 0;
+                  left: 0;
+                  width: 100%;
+                  height: 100%;
+                  background-color: rgba(0,0,0,0.8);
+                  z-index: 99999;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                `;
+                
+                const content = document.createElement('div');
+                content.style.cssText = `
+                  background: white;
+                  padding: 40px;
+                  border-radius: 20px;
+                  max-width: 800px;
+                  max-height: 80vh;
+                  overflow-y: auto;
+                  text-align: center;
+                `;
+                
+                content.innerHTML = `
+                  <h2 style="color: purple; font-size: 24px; margin-bottom: 20px;">📖 Educational Terms & Acronyms</h2>
+                  <p style="margin-bottom: 30px;">A guide to help parents understand school terminology</p>
+                  
+                  <div style="text-align: left; margin-bottom: 30px; background: #f0fdf4; padding: 20px; border-radius: 10px; border: 2px solid #22c55e;">
+                    <h3 style="color: #15803d; font-size: 18px; margin-bottom: 15px;">📊 Standards-Based Grading</h3>
+                    <p style="margin-bottom: 15px; font-size: 14px;"><strong>What is Standards-Based Grading?</strong><br/>
+                    A system where students receive feedback around "fixed targets" or competencies. Non-academic factors (participation, late assignments, etc.) are removed, so the final grade represents what the student knows and can do.</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                      <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #3b82f6;">
+                        <strong style="color: #3b82f6;">PF - Proficient:</strong><br/>
+                        <span style="font-size: 12px;">"I got it! I have mastered the content!"</span>
+                      </div>
+                      <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #f97316;">
+                        <strong style="color: #f97316;">PG - Progressing:</strong><br/>
+                        <span style="font-size: 12px;">"I am almost there. I need some support with the skill."</span>
+                      </div>
+                      <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #ef4444;">
+                        <strong style="color: #ef4444;">DV - Developing:</strong><br/>
+                        <span style="font-size: 12px;">"I need additional class and home support. Urgent intervention is needed."</span>
+                      </div>
+                    </div>
+                    
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                      <h4 style="color: #15803d; margin-bottom: 10px;">Key Benefits:</h4>
+                      <ul style="font-size: 12px; margin: 0; padding-left: 20px;">
+                        <li>Learning is prioritized over compliance</li>
+                        <li>Growth mindset develops</li>
+                        <li>Motivation to learn increases</li>
+                        <li>Grades have meaning</li>
+                        <li>Clear vision of success</li>
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  <div style="text-align: left; margin-bottom: 20px;">
+                    <h3 style="color: #1e40af;">🎒 First Grade Terms</h3>
+                    <p><strong>ELA:</strong> English Language Arts</p>
+                    <p><strong>CVC:</strong> Consonant-Vowel-Consonant words</p>
+                    <p><strong>Sight Words:</strong> Common words learned by sight</p>
+                    <p><strong>Phonics:</strong> Letter sounds and blending</p>
+                  </div>
+                  
+                  <button onclick="this.parentElement.parentElement.remove()" style="
+                    background: purple;
+                    color: white;
+                    padding: 10px 20px;
+                    border: none;
+                    border-radius: 10px;
+                    font-size: 16px;
+                    cursor: pointer;
+                  ">Close</button>
+                `;
+                
+                modal.appendChild(content);
+                document.body.appendChild(modal);
               }} 
                 className="bg-gradient-to-br from-indigo-400 to-purple-500 p-4 rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
                 <div className="text-3xl mb-1">📖</div>
