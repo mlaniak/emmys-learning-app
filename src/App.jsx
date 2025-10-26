@@ -66,6 +66,8 @@ const EmmyStudyGame = () => {
   const [feedbackCategory, setFeedbackCategory] = useState('general');
   const [feedbackMessage, setFeedbackMessage] = useState('');
   const [feedbackRating, setFeedbackRating] = useState(5);
+  const [showWrongAnswerModal, setShowWrongAnswerModal] = useState(false);
+  const [wrongAnswerData, setWrongAnswerData] = useState(null);
   const [parentMode, setParentMode] = useState(false);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [selectedNewsletter, setSelectedNewsletter] = useState(null);
@@ -2784,9 +2786,19 @@ Your Student 🌟
       setShowFeedback('incorrect'); 
       setAnswerAnimation('incorrect-shake');
       setCorrectAnswer(cor);
-      if (explanation) setTimeout(() => setShowExplanation(true), 800);
+      
+      // Show wrong answer popup instead of auto-continuing
+      setWrongAnswerData({
+        selectedAnswer: sel,
+        correctAnswer: cor,
+        explanation: explanation,
+        question: qs[currentQuestion]
+      });
+      setShowWrongAnswerModal(true);
     }
     
+    // Only auto-continue for correct answers
+    if (ok) {
     setTimeout(() => {
       setShowFeedback(null); 
       setAnswerAnimation(''); 
@@ -2832,7 +2844,8 @@ Your Student 🌟
         triggerHaptic('success');
         setCurrentScreen('complete');
       }
-    }, explanation && !ok ? 3500 : 1500);
+    }, 1500);
+    }
   };
 
   const resetGame = () => { 
@@ -3713,7 +3726,7 @@ Your Student 🌟
               ))}
             </div>
           </div>
-
+          
           {/* Word Display */}
           <div key={`word-section-${currentQuestion}`} className="text-center mb-6 sm:mb-8">
             <div className="text-3xl sm:text-4xl md:text-5xl mb-3">✏️</div>
@@ -5308,6 +5321,108 @@ Your Student 🌟
         >
           💬
         </button>
+      )}
+
+      {/* Wrong Answer Modal */}
+      {showWrongAnswerModal && wrongAnswerData && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 md:p-8">
+            <div className="text-center mb-6">
+              <div className="text-6xl mb-4">😅</div>
+              <h2 className="text-2xl md:text-3xl font-bold text-red-600 mb-2">Not Quite Right!</h2>
+              <p className="text-gray-600">Let's learn from this mistake</p>
+            </div>
+
+            <div className="space-y-4 mb-6">
+              {/* Question */}
+              {wrongAnswerData.question && (
+                <div className="bg-gray-50 rounded-xl p-4">
+                  <h3 className="font-bold text-gray-700 mb-2">Question:</h3>
+                  <p className="text-gray-600">
+                    {wrongAnswerData.question.question || wrongAnswerData.question.word || 'Question not available'}
+                  </p>
+                </div>
+              )}
+
+              {/* Your Answer */}
+              <div className="bg-red-50 rounded-xl p-4 border border-red-200">
+                <h3 className="font-bold text-red-700 mb-2">Your Answer:</h3>
+                <p className="text-red-600 font-semibold">{wrongAnswerData.selectedAnswer}</p>
+              </div>
+
+              {/* Correct Answer */}
+              <div className="bg-green-50 rounded-xl p-4 border border-green-200">
+                <h3 className="font-bold text-green-700 mb-2">Correct Answer:</h3>
+                <p className="text-green-600 font-semibold">{wrongAnswerData.correctAnswer}</p>
+              </div>
+
+              {/* Explanation */}
+              {wrongAnswerData.explanation && (
+                <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                  <h3 className="font-bold text-blue-700 mb-2">Why?</h3>
+                  <p className="text-blue-600">{wrongAnswerData.explanation}</p>
+                </div>
+              )}
+            </div>
+
+            <div className="text-center">
+              <button
+                onClick={() => {
+                  setShowWrongAnswerModal(false);
+                  setWrongAnswerData(null);
+                  setShowFeedback(null);
+                  setAnswerAnimation('');
+                  setCorrectAnswer('');
+                  
+                  // Continue to next question
+                  const qs = questionSets[currentScreen] || [];
+                  if (currentQuestion < qs.length - 1) {
+                    setCurrentQuestion(currentQuestion + 1);
+                  } else {
+                    // Game completed
+                    const subjectScore = Math.round((score / (questionCount * 10)) * 100);
+                    const isPerfectScore = subjectScore === 100;
+                    
+                    let newProgress = {
+                      ...progress,
+                      totalScore: progress.totalScore + score,
+                      lastPlayed: new Date().toISOString(),
+                      completedSubjects: {
+                        ...progress.completedSubjects,
+                        [currentScreen]: {
+                          completed: true,
+                          score: subjectScore,
+                          completedAt: new Date().toISOString(),
+                          questionsAnswered: questionCount,
+                          correctAnswers: Math.floor(score / 10)
+                        }
+                      }
+                    };
+                    
+                    if (isPerfectScore) {
+                      newProgress.stats = newProgress.stats || {};
+                      newProgress.stats.perfectScores = (newProgress.stats.perfectScores || 0) + 1;
+                    }
+                    
+                    newProgress = checkAchievements(newProgress);
+                    newProgress = checkUnlocks(newProgress);
+                    
+                    saveProgress(newProgress);
+                    playSound('complete');
+                    triggerHaptic('success');
+                    setCurrentScreen('complete');
+                  }
+                  
+                  playSound('click');
+                  triggerHaptic('light');
+                }}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg transition-colors transform hover:scale-105 active:scale-95"
+              >
+                Got It! Continue →
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Scroll to Top Button */}
