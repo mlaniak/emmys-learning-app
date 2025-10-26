@@ -5463,101 +5463,58 @@ Your Student 🌟
                       <p className="text-sm text-gray-600">Not Passing</p>
                     </div>
                     <div className="bg-white p-3 rounded-lg shadow-sm">
-                      <span className="font-bold text-green-600">I:</span>
-                      <p className="text-sm text-gray-600">Incomplete</p>
+                      <span className="font-bold text-green-600">PG:</span>
+                      <p className="text-sm text-gray-600">Proficient Grade</p>
                     </div>
                     <div className="bg-white p-3 rounded-lg shadow-sm">
-                      <span className="font-bold text-green-600">W:</span>
-                      <p className="text-sm text-gray-600">Withdrawal</p>
+                      <span className="font-bold text-green-600">PF:</span>
+                      <p className="text-sm text-gray-600">Pass/Fail</p>
                     </div>
                     <div className="bg-white p-3 rounded-lg shadow-sm">
-                      <span className="font-bold text-green-600">GPA:</span>
-                      <p className="text-sm text-gray-600">Grade Point Average</p>
+                      <span className="font-bold text-green-600">DAV:</span>
+                      <p className="text-sm text-gray-600">Developmental Assessment Value</p>
                     </div>
                   </div>
                 </div>
 
-                {/* Educational Acronyms */}
+                {/* First Grade Specific Terms */}
                 <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-6 border-2 border-blue-200">
-                  <h3 className="text-xl font-bold text-blue-700 mb-4">🏫 Educational Acronyms</h3>
+                  <h3 className="text-xl font-bold text-blue-700 mb-4">🎒 First Grade Terms</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3">
                       <div className="bg-white p-3 rounded-lg shadow-sm">
-                        <span className="font-bold text-blue-600">IEP:</span>
-                        <p className="text-sm text-gray-600">Individualized Education Program</p>
+                        <span className="font-bold text-blue-600">ELA:</span>
+                        <p className="text-sm text-gray-600">English Language Arts</p>
                       </div>
                       <div className="bg-white p-3 rounded-lg shadow-sm">
-                        <span className="font-bold text-blue-600">ELL:</span>
-                        <p className="text-sm text-gray-600">English Language Learner</p>
+                        <span className="font-bold text-blue-600">CVC:</span>
+                        <p className="text-sm text-gray-600">Consonant-Vowel-Consonant words</p>
                       </div>
                       <div className="bg-white p-3 rounded-lg shadow-sm">
-                        <span className="font-bold text-blue-600">ESL:</span>
-                        <p className="text-sm text-gray-600">English as a Second Language</p>
+                        <span className="font-bold text-blue-600">Sight Words:</span>
+                        <p className="text-sm text-gray-600">Common words learned by sight</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-blue-600">Phonics:</span>
+                        <p className="text-sm text-gray-600">Letter sounds and blending</p>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-blue-600">Number Sense:</span>
+                        <p className="text-sm text-gray-600">Understanding numbers 0-20</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-blue-600">Skip Counting:</span>
+                        <p className="text-sm text-gray-600">Counting by 2s, 5s, 10s</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg shadow-sm">
+                        <span className="font-bold text-blue-600">Story Elements:</span>
+                        <p className="text-sm text-gray-600">Characters, setting, problem, solution</p>
                       </div>
                       <div className="bg-white p-3 rounded-lg shadow-sm">
                         <span className="font-bold text-blue-600">PTA:</span>
                         <p className="text-sm text-gray-600">Parent-Teacher Association</p>
-                      </div>
-                      <div className="bg-white p-3 rounded-lg shadow-sm">
-                        <span className="font-bold text-blue-600">504 Plan:</span>
-                        <p className="text-sm text-gray-600">Accommodation plan for students with disabilities</p>
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <div className="bg-white p-3 rounded-lg shadow-sm">
-                        <span className="font-bold text-blue-600">FERPA:</span>
-                        <p className="text-sm text-gray-600">Family Educational Rights and Privacy Act</p>
-                      </div>
-                      <div className="bg-white p-3 rounded-lg shadow-sm">
-                        <span className="font-bold text-blue-600">ADA:</span>
-                        <p className="text-sm text-gray-600">Americans with Disabilities Act</p>
-                      </div>
-                      <div className="bg-white p-3 rounded-lg shadow-sm">
-                        <span className="font-bold text-blue-600">AP:</span>
-                        <p className="text-sm text-gray-600">Advanced Placement</p>
-                      </div>
-                      <div className="bg-white p-3 rounded-lg shadow-sm">
-                        <span className="font-bold text-blue-600">SAT:</span>
-                        <p className="text-sm text-gray-600">Scholastic Aptitude Test</p>
-                      </div>
-                      <div className="bg-white p-3 rounded-lg shadow-sm">
-                        <span className="font-bold text-blue-600">ACT:</span>
-                        <p className="text-sm text-gray-600">American College Testing</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Specific Terms */}
-                <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border-2 border-purple-200">
-                  <h3 className="text-xl font-bold text-purple-700 mb-4">🎯 Specific Terms</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-3">
-                      <div className="bg-white p-3 rounded-lg shadow-sm">
-                        <span className="font-bold text-purple-600">PG:</span>
-                        <p className="text-sm text-gray-600">Proficient Grade</p>
-                      </div>
-                      <div className="bg-white p-3 rounded-lg shadow-sm">
-                        <span className="font-bold text-purple-600">PF:</span>
-                        <p className="text-sm text-gray-600">Pass/Fail</p>
-                      </div>
-                      <div className="bg-white p-3 rounded-lg shadow-sm">
-                        <span className="font-bold text-purple-600">DAV:</span>
-                        <p className="text-sm text-gray-600">Developmental Assessment Value</p>
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <div className="bg-white p-3 rounded-lg shadow-sm">
-                        <span className="font-bold text-purple-600">CVC:</span>
-                        <p className="text-sm text-gray-600">Consonant-Vowel-Consonant words</p>
-                      </div>
-                      <div className="bg-white p-3 rounded-lg shadow-sm">
-                        <span className="font-bold text-purple-600">ELA:</span>
-                        <p className="text-sm text-gray-600">English Language Arts</p>
-                      </div>
-                      <div className="bg-white p-3 rounded-lg shadow-sm">
-                        <span className="font-bold text-purple-600">STEM:</span>
-                        <p className="text-sm text-gray-600">Science, Technology, Engineering, Math</p>
                       </div>
                     </div>
                   </div>
