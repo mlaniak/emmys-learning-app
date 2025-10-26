@@ -25,6 +25,14 @@ const NewsletterSelector = ({ onSelectNewsletter, onBack }) => {
       description: "First Grade Newsletter - Week 8",
       icon: "📰",
       pdfPath: "https://mlaniak.github.io/emmys-learning-app/newsletters/1st_Grade_Newsletter_week__8.pdf"
+    },
+    {
+      week: 7,
+      title: "Week 7 Newsletter",
+      date: "September 29th - October 3rd",
+      description: "First Grade Newsletter - Week 7",
+      icon: "📰",
+      pdfPath: "https://mlaniak.github.io/emmys-learning-app/newsletters/1st_Grade_Newsletter_week__7.pdf"
     }
   ];
 

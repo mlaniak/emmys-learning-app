@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-ro
 import Week10Newsletter from './Week10Newsletter';
 import Week9Newsletter from './Week9Newsletter';
 import Week8Newsletter from './Week8Newsletter';
+import Week7Newsletter from './Week7Newsletter';
 import NewsletterSelector from './NewsletterSelector';
 
 // EmailJS for direct email sending
@@ -4057,6 +4058,7 @@ Your Student 🌟
     
     // Show specific newsletter based on selection
     const newsletterComponents = {
+      7: Week7Newsletter,
       8: Week8Newsletter,
       9: Week9Newsletter,
       10: Week10Newsletter
