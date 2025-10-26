@@ -5529,34 +5529,40 @@ Your Student 🌟
                 <p className="text-gray-600">A guide to help parents understand school terminology</p>
               </div>
               <div className="space-y-6">
-                {/* Grading Scores */}
+                {/* Standards-Based Grading */}
                 <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border-2 border-green-200">
-                  <h3 className="text-xl font-bold text-green-700 mb-4">📊 Grading Scores</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <div className="bg-white p-3 rounded-lg shadow-sm">
-                      <span className="font-bold text-green-600">A, B, C, D, F:</span>
-                      <p className="text-sm text-gray-600">Standard letter grades</p>
+                  <h3 className="text-xl font-bold text-green-700 mb-4">📊 Standards-Based Grading</h3>
+                  <div className="mb-4 bg-white p-4 rounded-lg shadow-sm">
+                    <p className="text-sm text-gray-700 mb-3">
+                      <strong>What is Standards-Based Grading?</strong><br/>
+                      A system where students receive feedback around "fixed targets" or competencies. 
+                      Non-academic factors (participation, late assignments, etc.) are removed, so the final grade 
+                      represents what the student knows and can do.
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-white p-3 rounded-lg shadow-sm border-l-4 border-blue-500">
+                      <span className="font-bold text-blue-600">PF - Proficient:</span>
+                      <p className="text-sm text-gray-600">"I got it! I have mastered the content!"</p>
                     </div>
-                    <div className="bg-white p-3 rounded-lg shadow-sm">
-                      <span className="font-bold text-green-600">P:</span>
-                      <p className="text-sm text-gray-600">Pass</p>
+                    <div className="bg-white p-3 rounded-lg shadow-sm border-l-4 border-orange-500">
+                      <span className="font-bold text-orange-600">PG - Progressing:</span>
+                      <p className="text-sm text-gray-600">"I am almost there. I need some support with the skill."</p>
                     </div>
-                    <div className="bg-white p-3 rounded-lg shadow-sm">
-                      <span className="font-bold text-green-600">NP:</span>
-                      <p className="text-sm text-gray-600">Not Passing</p>
+                    <div className="bg-white p-3 rounded-lg shadow-sm border-l-4 border-red-500">
+                      <span className="font-bold text-red-600">DV - Developing:</span>
+                      <p className="text-sm text-gray-600">"I need additional class and home support. Urgent intervention is needed."</p>
                     </div>
-                    <div className="bg-white p-3 rounded-lg shadow-sm">
-                      <span className="font-bold text-green-600">PG:</span>
-                      <p className="text-sm text-gray-600">Proficient Grade</p>
-                    </div>
-                    <div className="bg-white p-3 rounded-lg shadow-sm">
-                      <span className="font-bold text-green-600">PF:</span>
-                      <p className="text-sm text-gray-600">Pass/Fail</p>
-                    </div>
-                    <div className="bg-white p-3 rounded-lg shadow-sm">
-                      <span className="font-bold text-green-600">DAV:</span>
-                      <p className="text-sm text-gray-600">Developmental Assessment Value</p>
-                    </div>
+                  </div>
+                  <div className="mt-4 bg-white p-4 rounded-lg shadow-sm">
+                    <h4 className="font-bold text-green-700 mb-2">Key Benefits:</h4>
+                    <ul className="text-sm text-gray-600 space-y-1">
+                      <li>• Learning is prioritized over compliance</li>
+                      <li>• Growth mindset develops</li>
+                      <li>• Motivation to learn increases</li>
+                      <li>• Grades have meaning</li>
+                      <li>• Clear vision of success</li>
+                    </ul>
                   </div>
                 </div>
 
