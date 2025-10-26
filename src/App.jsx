@@ -3462,7 +3462,13 @@ Your Student 🌟
               </div>
 
               {/* Legend/Glossary */}
-              <div onClick={() => { playSound('click'); triggerHaptic('light'); setShowLegendModal(true); }} 
+              <div onClick={() => { 
+                console.log('Legend button clicked!'); 
+                playSound('click'); 
+                triggerHaptic('light'); 
+                setShowLegendModal(true); 
+                console.log('showLegendModal set to true');
+              }} 
                 className="bg-gradient-to-br from-indigo-400 to-purple-500 p-4 rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
                 <div className="text-3xl mb-1">📖</div>
                 <h3 className="text-sm font-bold text-white">Legend</h3>
@@ -5309,6 +5315,7 @@ Your Student 🌟
                 <div className="text-6xl mb-4">📖</div>
                 <h2 className="text-2xl md:text-3xl font-bold text-purple-600 mb-2">Educational Terms & Acronyms</h2>
                 <p className="text-gray-600">A guide to help parents understand school terminology</p>
+                <p className="text-sm text-red-500 mt-2">DEBUG: Modal is rendering!</p>
               </div>
 
               <div className="space-y-6">
