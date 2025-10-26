@@ -5366,50 +5366,6 @@ Your Student 🌟
         </div>
       )}
 
-      {/* Debug log for modal state */}
-      {console.log('Current showLegendModal state before rendering:', showLegendModal)}
-      
-      {/* Simple text test */}
-      {showLegendModal && <div style={{position: 'fixed', top: '10px', left: '10px', backgroundColor: 'yellow', padding: '10px', zIndex: 99999}}>MODAL STATE IS TRUE!</div>}
-      
-      {/* Simple Test Modal */}
-      {showLegendModal && (
-        <div style={{
-          position: 'fixed',
-          top: '50px',
-          left: '50px',
-          width: '300px',
-          height: '200px',
-          backgroundColor: 'red',
-          zIndex: 99999,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '20px',
-          color: 'white',
-          border: '5px solid yellow'
-        }}>
-          TEST MODAL!
-          <button 
-            onClick={() => setShowLegendModal(false)}
-            style={{marginLeft: '10px', padding: '5px', fontSize: '16px'}}
-          >
-            Close
-          </button>
-        </div>
-      )}
-      
-      {/* Legend/Glossary Modal */}
-      {showLegendModal && (
-        <div className="fixed inset-0 bg-red-500 bg-opacity-80 flex items-center justify-center z-[9999] p-4" style={{zIndex: 9999}}>
-          <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border-4 border-red-500">
-            <div className="p-6 md:p-8">
-              <div className="text-center mb-6">
-                <div className="text-6xl mb-4">📖</div>
-                <h2 className="text-2xl md:text-3xl font-bold text-purple-600 mb-2">Educational Terms & Acronyms</h2>
-                <p className="text-gray-600">A guide to help parents understand school terminology</p>
-                <p className="text-sm text-red-500 mt-2">DEBUG: Modal is rendering!</p>
-              </div>
 
               <div className="space-y-6">
                 {/* Grading Scores */}
@@ -5539,28 +5495,6 @@ Your Student 🌟
         </div>
       )}
 
-      {/* Simple test - should appear when modal state is true */}
-      {showLegendModal && (
-        <div style={{
-          position: 'fixed',
-          top: '20px',
-          right: '20px',
-          backgroundColor: 'red',
-          color: 'white',
-          padding: '20px',
-          fontSize: '24px',
-          zIndex: 99999,
-          border: '5px solid yellow'
-        }}>
-          MODAL IS TRUE!
-          <button 
-            onClick={() => setShowLegendModal(false)}
-            style={{marginLeft: '10px', padding: '10px'}}
-          >
-            Close
-          </button>
-        </div>
-      )}
 
       {/* Scroll to Top Button */}
       <div className="fixed bottom-4 right-4 z-[9999]">
