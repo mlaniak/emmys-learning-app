@@ -649,8 +649,17 @@ Your Student 🌟
       navigate(`/${screen}`);
     }
     
-    // Scroll to top of page
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll to top of page - with delay for game screens on mobile
+    const gameScreens = ['phonics', 'math', 'reading', 'science', 'art', 'geography', 'history', 'spelling'];
+    if (gameScreens.includes(screen)) {
+      // Add small delay for game screens to ensure proper mobile scrolling
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 150);
+    } else {
+      // Immediate scroll for non-game screens
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   // Adaptive Learning System
@@ -2321,7 +2330,11 @@ Your Student 🌟
     navigateTo(pendingGame);
     setPendingGame(null);
     setCustomQuestionCount('');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // Extra scroll delay for question selector flow to ensure proper mobile experience
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 200);
   };
 
   if (currentScreen === 'home') {
