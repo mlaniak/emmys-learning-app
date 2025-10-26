@@ -3401,10 +3401,6 @@ Your Student 🌟
           
             {/* Main Action Buttons - Child-Focused */}
             <div className="mt-6 flex justify-center gap-3 flex-wrap">
-              <div onClick={() => navigateTo('achievements')} 
-                className="px-6 py-3 bg-yellow-500 text-white rounded-full font-bold cursor-pointer hover:bg-yellow-600 active:scale-95 transition-transform">
-                🏅 Achievements
-              </div>
               <div onClick={() => navigateTo('customize')} 
                 className="px-6 py-3 bg-green-500 text-white rounded-full font-bold cursor-pointer hover:bg-green-600 active:scale-95 transition-transform">
                 🎨 Customize
