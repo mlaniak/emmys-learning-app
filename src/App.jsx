@@ -3468,6 +3468,7 @@ Your Student 🌟
                 triggerHaptic('light'); 
                 setShowLegendModal(true); 
                 console.log('showLegendModal set to true');
+                alert('Legend button clicked! Modal should appear now.');
               }} 
                 className="bg-gradient-to-br from-indigo-400 to-purple-500 p-4 rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
                 <div className="text-3xl mb-1">📖</div>
@@ -5476,6 +5477,29 @@ Your Student 🌟
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Simple test - should appear when modal state is true */}
+      {showLegendModal && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          backgroundColor: 'red',
+          color: 'white',
+          padding: '20px',
+          fontSize: '24px',
+          zIndex: 99999,
+          border: '5px solid yellow'
+        }}>
+          MODAL IS TRUE!
+          <button 
+            onClick={() => setShowLegendModal(false)}
+            style={{marginLeft: '10px', padding: '10px'}}
+          >
+            Close
+          </button>
         </div>
       )}
 
