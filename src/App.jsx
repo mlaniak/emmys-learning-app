@@ -3122,6 +3122,8 @@ Your Student 🌟
 
   if (currentScreen === 'spelling') {
     const word = spellingWords[currentQuestion];
+    console.log('Spelling game render:', { currentQuestion, word, spellingWordsLength: spellingWords.length });
+    
     const colors = [
       { name: 'Purple', value: '#8B5CF6' }, { name: 'Pink', value: '#EC4899' },
       { name: 'Blue', value: '#3B82F6' }, { name: 'Green', value: '#10B981' },
@@ -3177,9 +3179,28 @@ Your Student 🌟
             </div>
           </div>
           <div className="mt-6 sm:mt-8 flex justify-between gap-3 sm:gap-4">
-            <div onClick={() => { if(currentQuestion>0) { setCurrentQuestion(currentQuestion-1); triggerHaptic('light'); } }} 
+            <div onClick={() => { 
+              console.log('Prev button clicked!', { currentQuestion });
+              if(currentQuestion>0) { 
+                console.log('Moving to previous question');
+                setCurrentQuestion(currentQuestion-1); 
+                triggerHaptic('light'); 
+              } 
+            }} 
               className={`px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-bold bg-gray-300 rounded-full cursor-pointer active:scale-95 transition-transform ${currentQuestion===0?'opacity-50':''}`}>← Prev</div>
-            <div onClick={() => { if(currentQuestion<spellingWords.length-1) { setCurrentQuestion(currentQuestion+1); triggerHaptic('light'); } else { navigateTo('home'); triggerHaptic('success'); window.scrollTo({ top: 0, behavior: 'smooth' }); } }} 
+            <div onClick={() => { 
+              console.log('Next button clicked!', { currentQuestion, spellingWordsLength: spellingWords.length });
+              if(currentQuestion<spellingWords.length-1) { 
+                console.log('Moving to next question');
+                setCurrentQuestion(currentQuestion+1); 
+                triggerHaptic('light'); 
+              } else { 
+                console.log('Going to home');
+                navigateTo('home'); 
+                triggerHaptic('success'); 
+                window.scrollTo({ top: 0, behavior: 'smooth' }); 
+              } 
+            }} 
               className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-bold bg-purple-500 text-white rounded-full cursor-pointer active:scale-95 transition-transform">
               {currentQuestion < spellingWords.length-1 ? 'Next →' : 'Done 🎉'}
             </div>
