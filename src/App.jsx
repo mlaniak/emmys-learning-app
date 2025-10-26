@@ -3420,7 +3420,7 @@ Your Student 🌟
           {/* Parent Tools & Reference */}
           <div className="mb-6">
             <h2 className="text-xl md:text-2xl font-bold text-center text-purple-800 mb-3">📚 Parent Tools</h2>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
               {/* Word Lists & Quiz */}
               <div onClick={() => navigateTo('parent-reference')} 
                 className="bg-gradient-to-br from-purple-400 to-indigo-500 p-4 rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
@@ -3459,6 +3459,18 @@ Your Student 🌟
                 <div className="text-3xl mb-1">📰</div>
                 <h3 className="text-sm font-bold text-white">Newsletter</h3>
                 <p className="text-xs text-blue-100">Week 10</p>
+              </div>
+
+              {/* Calendar */}
+              <div onClick={() => { 
+                playSound('click'); 
+                triggerHaptic('light'); 
+                navigateTo('calendar'); 
+              }} 
+                className="bg-gradient-to-br from-teal-400 to-cyan-500 p-4 rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
+                <div className="text-3xl mb-1">📅</div>
+                <h3 className="text-sm font-bold text-white">Calendar</h3>
+                <p className="text-xs text-teal-100">School events</p>
               </div>
 
               {/* Legend/Glossary */}
