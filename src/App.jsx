@@ -37,7 +37,22 @@ const EmmyStudyGame = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [breadcrumbs, setBreadcrumbs] = useState(['Home']);
   const [learningStreak, setLearningStreak] = useState(0);
-  const [selectedSpellingMonth, setSelectedSpellingMonth] = useState('all');
+  // Get current month for default spelling selection
+  const getCurrentMonth = () => {
+    const now = new Date();
+    const month = now.getMonth(); // 0-11 (January = 0)
+    const monthMap = {
+      9: 'october',   // October
+      10: 'november', // November  
+      11: 'december', // December
+      0: 'january',   // January
+      1: 'february',  // February
+      2: 'march'      // March
+    };
+    return monthMap[month] || 'all'; // Default to 'all' if not in our range
+  };
+
+  const [selectedSpellingMonth, setSelectedSpellingMonth] = useState(getCurrentMonth());
   const [lastLearningDate, setLastLearningDate] = useState(null);
   const [dailyChallenge, setDailyChallenge] = useState(null);
   const [confidenceLevels, setConfidenceLevels] = useState({});
