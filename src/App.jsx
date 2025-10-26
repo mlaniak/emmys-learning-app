@@ -56,6 +56,7 @@ const EmmyStudyGame = () => {
   const [selectedPhonicsDifficulty, setSelectedPhonicsDifficulty] = useState('medium');
   const [selectedMathDifficulty, setSelectedMathDifficulty] = useState('medium');
   const [selectedReadingCategory, setSelectedReadingCategory] = useState('all');
+  const [selectedCalendarMonth, setSelectedCalendarMonth] = useState(new Date().getMonth());
   const [lastLearningDate, setLastLearningDate] = useState(null);
   const [dailyChallenge, setDailyChallenge] = useState(null);
   const [confidenceLevels, setConfidenceLevels] = useState({});
@@ -1540,6 +1541,63 @@ Your Student 🌟
     { question: 'WHERE does the character face danger?', answer: 'Setting', options: ['Characters', 'Setting', 'Problem'], emoji: '⚠️' },
     { question: 'WHAT is the character\'s strength?', answer: 'Characters', options: ['Characters', 'Setting', 'Problem'], emoji: '💪' }
   ];
+
+  // Calendar Events Data (based on Smore newsletters and typical school events)
+  const calendarEvents = {
+    9: [ // October
+      { date: 31, title: 'Halloween Spelling Test', type: 'test', description: 'October spelling words test' },
+      { date: 31, title: 'Halloween Party', type: 'event', description: 'Class Halloween celebration' }
+    ],
+    10: [ // November
+      { date: 11, title: 'Veterans Day', type: 'holiday', description: 'School closed - Veterans Day' },
+      { date: 24, title: 'Thanksgiving Break Starts', type: 'holiday', description: 'Early dismissal for Thanksgiving break' },
+      { date: 25, title: 'Thanksgiving Day', type: 'holiday', description: 'School closed - Thanksgiving Day' },
+      { date: 26, title: 'Thanksgiving Break', type: 'holiday', description: 'School closed - Thanksgiving break' }
+    ],
+    11: [ // December
+      { date: 20, title: 'Winter Break Starts', type: 'holiday', description: 'Early dismissal for winter break' },
+      { date: 21, title: 'Winter Break', type: 'holiday', description: 'School closed - Winter break' },
+      { date: 22, title: 'Winter Break', type: 'holiday', description: 'School closed - Winter break' },
+      { date: 23, title: 'Winter Break', type: 'holiday', description: 'School closed - Winter break' },
+      { date: 24, title: 'Christmas Eve', type: 'holiday', description: 'School closed - Christmas Eve' },
+      { date: 25, title: 'Christmas Day', type: 'holiday', description: 'School closed - Christmas Day' },
+      { date: 26, title: 'Winter Break', type: 'holiday', description: 'School closed - Winter break' },
+      { date: 27, title: 'Winter Break', type: 'holiday', description: 'School closed - Winter break' },
+      { date: 28, title: 'Winter Break', type: 'holiday', description: 'School closed - Winter break' },
+      { date: 29, title: 'Winter Break', type: 'holiday', description: 'School closed - Winter break' },
+      { date: 30, title: 'Winter Break', type: 'holiday', description: 'School closed - Winter break' },
+      { date: 31, title: 'New Year\'s Eve', type: 'holiday', description: 'School closed - New Year\'s Eve' }
+    ],
+    0: [ // January
+      { date: 1, title: 'New Year\'s Day', type: 'holiday', description: 'School closed - New Year\'s Day' },
+      { date: 2, title: 'School Resumes', type: 'event', description: 'Classes resume after winter break' },
+      { date: 15, title: 'Martin Luther King Jr. Day', type: 'holiday', description: 'School closed - MLK Day' }
+    ],
+    1: [ // February
+      { date: 14, title: 'Valentine\'s Day Party', type: 'event', description: 'Class Valentine\'s Day celebration' },
+      { date: 19, title: 'Presidents\' Day', type: 'holiday', description: 'School closed - Presidents\' Day' }
+    ],
+    2: [ // March
+      { date: 17, title: 'St. Patrick\'s Day', type: 'event', description: 'Green day celebration' },
+      { date: 25, title: 'Spring Break Starts', type: 'holiday', description: 'Early dismissal for spring break' },
+      { date: 26, title: 'Spring Break', type: 'holiday', description: 'School closed - Spring break' },
+      { date: 27, title: 'Spring Break', type: 'holiday', description: 'School closed - Spring break' },
+      { date: 28, title: 'Spring Break', type: 'holiday', description: 'School closed - Spring break' },
+      { date: 29, title: 'Spring Break', type: 'holiday', description: 'School closed - Spring break' }
+    ],
+    3: [ // April
+      { date: 1, title: 'School Resumes', type: 'event', description: 'Classes resume after spring break' },
+      { date: 22, title: 'Earth Day', type: 'event', description: 'Environmental awareness activities' }
+    ],
+    4: [ // May
+      { date: 5, title: 'Cinco de Mayo', type: 'event', description: 'Cultural celebration' },
+      { date: 27, title: 'Memorial Day', type: 'holiday', description: 'School closed - Memorial Day' }
+    ],
+    5: [ // June
+      { date: 14, title: 'Last Day of School', type: 'event', description: 'End of school year celebration' },
+      { date: 19, title: 'Juneteenth', type: 'holiday', description: 'School closed - Juneteenth' }
+    ]
+  };
 
   const spellingWords = [
     // October Words (Test 10/31)
@@ -3341,6 +3399,10 @@ Your Student 🌟
                 className="px-6 py-3 bg-indigo-500 text-white rounded-full font-bold cursor-pointer hover:bg-indigo-600 active:scale-95 transition-transform">
                 📊 Progress
               </div>
+              <div onClick={() => navigateTo('calendar')} 
+                className="px-6 py-3 bg-teal-500 text-white rounded-full font-bold cursor-pointer hover:bg-teal-600 active:scale-95 transition-transform">
+                📅 Calendar
+              </div>
               <div onClick={() => setShowSearch(true)} 
                 className="px-6 py-3 bg-orange-500 text-white rounded-full font-bold cursor-pointer hover:bg-orange-600 active:scale-95 transition-transform">
                 🔍 Search
@@ -3734,6 +3796,183 @@ Your Student 🌟
               className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-bold bg-purple-500 text-white rounded-full cursor-pointer active:scale-95 transition-transform">
               {currentQuestion < filteredWords.length-1 ? 'Next →' : 'Done 🎉'}
             </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (currentScreen === 'calendar') {
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    const currentDate = new Date();
+    const currentMonth = selectedCalendarMonth;
+    const currentYear = currentDate.getFullYear();
+    
+    // Get first day of month and number of days
+    const firstDay = new Date(currentYear, currentMonth, 1);
+    const lastDay = new Date(currentYear, currentMonth + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+
+    // Get events for current month
+    const monthEvents = calendarEvents[currentMonth] || [];
+
+    // Create calendar grid
+    const calendarDays = [];
+    
+    // Add empty cells for days before month starts
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      calendarDays.push({ day: '', isEmpty: true });
+    }
+    
+    // Add days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dayEvents = monthEvents.filter(event => event.date === day);
+      calendarDays.push({ 
+        day, 
+        isEmpty: false, 
+        events: dayEvents,
+        isToday: day === currentDate.getDate() && currentMonth === currentDate.getMonth()
+      });
+    }
+
+    const getEventTypeColor = (type) => {
+      switch (type) {
+        case 'test': return 'bg-red-100 text-red-800 border-red-200';
+        case 'event': return 'bg-blue-100 text-blue-800 border-blue-200';
+        case 'holiday': return 'bg-green-100 text-green-800 border-green-200';
+        default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      }
+    };
+
+    const getEventTypeIcon = (type) => {
+      switch (type) {
+        case 'test': return '📝';
+        case 'event': return '🎉';
+        case 'holiday': return '🏫';
+        default: return '📅';
+      }
+    };
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-teal-200 to-teal-400 p-4 md:p-8">
+        <div onClick={() => { navigateTo('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} 
+          className="bg-white px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-lg inline-flex gap-2 hover:scale-105 cursor-pointer mb-4">← Back</div>
+        
+        <div className="max-w-6xl mx-auto bg-white rounded-3xl shadow-2xl p-6 md:p-12">
+          <div className="text-center mb-8">
+            <div className="text-6xl mb-4">📅</div>
+            <h1 className="text-3xl md:text-4xl font-bold text-teal-700 mb-2">School Calendar</h1>
+            <p className="text-lg text-gray-600">Important dates and events from Smore newsletters</p>
+          </div>
+
+          {/* Month Navigation */}
+          <div className="flex justify-between items-center mb-6">
+            <button
+              onClick={() => {
+                setSelectedCalendarMonth(selectedCalendarMonth === 0 ? 11 : selectedCalendarMonth - 1);
+                playSound('click');
+                triggerHaptic('light');
+              }}
+              className="px-4 py-2 bg-teal-500 text-white rounded-full hover:bg-teal-600 transition-colors"
+            >
+              ← Previous
+            </button>
+            
+            <h2 className="text-2xl md:text-3xl font-bold text-teal-700">
+              {monthNames[currentMonth]} {currentYear}
+            </h2>
+            
+            <button
+              onClick={() => {
+                setSelectedCalendarMonth(selectedCalendarMonth === 11 ? 0 : selectedCalendarMonth + 1);
+                playSound('click');
+                triggerHaptic('light');
+              }}
+              className="px-4 py-2 bg-teal-500 text-white rounded-full hover:bg-teal-600 transition-colors"
+            >
+              Next →
+            </button>
+          </div>
+
+          {/* Calendar Grid */}
+          <div className="grid grid-cols-7 gap-2 mb-6">
+            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+              <div key={day} className="p-3 text-center font-bold text-teal-600 bg-teal-50 rounded-lg">
+                {day}
+              </div>
+            ))}
+            
+            {calendarDays.map((dayData, index) => (
+              <div
+                key={index}
+                className={`min-h-[80px] p-2 border rounded-lg ${
+                  dayData.isEmpty 
+                    ? 'bg-gray-50' 
+                    : dayData.isToday 
+                      ? 'bg-teal-100 border-teal-300' 
+                      : 'bg-white border-gray-200 hover:bg-teal-50'
+                }`}
+              >
+                {!dayData.isEmpty && (
+                  <>
+                    <div className={`text-sm font-bold mb-1 ${
+                      dayData.isToday ? 'text-teal-700' : 'text-gray-700'
+                    }`}>
+                      {dayData.day}
+                    </div>
+                    
+                    {dayData.events.map((event, eventIndex) => (
+                      <div
+                        key={eventIndex}
+                        className={`text-xs p-1 rounded mb-1 border ${getEventTypeColor(event.type)}`}
+                        title={event.description}
+                      >
+                        <span className="mr-1">{getEventTypeIcon(event.type)}</span>
+                        <span className="truncate">{event.title}</span>
+                      </div>
+                    ))}
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Legend */}
+          <div className="bg-teal-50 rounded-2xl p-6">
+            <h3 className="text-xl font-bold text-teal-700 mb-4">📋 Event Types</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">📝</span>
+                <span className="font-semibold text-red-700">Tests & Assessments</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-lg">🎉</span>
+                <span className="font-semibold text-blue-700">School Events & Parties</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-lg">🏫</span>
+                <span className="font-semibold text-green-700">Holidays & Breaks</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Smore Reference */}
+          <div className="mt-8 bg-gradient-to-r from-teal-500 to-teal-600 rounded-2xl p-6 text-white text-center">
+            <h3 className="text-xl font-bold mb-2">📰 Stay Updated</h3>
+            <p className="mb-4">For the latest school news and detailed event information, check the Smore newsletters:</p>
+            <a
+              href="https://app.smore.com/n/9tvrj"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block bg-white text-teal-600 px-6 py-3 rounded-full font-bold hover:bg-teal-50 transition-colors"
+            >
+              📖 View Smore Newsletters
+            </a>
           </div>
         </div>
       </div>
