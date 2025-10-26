@@ -3971,7 +3971,7 @@ Your Student 🌟
           <div className="text-center mb-8">
             <div className="text-6xl mb-4">📰</div>
             <h1 className="text-3xl md:text-4xl font-bold text-orange-700 mb-2">Smore Scopes</h1>
-            <p className="text-lg text-gray-600">Monthly school scopes and updates</p>
+            <p className="text-lg text-gray-600">Monthly school scopes and updates for 2025</p>
           </div>
 
           {/* Current Month Newsletter */}
