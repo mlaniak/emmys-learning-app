@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import Week11Newsletter from './Week11Newsletter';
 import Week10Newsletter from './Week10Newsletter';
 import Week9Newsletter from './Week9Newsletter';
 import Week8Newsletter from './Week8Newsletter';
@@ -4917,7 +4918,8 @@ Your Student ✨
       7: Week7Newsletter,
       8: Week8Newsletter,
       9: Week9Newsletter,
-      10: Week10Newsletter
+      10: Week10Newsletter,
+      11: Week11Newsletter
     };
     
     const NewsletterComponent = newsletterComponents[selectedNewsletter];

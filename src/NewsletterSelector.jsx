@@ -3,6 +3,14 @@ import React from 'react';
 const NewsletterSelector = ({ onSelectNewsletter, onBack }) => {
   const newsletters = [
     {
+      week: 11,
+      title: "Week 11 Newsletter",
+      date: "TBD", 
+      description: "First Grade Newsletter - Week 11",
+      icon: "📰",
+      pdfPath: "https://mlaniak.github.io/emmys-learning-app/newsletters/1st_Grade_Newsletter_Week__11.pdf"
+    },
+    {
       week: 10,
       title: "Week 10 Newsletter",
       date: "October 20th-24th", 
