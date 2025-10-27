@@ -2215,7 +2215,11 @@ Your Student ✨
         },
         {
           name: 'CK Words',
-          words: ['duck', 'back', 'pack', 'sack', 'tack', 'black', 'clock', 'block', 'rock', 'sock', 'lock', 'shock', 'stock', 'truck', 'stuck']
+          words: ['duck', 'back', 'pack', 'sack', 'tack', 'black', 'clock', 'dock', 'block', 'rock', 'sock', 'lock', 'shock', 'stock', 'truck', 'stuck']
+        },
+        {
+          name: 'TCH Words',
+          words: ['catch', 'match', 'patch', 'watch', 'stretch', 'fetch', 'itch', 'notch', 'stitch', 'ditch', 'witch', 'hitch', 'switch', 'sketch', 'scratch']
         }
       ]
     },
