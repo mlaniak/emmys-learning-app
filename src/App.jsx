@@ -2096,6 +2096,14 @@ Your Student ✨
   ];
 
   const geographyQuestions = [
+    // Map Skills Questions (Week 11 Social Studies Test)
+    { question: 'What is the name of the symbol that shows directions on a map?', options: ['Compass Rose', 'Map Key'], correct: 'Compass Rose', emoji: '🧭', explanation: 'A compass rose shows directions like North, South, East, and West!' },
+    { question: 'Which direction comes between North and South on a compass?', options: ['East', 'West'], correct: 'East', emoji: '➡️', explanation: 'East is between North and South!' },
+    { question: 'What country is to the north of the United States?', options: ['Canada', 'Mexico'], correct: 'Canada', emoji: '🇨🇦', explanation: 'Canada is directly north of the United States!' },
+    { question: 'What is your country called?', options: ['United States of America', 'Mexico'], correct: 'United States of America', emoji: '🇺🇸', explanation: 'We live in the United States of America!' },
+    { question: 'What is the name of the symbol on a map that shows what different symbols mean?', options: ['Map Key or Legend', 'Compass Rose'], correct: 'Map Key or Legend', emoji: '🗺️', explanation: 'A map key or legend explains what the symbols on the map mean!' },
+    
+    // Traditional Geography Questions
     { question: 'What is the biggest ocean?', options: ['Pacific Ocean', 'Atlantic Ocean'], correct: 'Pacific Ocean', emoji: '🌊', explanation: 'The Pacific Ocean is the largest ocean on Earth!' },
     { question: 'What is the biggest continent?', options: ['Asia', 'Africa'], correct: 'Asia', emoji: '🌏', explanation: 'Asia is the largest continent on Earth!' },
     { question: 'What is the coldest continent?', options: ['Antarctica', 'North America'], correct: 'Antarctica', emoji: '🧊', explanation: 'Antarctica is the coldest continent with lots of ice!' },
