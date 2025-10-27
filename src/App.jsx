@@ -6,6 +6,7 @@ import Week9Newsletter from './Week9Newsletter';
 import Week8Newsletter from './Week8Newsletter';
 import Week7Newsletter from './Week7Newsletter';
 import NewsletterSelector from './NewsletterSelector';
+import FieldTrips from './FieldTrips';
 
 // EmailJS for direct email sending
 import emailjs from '@emailjs/browser';
@@ -481,6 +482,7 @@ Your Student ✨
       'customize': ['Home', 'Customize'],
       'progress': ['Home', 'Progress'],
       'feedback': ['Home', 'Feedback'],
+      'field-trips': ['Home', 'Field Trips'],
       'phonics': ['Home', 'Study Guides', 'Phonics'],
       'math': ['Home', 'Study Guides', 'Math'],
       'reading': ['Home', 'Study Guides', 'Reading'],
@@ -3484,6 +3486,18 @@ Your Student ✨
                 <p className="text-xs text-teal-100">School events</p>
               </div>
 
+              {/* Field Trips */}
+              <div onClick={() => { 
+                playSound('click'); 
+                triggerHaptic('light'); 
+                navigateTo('field-trips'); 
+              }} 
+                className="bg-gradient-to-br from-green-400 to-emerald-500 p-4 rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform">
+                <div className="text-3xl mb-1">🗺️</div>
+                <h3 className="text-sm font-bold text-white">Field Trips</h3>
+                <p className="text-xs text-green-100">Upcoming trips</p>
+              </div>
+
               {/* Smore Newsletters */}
               <div onClick={() => { 
                 playSound('click'); 
@@ -4934,6 +4948,12 @@ Your Student ✨
         </div>
       );
     }
+  }
+
+  if (currentScreen === 'field-trips') {
+    return (
+      <FieldTrips onBack={() => navigateTo('home')} />
+    );
   }
 
   if (currentScreen === 'parent-reference') {
