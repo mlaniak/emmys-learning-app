@@ -698,7 +698,7 @@ Your Student ✨
       case 'history':
         return historyQuestions.length;
       case 'social':
-        return skipCountingQuestions.length; // Using skip counting for social/citizenship
+        return socialStudiesQuestions.length;
       case 'skipcounting':
         return skipCountingQuestions.length;
       default:
@@ -1975,7 +1975,27 @@ Your Student ✨
     { question: 'What do we call the process of a caterpillar becoming a butterfly?', options: ['Metamorphosis', 'Growth'], correct: 'Metamorphosis', emoji: '🦋', explanation: 'Metamorphosis is the amazing process of a caterpillar changing into a butterfly!' }
   ];
 
+  // Social Studies Map Skills (Week 11 Test - October 31)
   const socialStudiesQuestions = [
+    { question: 'What is the symbol on a map that shows directions like North, South, East, and West?', options: ['Compass Rose', 'Map Key'], correct: 'Compass Rose', emoji: '🧭', explanation: 'A compass rose shows directions on a map!' },
+    { question: 'Which direction is missing from a compass showing North, South, and West?', options: ['East', 'North'], correct: 'East', emoji: '➡️', explanation: 'East is the missing direction! (North, South, EAST, West)' },
+    { question: 'What is the symbol on a map that explains what different symbols mean?', options: ['Map Key', 'Compass Rose'], correct: 'Map Key', emoji: '🗝️', explanation: 'The map key (or legend) tells you what the symbols on the map mean!' },
+    { question: 'Which direction would you go to get from the United States to Canada?', options: ['North', 'South'], correct: 'North', emoji: '⬆️', explanation: 'Canada is north of the United States!' },
+    { question: 'Which direction would you go to get from the United States to Mexico?', options: ['South', 'North'], correct: 'South', emoji: '⬇️', explanation: 'Mexico is south of the United States!' },
+    { question: 'What country do you live in?', options: ['United States of America', 'Mexico'], correct: 'United States of America', emoji: '🇺🇸', explanation: 'We live in the United States of America!' },
+    { question: 'What state do you live in?', options: ['Texas', 'Florida'], correct: 'Texas', emoji: '🤠', explanation: 'We live in Texas!' },
+    { question: 'Which direction points up on a compass?', options: ['North', 'South'], correct: 'North', emoji: '⬆️', explanation: 'North points up on a compass!' },
+    { question: 'Which direction points down on a compass?', options: ['South', 'North'], correct: 'South', emoji: '⬇️', explanation: 'South points down on a compass!' },
+    { question: 'Which direction points right on a compass?', options: ['East', 'West'], correct: 'East', emoji: '➡️', explanation: 'East points to the right on a compass!' },
+    { question: 'Which direction points left on a compass?', options: ['West', 'East'], correct: 'West', emoji: '⬅️', explanation: 'West points to the left on a compass!' },
+    { question: 'Which word means "up" on a compass?', options: ['North', 'South'], correct: 'North', emoji: '⬆️', explanation: 'North means up on a compass!' },
+    { question: 'Which word means "down" on a compass?', options: ['South', 'North'], correct: 'South', emoji: '⬇️', explanation: 'South means down on a compass!' },
+    { question: 'Which word means "right" on a compass?', options: ['East', 'West'], correct: 'East', emoji: '➡️', explanation: 'East means right on a compass!' },
+    { question: 'Which word means "left" on a compass?', options: ['West', 'East'], correct: 'West', emoji: '⬅️', explanation: 'West means left on a compass!' },
+    { question: 'If you are going "up" on a map, which direction are you going?', options: ['North', 'South'], correct: 'North', emoji: '⬆️', explanation: 'Going up on a map means you are going North!' },
+    { question: 'If you are going "down" on a map, which direction are you going?', options: ['South', 'North'], correct: 'South', emoji: '⬇️', explanation: 'Going down on a map means you are going South!' },
+    { question: 'Can you name the four main directions on a compass?', options: ['North, South, East, West', 'Up, Down, Left, Right'], correct: 'North, South, East, West', emoji: '🧭', explanation: 'The four main directions are North, South, East, and West!' },
+    { question: 'What do we call a picture of the Earth showing countries and places?', options: ['A Map', 'A Drawing'], correct: 'A Map', emoji: '🗺️', explanation: 'A map is a picture showing places on Earth!' },
     { question: 'Being a good citizen means being...', options: ['Respectful', 'Rude'], correct: 'Respectful', emoji: '🤝', explanation: 'Good citizens treat everyone with respect!' },
     { question: 'Benjamin Franklin was a good citizen who...', options: ['Helped his community', 'Stayed home'], correct: 'Helped his community', emoji: '👨', explanation: 'He helped America and his community!' },
     { question: 'What should you do if you see someone being hurt?', options: ['Help them', 'Ignore them'], correct: 'Help them', emoji: '🆘', explanation: 'Good citizens help others who need it!' },
