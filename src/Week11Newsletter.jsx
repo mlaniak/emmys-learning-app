@@ -23,6 +23,7 @@ const Week11Newsletter = ({ onViewPDF, onBack }) => {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-blue-600 mb-2">1st Grade Newsletter - Week 11</h1>
+          <h2 className="text-xl text-gray-600">October 27th-31st</h2>
           <div className="w-24 h-1 bg-blue-600 mx-auto mt-4"></div>
           
           {/* PDF View Button */}
