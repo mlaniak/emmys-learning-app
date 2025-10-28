@@ -8,7 +8,7 @@ import OfflineManager from './components/OfflineManager';
 
 // Main App Component with Authentication
 const AppWithAuth = () => {
-  const { user, userProfile, loading } = useUser();
+  const { user, userProfile, loading, logout } = useUser();
   const [showProfileManager, setShowProfileManager] = useState(false);
   const [showProgressTracker, setShowProgressTracker] = useState(false);
 
@@ -83,6 +83,23 @@ const AppWithAuth = () => {
                     👨‍👩‍👧‍👦 Parent View
                   </button>
                 )}
+
+                <button
+                  onClick={() => {
+                    if (userProfile?.is_guest) {
+                      // Clear guest data
+                      localStorage.removeItem('isGuest');
+                      localStorage.removeItem('guestProfile');
+                      window.location.reload();
+                    } else {
+                      // Logout authenticated user
+                      logout();
+                    }
+                  }}
+                  className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+                >
+                  {userProfile?.is_guest ? '🚪 Exit Guest' : '🚪 Logout'}
+                </button>
               </div>
             </div>
           </div>
