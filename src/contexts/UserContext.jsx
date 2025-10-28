@@ -129,6 +129,79 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+  // Guest login - creates a temporary local profile
+  const loginAsGuest = () => {
+    const guestId = `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const guestProfile = {
+      id: guestId,
+      display_name: 'Guest User',
+      email: `${guestId}@guest.local`,
+      avatar: 'default',
+      preferences: {
+        difficulty: 'medium',
+        sound_enabled: true,
+        music_enabled: true,
+        theme: 'light'
+      },
+      progress: {
+        score: 0,
+        learning_streak: 0,
+        completed_lessons: [],
+        achievements: [],
+        last_active: new Date().toISOString()
+      },
+      is_child: false,
+      is_guest: true
+    };
+
+    // Store guest data in localStorage
+    localStorage.setItem('guestProfile', JSON.stringify(guestProfile));
+    localStorage.setItem('isGuest', 'true');
+
+    // Set user and profile
+    setUser({ id: guestId, email: guestProfile.email });
+    setUserProfile(guestProfile);
+    setError(null);
+  };
+
+  // Sign in with Google
+  const signInWithGoogle = async () => {
+    try {
+      setError(null);
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`
+        }
+      });
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Google sign in error:', error);
+      setError(error.message);
+      throw error;
+    }
+  };
+
+  // Sign in with Apple
+  const signInWithApple = async () => {
+    try {
+      setError(null);
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'apple',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`
+        }
+      });
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Apple sign in error:', error);
+      setError(error.message);
+      throw error;
+    }
+  };
+
   // Reset password
   const resetPassword = async (email) => {
     try {
@@ -169,6 +242,17 @@ export const UserProvider = ({ children }) => {
   // Update user progress
   const updateProgress = async (progressUpdates) => {
     if (!user) return;
+
+    // Handle guest users
+    if (userProfile?.is_guest) {
+      const updatedProfile = {
+        ...userProfile,
+        progress: { ...userProfile.progress, ...progressUpdates }
+      };
+      localStorage.setItem('guestProfile', JSON.stringify(updatedProfile));
+      setUserProfile(updatedProfile);
+      return;
+    }
 
     try {
       setError(null);
@@ -233,6 +317,18 @@ export const UserProvider = ({ children }) => {
 
   // Listen for auth state changes
   useEffect(() => {
+    // Check for guest user first
+    const isGuest = localStorage.getItem('isGuest') === 'true';
+    if (isGuest) {
+      const guestProfile = JSON.parse(localStorage.getItem('guestProfile') || '{}');
+      if (guestProfile.id) {
+        setUser({ id: guestProfile.id, email: guestProfile.email });
+        setUserProfile(guestProfile);
+        setLoading(false);
+        return;
+      }
+    }
+
     // Get initial session
     const getInitialSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -253,6 +349,9 @@ export const UserProvider = ({ children }) => {
           setUser(session.user);
           const profile = await getUserProfile(session.user.id);
           setUserProfile(profile);
+          // Clear guest data when real user signs in
+          localStorage.removeItem('isGuest');
+          localStorage.removeItem('guestProfile');
         } else {
           setUser(null);
           setUserProfile(null);
@@ -272,6 +371,9 @@ export const UserProvider = ({ children }) => {
     signUp,
     signIn,
     logout,
+    loginAsGuest,
+    signInWithGoogle,
+    signInWithApple,
     resetPassword,
     updateUserProfile,
     updateProgress,
