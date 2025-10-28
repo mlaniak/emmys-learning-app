@@ -553,6 +553,12 @@ Your Student ✨
     // Handle hash-based redirects from 404.html
     if (window.location.hash && window.location.hash.startsWith('#')) {
       const hashPath = window.location.hash.substring(1);
+      
+      // Skip OAuth callback processing - let AuthCallback handle it
+      if (hashPath.includes('access_token') || hashPath.includes('error') || hashPath.includes('auth/callback')) {
+        return;
+      }
+      
       const pathParts = hashPath.split('/').filter(part => part);
       
       // Update the URL to the correct path without hash
