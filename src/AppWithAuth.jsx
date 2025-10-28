@@ -1,16 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserProvider, useUser } from './contexts/UserContext';
 import AuthForm from './components/AuthForm';
 import ProfileManager from './components/ProfileManager';
 import ProgressTracker from './components/ProgressTracker';
 import ParentDashboard from './components/ParentDashboard';
 import OfflineManager from './components/OfflineManager';
+import AuthCallback from './components/AuthCallback';
 
 // Main App Component with Authentication
 const AppWithAuth = () => {
   const { user, userProfile, loading, logout } = useUser();
   const [showProfileManager, setShowProfileManager] = useState(false);
   const [showProgressTracker, setShowProgressTracker] = useState(false);
+
+  // Check if we're on the auth callback route
+  useEffect(() => {
+    const handleAuthCallback = () => {
+      const hash = window.location.hash;
+      if (hash.includes('access_token') || hash.includes('error')) {
+        // We're on the auth callback, let the AuthCallback component handle it
+        return;
+      }
+    };
+
+    handleAuthCallback();
+  }, []);
+
+  // Show auth callback component if we're on the callback route
+  if (window.location.hash.includes('access_token') || window.location.hash.includes('error')) {
+    return <AuthCallback />;
+  }
 
   if (loading) {
     return (
