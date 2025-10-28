@@ -317,6 +317,34 @@ export const UserProvider = ({ children }) => {
 
   // Listen for auth state changes
   useEffect(() => {
+    // Check for OAuth callback first
+    const handleOAuthCallback = async () => {
+      const hash = window.location.hash;
+      console.log('UserContext: Checking for OAuth callback, hash:', hash);
+      
+      if (hash.includes('access_token') || hash.includes('error')) {
+        console.log('UserContext: OAuth callback detected, processing...');
+        try {
+          // Let Supabase handle the OAuth callback
+          const { data, error } = await supabase.auth.getSession();
+          console.log('UserContext: OAuth session result:', data, error);
+          
+          if (data.session) {
+            console.log('UserContext: OAuth session established:', data.session);
+            setUser(data.session.user);
+            const profile = await getUserProfile(data.session.user.id);
+            setUserProfile(profile);
+            // Clear the hash after processing
+            window.location.hash = '';
+            setLoading(false);
+            return;
+          }
+        } catch (error) {
+          console.error('UserContext: OAuth callback error:', error);
+        }
+      }
+    };
+
     // Check for guest user first
     const isGuest = localStorage.getItem('isGuest') === 'true';
     if (isGuest) {
@@ -328,6 +356,9 @@ export const UserProvider = ({ children }) => {
         return;
       }
     }
+
+    // Handle OAuth callback
+    handleOAuthCallback();
 
     // Get initial session
     const getInitialSession = async () => {

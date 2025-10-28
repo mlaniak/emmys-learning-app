@@ -19,23 +19,13 @@ const AppWithAuth = () => {
       const hash = window.location.hash;
       console.log('AppWithAuth: Current hash:', hash);
       console.log('AppWithAuth: Full URL:', window.location.href);
-      if (hash.includes('access_token') || hash.includes('error') || hash.includes('auth/callback')) {
-        console.log('AppWithAuth: Detected auth callback in hash');
-        // We're on the auth callback, let the AuthCallback component handle it
-        return;
-      }
+      // OAuth callback is now handled in UserContext
     };
 
     handleAuthCallback();
   }, []);
 
-  // Show auth callback component if we're on the callback route
-  const currentHash = window.location.hash;
-  console.log('AppWithAuth: Checking hash for callback:', currentHash);
-  if (currentHash.includes('access_token') || currentHash.includes('error') || currentHash.includes('auth/callback')) {
-    console.log('AppWithAuth: Rendering AuthCallback component');
-    return <AuthCallback />;
-  }
+  // OAuth callback is now handled in UserContext, so we don't need to render AuthCallback here
 
   if (loading) {
     return (
