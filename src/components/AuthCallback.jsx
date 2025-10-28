@@ -1,10 +1,7 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase/config';
 
 const AuthCallback = () => {
-  const navigate = useNavigate();
-
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
@@ -13,25 +10,30 @@ const AuthCallback = () => {
         
         if (error) {
           console.error('Auth callback error:', error);
-          navigate('/');
+          // Clear the hash and reload the page
+          window.location.hash = '';
+          window.location.reload();
           return;
         }
 
         if (data.session) {
-          // User is authenticated, redirect to main app
-          navigate('/');
+          // User is authenticated, clear the hash and reload
+          window.location.hash = '';
+          window.location.reload();
         } else {
-          // No session, redirect to login
-          navigate('/');
+          // No session, clear the hash and reload
+          window.location.hash = '';
+          window.location.reload();
         }
       } catch (error) {
         console.error('Auth callback error:', error);
-        navigate('/');
+        window.location.hash = '';
+        window.location.reload();
       }
     };
 
     handleAuthCallback();
-  }, [navigate]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 flex items-center justify-center">
