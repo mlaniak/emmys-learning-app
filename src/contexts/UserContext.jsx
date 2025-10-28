@@ -325,50 +325,55 @@ export const UserProvider = ({ children }) => {
       if (hash.includes('access_token') || hash.includes('error')) {
         console.log('UserContext: OAuth callback detected, processing...');
         try {
-          // Manually handle OAuth callback since detectSessionInUrl is disabled
-          const { data, error } = await supabase.auth.getSession();
-          console.log('UserContext: Initial session check:', data, error);
+          // Parse the hash to extract tokens
+          const hashParams = new URLSearchParams(hash.substring(1));
+          const accessToken = hashParams.get('access_token');
+          const refreshToken = hashParams.get('refresh_token');
+          const tokenType = hashParams.get('token_type');
+          const expiresIn = hashParams.get('expires_in');
           
-          // If no session, try to set it from the URL hash
-          if (!data.session && hash.includes('access_token')) {
-            console.log('UserContext: No session found, parsing OAuth tokens from URL...');
+          console.log('UserContext: Extracted tokens - Access:', accessToken ? 'YES' : 'NO', 'Refresh:', refreshToken ? 'YES' : 'NO');
+          console.log('UserContext: Token details - Type:', tokenType, 'Expires:', expiresIn);
+          
+          if (accessToken && refreshToken) {
+            console.log('UserContext: Attempting to set session manually...');
+            const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken
+            });
             
-            // Parse the hash to extract tokens
-            const hashParams = new URLSearchParams(hash.substring(1));
-            const accessToken = hashParams.get('access_token');
-            const refreshToken = hashParams.get('refresh_token');
-            const tokenType = hashParams.get('token_type');
+            console.log('UserContext: setSession result:', sessionData, sessionError);
             
-            console.log('UserContext: Extracted tokens:', { accessToken: !!accessToken, refreshToken: !!refreshToken, tokenType });
-            
-            if (accessToken) {
-              // Set the session manually
-              const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
-                access_token: accessToken,
-                refresh_token: refreshToken || ''
-              });
-              
-              console.log('UserContext: Manual session set result:', sessionData, sessionError);
-              
-              if (sessionData.session) {
-                console.log('UserContext: OAuth session established manually:', sessionData.session);
-                setUser(sessionData.session.user);
-                const profile = await getUserProfile(sessionData.session.user.id);
-                setUserProfile(profile);
-                setLoading(false);
-                return;
-              }
+            if (sessionError) {
+              console.error('UserContext: setSession error:', sessionError);
+              throw sessionError;
             }
-          } else if (data.session) {
-            console.log('UserContext: OAuth session already established:', data.session);
-            setUser(data.session.user);
-            const profile = await getUserProfile(data.session.user.id);
-            setUserProfile(profile);
-            setLoading(false);
-            return;
+            
+            if (sessionData.session) {
+              console.log('UserContext: Manual session established successfully:', sessionData.session);
+              setUser(sessionData.session.user);
+              const profile = await getUserProfile(sessionData.session.user.id);
+              setUserProfile(profile);
+              setLoading(false);
+              // Clear hash after successful session establishment
+              console.log('UserContext: Clearing hash after successful session establishment');
+              window.history.replaceState(null, '', window.location.pathname);
+              return;
+            } else {
+              console.log('UserContext: setSession did not return a session');
+            }
+          } else {
+            console.log('UserContext: Access token or refresh token missing from hash');
           }
+          
+          // Always clear the hash if it contains OAuth parameters, even if session setting failed
+          console.log('UserContext: Clearing hash after OAuth callback attempt');
+          window.history.replaceState(null, '', window.location.pathname);
+          
         } catch (error) {
-          console.error('UserContext: OAuth callback error:', error);
+          console.error('UserContext: OAuth callback error during manual session setting:', error);
+          // Clear hash on error too
+          window.history.replaceState(null, '', window.location.pathname);
         }
       }
     };
@@ -405,7 +410,8 @@ export const UserProvider = ({ children }) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('UserContext: Auth state change:', event, session);
-        if (session?.user) {
+        
+        if (event === 'SIGNED_IN' && session?.user) {
           console.log('UserContext: User authenticated:', session.user);
           setUser(session.user);
           const profile = await getUserProfile(session.user.id);
@@ -415,16 +421,34 @@ export const UserProvider = ({ children }) => {
           localStorage.removeItem('isGuest');
           localStorage.removeItem('guestProfile');
           
-          // Clean up URL only after successful sign in
-          if (event === 'SIGNED_IN') {
-            console.log('UserContext: Cleaning up URL after successful sign in');
-            setTimeout(() => {
-              // Use replaceState to avoid triggering auth state changes
-              window.history.replaceState(null, '', window.location.pathname);
-            }, 100);
+          // Clean up URL only after successful sign in with delay
+          console.log('UserContext: Cleaning up URL after successful SIGNED_IN event');
+          setTimeout(() => {
+            window.history.replaceState(null, '', window.location.pathname);
+            console.log('UserContext: URL cleaned up after SIGNED_IN');
+          }, 500);
+          
+        } else if (event === 'SIGNED_OUT') {
+          console.log('UserContext: User signed out');
+          setUser(null);
+          setUserProfile(null);
+          // Ensure hash is cleared on sign out if it contains tokens
+          if (window.location.hash.includes('access_token') || window.location.hash.includes('error')) {
+            console.log('UserContext: Clearing hash on SIGNED_OUT event with OAuth params');
+            window.history.replaceState(null, '', window.location.pathname);
           }
+          
+        } else if (event === 'INITIAL_SESSION' && session?.user) {
+          console.log('UserContext: Initial session detected:', session.user);
+          setUser(session.user);
+          const profile = await getUserProfile(session.user.id);
+          setUserProfile(profile);
+          // Clear guest data if an initial session is found
+          localStorage.removeItem('isGuest');
+          localStorage.removeItem('guestProfile');
+          
         } else {
-          console.log('UserContext: No user session');
+          console.log('UserContext: No user session or other event:', event);
           setUser(null);
           setUserProfile(null);
         }
