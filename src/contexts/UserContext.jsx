@@ -326,7 +326,17 @@ export const UserProvider = ({ children }) => {
         console.log('UserContext: OAuth callback detected, processing...');
         try {
           // Parse the hash to extract tokens
-          const hashParams = new URLSearchParams(hash.substring(1));
+          // The hash might be in format: #access_token=...&refresh_token=... or #/auth/callback#access_token=...
+          let hashContent = hash.substring(1);
+          console.log('UserContext: Full hash content:', hashContent);
+          
+          // If hash contains /auth/callback, extract the part after the second #
+          if (hashContent.includes('/auth/callback#')) {
+            hashContent = hashContent.split('/auth/callback#')[1];
+            console.log('UserContext: Extracted hash content after /auth/callback:', hashContent);
+          }
+          
+          const hashParams = new URLSearchParams(hashContent);
           const accessToken = hashParams.get('access_token');
           const refreshToken = hashParams.get('refresh_token');
           const tokenType = hashParams.get('token_type');
@@ -334,6 +344,7 @@ export const UserProvider = ({ children }) => {
           
           console.log('UserContext: Extracted tokens - Access:', accessToken ? 'YES' : 'NO', 'Refresh:', refreshToken ? 'YES' : 'NO');
           console.log('UserContext: Token details - Type:', tokenType, 'Expires:', expiresIn);
+          console.log('UserContext: Access token length:', accessToken ? accessToken.length : 0);
           
           if (accessToken && refreshToken) {
             console.log('UserContext: Attempting to set session manually...');
