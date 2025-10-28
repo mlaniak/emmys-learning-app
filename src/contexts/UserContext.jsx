@@ -325,16 +325,45 @@ export const UserProvider = ({ children }) => {
       if (hash.includes('access_token') || hash.includes('error')) {
         console.log('UserContext: OAuth callback detected, processing...');
         try {
-          // Let Supabase handle the OAuth callback
+          // Manually handle OAuth callback since detectSessionInUrl is disabled
           const { data, error } = await supabase.auth.getSession();
-          console.log('UserContext: OAuth session result:', data, error);
+          console.log('UserContext: Initial session check:', data, error);
           
-          if (data.session) {
-            console.log('UserContext: OAuth session established:', data.session);
+          // If no session, try to set it from the URL hash
+          if (!data.session && hash.includes('access_token')) {
+            console.log('UserContext: No session found, parsing OAuth tokens from URL...');
+            
+            // Parse the hash to extract tokens
+            const hashParams = new URLSearchParams(hash.substring(1));
+            const accessToken = hashParams.get('access_token');
+            const refreshToken = hashParams.get('refresh_token');
+            const tokenType = hashParams.get('token_type');
+            
+            console.log('UserContext: Extracted tokens:', { accessToken: !!accessToken, refreshToken: !!refreshToken, tokenType });
+            
+            if (accessToken) {
+              // Set the session manually
+              const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+                access_token: accessToken,
+                refresh_token: refreshToken || ''
+              });
+              
+              console.log('UserContext: Manual session set result:', sessionData, sessionError);
+              
+              if (sessionData.session) {
+                console.log('UserContext: OAuth session established manually:', sessionData.session);
+                setUser(sessionData.session.user);
+                const profile = await getUserProfile(sessionData.session.user.id);
+                setUserProfile(profile);
+                setLoading(false);
+                return;
+              }
+            }
+          } else if (data.session) {
+            console.log('UserContext: OAuth session already established:', data.session);
             setUser(data.session.user);
             const profile = await getUserProfile(data.session.user.id);
             setUserProfile(profile);
-            // Don't clear hash immediately - let Supabase handle it naturally
             setLoading(false);
             return;
           }
