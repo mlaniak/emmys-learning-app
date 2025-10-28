@@ -334,8 +334,7 @@ export const UserProvider = ({ children }) => {
             setUser(data.session.user);
             const profile = await getUserProfile(data.session.user.id);
             setUserProfile(profile);
-            // Clear the hash after processing
-            window.location.hash = '';
+            // Don't clear hash immediately - let Supabase handle it naturally
             setLoading(false);
             return;
           }
@@ -386,6 +385,15 @@ export const UserProvider = ({ children }) => {
           // Clear guest data when real user signs in
           localStorage.removeItem('isGuest');
           localStorage.removeItem('guestProfile');
+          
+          // Clean up URL only after successful sign in
+          if (event === 'SIGNED_IN') {
+            console.log('UserContext: Cleaning up URL after successful sign in');
+            setTimeout(() => {
+              // Use replaceState to avoid triggering auth state changes
+              window.history.replaceState(null, '', window.location.pathname);
+            }, 100);
+          }
         } else {
           console.log('UserContext: No user session');
           setUser(null);
