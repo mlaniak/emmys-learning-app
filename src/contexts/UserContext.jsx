@@ -345,14 +345,18 @@ export const UserProvider = ({ children }) => {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('UserContext: Auth state change:', event, session);
         if (session?.user) {
+          console.log('UserContext: User authenticated:', session.user);
           setUser(session.user);
           const profile = await getUserProfile(session.user.id);
+          console.log('UserContext: User profile loaded:', profile);
           setUserProfile(profile);
           // Clear guest data when real user signs in
           localStorage.removeItem('isGuest');
           localStorage.removeItem('guestProfile');
         } else {
+          console.log('UserContext: No user session');
           setUser(null);
           setUserProfile(null);
         }

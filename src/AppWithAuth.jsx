@@ -17,7 +17,10 @@ const AppWithAuth = () => {
   useEffect(() => {
     const handleAuthCallback = () => {
       const hash = window.location.hash;
-      if (hash.includes('access_token') || hash.includes('error')) {
+      console.log('AppWithAuth: Current hash:', hash);
+      console.log('AppWithAuth: Full URL:', window.location.href);
+      if (hash.includes('access_token') || hash.includes('error') || hash.includes('auth/callback')) {
+        console.log('AppWithAuth: Detected auth callback in hash');
         // We're on the auth callback, let the AuthCallback component handle it
         return;
       }
@@ -27,7 +30,10 @@ const AppWithAuth = () => {
   }, []);
 
   // Show auth callback component if we're on the callback route
-  if (window.location.hash.includes('access_token') || window.location.hash.includes('error')) {
+  const currentHash = window.location.hash;
+  console.log('AppWithAuth: Checking hash for callback:', currentHash);
+  if (currentHash.includes('access_token') || currentHash.includes('error') || currentHash.includes('auth/callback')) {
+    console.log('AppWithAuth: Rendering AuthCallback component');
     return <AuthCallback />;
   }
 
