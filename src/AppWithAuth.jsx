@@ -5,27 +5,12 @@ import ProfileManager from './components/ProfileManager';
 import ProgressTracker from './components/ProgressTracker';
 import ParentDashboard from './components/ParentDashboard';
 import OfflineManager from './components/OfflineManager';
-import AuthCallback from './components/AuthCallback';
 
 // Main App Component with Authentication
 const AppWithAuth = () => {
   const { user, userProfile, loading, logout } = useUser();
   const [showProfileManager, setShowProfileManager] = useState(false);
   const [showProgressTracker, setShowProgressTracker] = useState(false);
-
-  // Check if we're on the auth callback route
-  useEffect(() => {
-    const handleAuthCallback = () => {
-      const hash = window.location.hash;
-      console.log('AppWithAuth: Current hash:', hash);
-      console.log('AppWithAuth: Full URL:', window.location.href);
-      // OAuth callback is now handled in UserContext
-    };
-
-    handleAuthCallback();
-  }, []);
-
-  // OAuth callback is now handled in UserContext, so we don't need to render AuthCallback here
 
   console.log('AppWithAuth: Current state - loading:', loading, 'user:', user, 'userProfile:', userProfile);
   

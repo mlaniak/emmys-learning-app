@@ -16,7 +16,6 @@ export const UserProvider = ({ children }) => {
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [oauthProcessed, setOauthProcessed] = useState(false);
 
   // Create user profile in Supabase
   const createUserProfile = async (user, additionalData = {}) => {
@@ -211,7 +210,7 @@ export const UserProvider = ({ children }) => {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}${window.location.pathname}auth/callback`
+          redirectTo: `${window.location.origin}/emmys-learning-app`
         }
       });
       if (error) throw error;
@@ -230,7 +229,7 @@ export const UserProvider = ({ children }) => {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'apple',
         options: {
-          redirectTo: `${window.location.origin}${window.location.pathname}auth/callback`
+          redirectTo: `${window.location.origin}/emmys-learning-app`
         }
       });
       if (error) throw error;
@@ -357,118 +356,6 @@ export const UserProvider = ({ children }) => {
 
   // Listen for auth state changes
   useEffect(() => {
-    // Check for OAuth callback first
-    const handleOAuthCallback = async () => {
-      const hash = window.location.hash;
-      console.log('UserContext: Checking for OAuth callback, hash:', hash);
-      
-      if ((hash.includes('access_token') || hash.includes('error')) && !oauthProcessed) {
-        console.log('UserContext: OAuth callback detected, processing...');
-        setOauthProcessed(true);
-        try {
-          // Parse the hash to extract tokens
-          // The hash might be in format: #access_token=...&refresh_token=... or #/auth/callback#access_token=...
-          let hashContent = hash.substring(1);
-          console.log('UserContext: Full hash content:', hashContent);
-          
-          // If hash contains /auth/callback, extract the part after the second #
-          if (hashContent.includes('/auth/callback#')) {
-            hashContent = hashContent.split('/auth/callback#')[1];
-            console.log('UserContext: Extracted hash content after /auth/callback:', hashContent);
-          }
-          
-          const hashParams = new URLSearchParams(hashContent);
-          const accessToken = hashParams.get('access_token');
-          const refreshToken = hashParams.get('refresh_token');
-          const tokenType = hashParams.get('token_type');
-          const expiresIn = hashParams.get('expires_in');
-          
-          console.log('UserContext: Extracted tokens - Access:', accessToken ? 'YES' : 'NO', 'Refresh:', refreshToken ? 'YES' : 'NO');
-          console.log('UserContext: Token details - Type:', tokenType, 'Expires:', expiresIn);
-          console.log('UserContext: Access token length:', accessToken ? accessToken.length : 0);
-          
-          if (accessToken && refreshToken) {
-            console.log('UserContext: Attempting to set session manually...');
-            const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
-              access_token: accessToken,
-              refresh_token: refreshToken
-            });
-            
-            console.log('UserContext: setSession result:', sessionData, sessionError);
-            
-            if (sessionError) {
-              console.error('UserContext: setSession error:', sessionError);
-              throw sessionError;
-            }
-            
-            if (sessionData.session) {
-              console.log('UserContext: Manual session established successfully:', sessionData.session);
-              setUser(sessionData.session.user);
-              
-              try {
-                console.log('UserContext: Loading user profile...');
-                const profile = await getUserProfile(sessionData.session.user.id);
-                console.log('UserContext: User profile loaded:', profile);
-                setUserProfile(profile);
-                setLoading(false);
-                console.log('UserContext: Loading set to false');
-                
-                // Clear hash after successful session establishment
-                console.log('UserContext: Clearing hash after successful session establishment');
-                window.history.replaceState(null, '', window.location.pathname);
-                return;
-              } catch (profileError) {
-                console.error('UserContext: Error loading user profile:', profileError);
-                // Set a default profile if profile loading fails
-                const defaultProfile = {
-                  id: sessionData.session.user.id,
-                  display_name: sessionData.session.user.user_metadata?.display_name || sessionData.session.user.email,
-                  email: sessionData.session.user.email,
-                  avatar: 'default',
-                  preferences: {
-                    difficulty: 'medium',
-                    sound_enabled: true,
-                    music_enabled: true,
-                    theme: 'light'
-                  },
-                  progress: {
-                    score: 0,
-                    learning_streak: 0,
-                    completed_lessons: [],
-                    achievements: [],
-                    last_active: new Date().toISOString()
-                  },
-                  is_child: false,
-                  is_guest: false
-                };
-                setUserProfile(defaultProfile);
-                setLoading(false);
-                console.log('UserContext: Using default profile, loading set to false');
-                
-                // Clear hash after successful session establishment
-                console.log('UserContext: Clearing hash after successful session establishment');
-                window.history.replaceState(null, '', window.location.pathname);
-                return;
-              }
-            } else {
-              console.log('UserContext: setSession did not return a session');
-            }
-          } else {
-            console.log('UserContext: Access token or refresh token missing from hash');
-          }
-          
-          // Always clear the hash if it contains OAuth parameters, even if session setting failed
-          console.log('UserContext: Clearing hash after OAuth callback attempt');
-          window.history.replaceState(null, '', window.location.pathname);
-          
-        } catch (error) {
-          console.error('UserContext: OAuth callback error during manual session setting:', error);
-          // Clear hash on error too
-          window.history.replaceState(null, '', window.location.pathname);
-        }
-      }
-    };
-
     // Check for guest user first
     const isGuest = localStorage.getItem('isGuest') === 'true';
     if (isGuest) {
@@ -481,10 +368,7 @@ export const UserProvider = ({ children }) => {
       }
     }
 
-    // Handle OAuth callback
-    handleOAuthCallback();
-
-    // Get initial session
+    // Get initial session - Supabase will automatically handle OAuth callbacks
     const getInitialSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
@@ -504,7 +388,6 @@ export const UserProvider = ({ children }) => {
         
         if (event === 'SIGNED_IN' && session?.user) {
           console.log('UserContext: SIGNED_IN event - User authenticated:', session.user);
-          console.log('UserContext: OAuth already processed manually:', oauthProcessed);
           setUser(session.user);
           
           try {
@@ -543,13 +426,6 @@ export const UserProvider = ({ children }) => {
           // Clear guest data when real user signs in
           localStorage.removeItem('isGuest');
           localStorage.removeItem('guestProfile');
-          
-          // Clean up URL only after successful sign in with delay
-          console.log('UserContext: SIGNED_IN - Cleaning up URL after successful SIGNED_IN event');
-          setTimeout(() => {
-            window.history.replaceState(null, '', window.location.pathname);
-            console.log('UserContext: SIGNED_IN - URL cleaned up');
-          }, 500);
           
         } else if (event === 'SIGNED_OUT') {
           console.log('UserContext: User signed out');
