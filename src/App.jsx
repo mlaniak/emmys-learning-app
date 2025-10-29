@@ -15,6 +15,10 @@ import MinimalTestApp from './MinimalTestApp';
 import UltraMinimalTest from './UltraMinimalTest';
 import TestAppWithoutProvider from './TestAppWithoutProvider';
 import AuthCallback from './components/AuthCallback';
+import FeedbackOverlay from './components/FeedbackOverlay';
+import AchievementBadge from './components/AchievementBadge';
+import ConfettiEffect from './components/ConfettiEffect';
+import { useAnimations } from './hooks/useAnimations';
 
 // EmailJS for direct email sending
 import emailjs from '@emailjs/browser';
@@ -27,6 +31,13 @@ const EmmyStudyGame = () => {
   
   // Add safety check to prevent rendering issues
   const [isInitialized, setIsInitialized] = useState(false);
+  
+  // Animation system
+  const animations = useAnimations();
+  
+  // Achievement system state
+  const [currentAchievement, setCurrentAchievement] = useState(null);
+  const [showAchievementBadge, setShowAchievementBadge] = useState(false);
   
   useEffect(() => {
     // Small delay to ensure all context is ready
@@ -2871,12 +2882,24 @@ Your Student ✨
       triggerHaptic('success');
       setShowFeedback('correct'); 
       setAnswerAnimation('correct-bounce');
+      
+      // Trigger success animation on the question container
+      const questionContainer = document.querySelector('.question-container');
+      if (questionContainer) {
+        animations.triggerSuccess(questionContainer);
+      }
     } else { 
       playSound('incorrect');
       triggerHaptic('error');
       setShowFeedback('incorrect'); 
       setAnswerAnimation('incorrect-shake');
       setCorrectAnswer(cor);
+      
+      // Trigger error animation on the question container
+      const questionContainer = document.querySelector('.question-container');
+      if (questionContainer) {
+        animations.triggerError(questionContainer);
+      }
       
       // Show wrong answer popup instead of auto-continuing
       setWrongAnswerData({
@@ -3239,6 +3262,17 @@ Your Student ✨
       <>
         {questionSelectorModal}
         <DebugInfo />
+        
+        {/* Achievement Badge Display */}
+        <AchievementBadge
+          achievement={currentAchievement}
+          visible={showAchievementBadge}
+          onClose={() => {
+            setShowAchievementBadge(false);
+            setCurrentAchievement(null);
+          }}
+        />
+        
       <div className={`min-h-screen bg-gradient-to-br ${currentTheme.colors} p-4 md:p-8`}>
         {/* User Header - Only show if user is logged in */}
         {user && userProfile && (
@@ -3446,13 +3480,17 @@ Your Student ✨
                   { name: 'geography', title: 'Geography', icon: '🌍', color: 'from-emerald-400 to-emerald-600' },
                   { name: 'history', title: 'History', icon: '📜', color: 'from-amber-400 to-amber-600' }
                 ].map(game => (
-                  <div key={game.name} onClick={() => { console.log('Button clicked:', game.name); handleGameSelection(game.name); }}
-                    className={`bg-gradient-to-br ${game.color} p-4 rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer text-center transition-transform relative hover:wiggle`}>
+                  <div key={game.name} onClick={(e) => { 
+                    console.log('Button clicked:', game.name); 
+                    animations.animateButtonPress(e.currentTarget);
+                    handleGameSelection(game.name); 
+                  }}
+                    className={`bg-gradient-to-br ${game.color} p-4 rounded-xl shadow-lg hover-lift hover-glow cursor-pointer text-center transition-all duration-200 relative`}>
                     <div className="text-3xl md:text-4xl mb-2 sparkle">{game.icon}</div>
                     <h2 className="text-sm md:text-base font-bold text-white mb-1">{game.title}</h2>
                     <div className="text-xs text-white/80 mb-1">{getQuestionCount(game.name)} questions</div>
                     {progress.completedSubjects[game.name] && (
-                      <div className="absolute top-1 right-1 text-lg sparkle">🏆</div>
+                      <div className="absolute top-1 right-1 text-lg sparkle float">🏆</div>
                     )}
                     {progress.completedSubjects[game.name] && (
                       <div className="text-xs text-yellow-200 mt-1 font-semibold">Score: {progress.completedSubjects[game.name].score}</div>
@@ -5610,21 +5648,22 @@ Your Student ✨
       )}
 
       <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl p-6 md:p-12 relative">
-        {showFeedback && (
-          <div className={`absolute inset-0 flex items-center justify-center z-50 rounded-3xl ${showFeedback==='correct'?'bg-green-500':'bg-red-500'} bg-opacity-90`}>
-            <div className="text-center p-4">
-              <div className="text-7xl md:text-9xl mb-4">{showFeedback==='correct'?'🎉':'😅'}</div>
-              <p className="text-3xl md:text-5xl font-bold text-white mb-2">{showFeedback==='correct'?'Amazing!':'Try Again!'}</p>
-              {showExplanation && correctAnswer && (
-                <div className="mt-4 bg-white bg-opacity-20 rounded-2xl p-4">
-                  <p className="text-xl md:text-2xl font-bold text-white mb-2">Correct answer: {correctAnswer}</p>
-                  {q.explanation && <p className="text-lg md:text-xl text-white">{q.explanation}</p>}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-        <div className={`text-center mb-8 ${answerAnimation}`}>
+        <FeedbackOverlay
+          feedback={showFeedback}
+          visible={!!showFeedback}
+          onClose={() => {
+            setShowFeedback(null);
+            setAnswerAnimation('');
+            setShowExplanation(false);
+            setCorrectAnswer('');
+          }}
+          showExplanation={showExplanation}
+          explanation={q?.explanation || ''}
+          correctAnswer={correctAnswer}
+          score={score}
+          isComplete={false}
+        />
+        <div className={`question-container text-center mb-8 ${answerAnimation}`}>
           <div className="text-6xl md:text-8xl mb-4">{q.image || q.emoji}</div>
           {q.word && (
             <div className="flex items-center justify-center gap-4 mb-4">
