@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useUser } from '../contexts/UserContext';
 
 const AuthForm = ({ isSignUp = false, onSuccess }) => {
-  const { signIn, signUp, signInWithGoogle, signInWithApple, loginAsGuest, error, setError } = useUser();
+  const { signIn, signUp, signInWithGoogle, signInWithApple, loginAsGuest, loginAsDeveloper, error, setError } = useUser();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -286,39 +286,7 @@ const AuthForm = ({ isSignUp = false, onSuccess }) => {
     {/* Skip Authentication - Development Only */}
     <div className="mt-4">
       <button
-        onClick={() => {
-          // Create a temporary user for development
-          const tempUser = {
-            id: 'dev-user-123',
-            email: 'developer@test.com'
-          };
-          const tempProfile = {
-            id: 'dev-user-123',
-            display_name: 'Developer',
-            email: 'developer@test.com',
-            avatar: 'default',
-            preferences: {
-              difficulty: 'medium',
-              sound_enabled: true,
-              music_enabled: true,
-              theme: 'light'
-            },
-            progress: {
-              score: 0,
-              learning_streak: 0,
-              completed_lessons: [],
-              achievements: [],
-              last_active: new Date().toISOString()
-            },
-            is_child: false,
-            is_guest: false
-          };
-          
-          // Set user and profile directly
-          setUser(tempUser);
-          setUserProfile(tempProfile);
-          setError(null);
-        }}
+        onClick={loginAsDeveloper}
         className="w-full bg-yellow-100 text-yellow-800 py-3 px-4 rounded-xl font-semibold hover:bg-yellow-200 transition-colors flex items-center justify-center"
       >
         <span className="text-lg mr-2">🚀</span>

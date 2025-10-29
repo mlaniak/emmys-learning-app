@@ -130,6 +130,40 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+  // Development mode login - bypasses authentication
+  const loginAsDeveloper = () => {
+    const tempUser = {
+      id: 'dev-user-123',
+      email: 'developer@test.com'
+    };
+    const tempProfile = {
+      id: 'dev-user-123',
+      display_name: 'Developer',
+      email: 'developer@test.com',
+      avatar: 'default',
+      preferences: {
+        difficulty: 'medium',
+        sound_enabled: true,
+        music_enabled: true,
+        theme: 'light'
+      },
+      progress: {
+        score: 0,
+        learning_streak: 0,
+        completed_lessons: [],
+        achievements: [],
+        last_active: new Date().toISOString()
+      },
+      is_child: false,
+      is_guest: false
+    };
+    
+    setUser(tempUser);
+    setUserProfile(tempProfile);
+    setError(null);
+    setLoading(false);
+  };
+
   // Guest login - creates a temporary local profile
   const loginAsGuest = () => {
     const guestId = `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -555,6 +589,7 @@ export const UserProvider = ({ children }) => {
     signIn,
     logout,
     loginAsGuest,
+    loginAsDeveloper,
     signInWithGoogle,
     signInWithApple,
     resetPassword,
