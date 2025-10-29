@@ -78,8 +78,35 @@ jobs:
     - name: Build application
       run: |
         echo "=== Building Application ==="
-        echo "Using npm run build..."
-        npm run build
+        echo "Trying multiple build methods..."
+        
+        # Method 1: Try npm run build
+        if npm run build; then
+          echo "✅ npm run build succeeded"
+        else
+          echo "❌ npm run build failed, trying direct binary..."
+          
+          # Method 2: Try direct binary path
+          if ./node_modules/.bin/vite build; then
+            echo "✅ Direct binary succeeded"
+          else
+            echo "❌ Direct binary failed, trying npx..."
+            
+            # Method 3: Try npx (will download if needed)
+            if npx vite@5.4.21 build; then
+              echo "✅ npx succeeded"
+            else
+              echo "❌ All build methods failed"
+              echo "=== Final Diagnostics ==="
+              echo "PATH: $PATH"
+              echo "node_modules/.bin contents:"
+              ls -la node_modules/.bin/ || echo "No .bin directory"
+              echo "Vite package contents:"
+              ls -la node_modules/vite/ || echo "No vite package"
+              exit 1
+            fi
+          fi
+        fi
       env:
         NODE_ENV: production
     
