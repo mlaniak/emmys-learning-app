@@ -84,6 +84,8 @@ const EmmyStudyGame = () => {
   const [pendingGame, setPendingGame] = useState(null);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
+  const [hintUsed, setHintUsed] = useState(false);
+  const [showHint, setShowHint] = useState(false);
   const [progress, setProgress] = useState(() => {
     const saved = localStorage.getItem('emmy-learning-progress');
     return saved ? JSON.parse(saved) : {
@@ -2804,8 +2806,11 @@ Your Student ✨
   const handleAnswer = (sel, cor, qs, explanation) => {
     const startTime = Date.now();
     const ok = sel === cor;
-    const newScore = score + (ok ? 10 : 0);
-      setScore(newScore);
+    // Calculate score: 10 points for correct, but only 5 if hint was used
+    const basePoints = ok ? 10 : 0;
+    const finalPoints = hintUsed ? Math.floor(basePoints / 2) : basePoints;
+    const newScore = score + finalPoints;
+    setScore(newScore);
     
     // Track this question in history to avoid repeats
     const currentQ = qs[currentQuestion];
@@ -2866,6 +2871,8 @@ Your Student ✨
       setAnswerAnimation(''); 
       setShowExplanation(false); 
       setCorrectAnswer('');
+      setHintUsed(false);
+      setShowHint(false);
       
       if (currentQuestion < qs.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
@@ -2913,8 +2920,79 @@ Your Student ✨
   const resetGame = () => { 
     setCurrentQuestion(0); 
     setScore(0); 
+    setHintUsed(false);
+    setShowHint(false);
     navigateTo('home');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Generate hint based on question type and content
+  const generateHint = (question, options, correctAnswer, subject) => {
+    const hints = {
+      phonics: [
+        "Look at the beginning sound of the word.",
+        "Think about what sound the letters make together.",
+        "Say the word out loud to hear the sounds."
+      ],
+      math: [
+        "Count carefully step by step.",
+        "Think about what operation you need to use.",
+        "Draw a picture to help you visualize the problem."
+      ],
+      reading: [
+        "Think about what makes sense in the story.",
+        "Look for clues in the question.",
+        "Remember what you learned about story elements."
+      ],
+      science: [
+        "Think about what you know about this topic.",
+        "Consider what happens in nature.",
+        "Remember the science concepts we've learned."
+      ],
+      social: [
+        "Think about being a good citizen.",
+        "Consider what helps our community.",
+        "Remember what makes someone a good person."
+      ],
+      skipcounting: [
+        "Count by the number mentioned in the question.",
+        "Think about patterns in counting.",
+        "Start from the number given and count up."
+      ]
+    };
+
+    const subjectHints = hints[subject] || hints.phonics;
+    const randomHint = subjectHints[Math.floor(Math.random() * subjectHints.length)];
+    
+    // Add specific hints based on question content
+    if (question.toLowerCase().includes('photosynthesis')) {
+      return "Plants use sunlight to make their own food! 🌱☀️";
+    }
+    if (question.toLowerCase().includes('transpiration')) {
+      return "This is how plants 'breathe' and move water! 💧🌿";
+    }
+    if (question.toLowerCase().includes('addition') || question.toLowerCase().includes('plus')) {
+      return "Add the numbers together to find the total! ➕";
+    }
+    if (question.toLowerCase().includes('subtraction') || question.toLowerCase().includes('minus')) {
+      return "Take away the smaller number from the bigger one! ➖";
+    }
+    
+    return randomHint;
+  };
+
+  const handleHelpClick = () => {
+    if (!hintUsed) {
+      setHintUsed(true);
+      setShowHint(true);
+      playSound('click');
+      triggerHaptic('light');
+      
+      // Hide hint after 5 seconds
+      setTimeout(() => {
+        setShowHint(false);
+      }, 5000);
+    }
   };
 
   // Handle game selection with question count
@@ -5438,6 +5516,39 @@ Your Student ✨
             </div>
           ))}
         </div>
+        {/* Help Button */}
+        <div className="text-center mb-6">
+          <button
+            onClick={handleHelpClick}
+            disabled={hintUsed}
+            className={`px-6 py-3 rounded-full font-bold transition-all ${
+              hintUsed 
+                ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
+                : 'bg-orange-500 hover:bg-orange-600 text-white hover:scale-105 active:scale-95'
+            }`}
+            title={hintUsed ? "Hint already used" : "Get a hint (costs half points)"}
+          >
+            {hintUsed ? '💡 Hint Used' : '💡 I Need Help'}
+          </button>
+          {hintUsed && (
+            <p className="text-sm text-orange-600 mt-2 font-medium">
+              ⚠️ You'll get half points for this question
+            </p>
+          )}
+        </div>
+
+        {/* Hint Display */}
+        {showHint && (
+          <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 mb-6 mx-4">
+            <div className="flex items-center justify-center">
+              <span className="text-2xl mr-3">💡</span>
+              <p className="text-lg font-medium text-blue-800">
+                {generateHint(q.question, q.options, q.correct || q.answer, currentScreen)}
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className="mt-8 text-center">
           <p className="text-xl md:text-2xl text-gray-600">Question {currentQuestion+1} of {questionCount}</p>
           <p className="text-2xl md:text-3xl font-bold mt-2">Score: {score} ⭐</p>
@@ -5734,6 +5845,8 @@ Your Student ✨
                   setShowFeedback(null);
                   setAnswerAnimation('');
                   setCorrectAnswer('');
+                  setHintUsed(false);
+                  setShowHint(false);
                   
                   // Continue to next question
                   const qs = questionSets[currentScreen] || [];
