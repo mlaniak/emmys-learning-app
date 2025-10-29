@@ -14,6 +14,7 @@ import DebugInfo from './components/DebugInfo';
 import MinimalTestApp from './MinimalTestApp';
 import UltraMinimalTest from './UltraMinimalTest';
 import TestAppWithoutProvider from './TestAppWithoutProvider';
+import AuthCallback from './components/AuthCallback';
 
 // EmailJS for direct email sending
 import emailjs from '@emailjs/browser';
@@ -6070,6 +6071,9 @@ const App = () => {
         <BrowserRouter basename="/emmys-learning-app">
           <Routes>
             <Route path="/" element={<EmmyStudyGame />} />
+            
+            {/* OAuth Callback Route */}
+            <Route path="/auth/callback" element={<AuthCallback />} />
             
             {/* Newsletter Routes */}
             <Route path="/newsletter" element={<EmmyStudyGame />} />

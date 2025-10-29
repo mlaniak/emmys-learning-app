@@ -6,7 +6,7 @@
  */
 
 import { isDevelopment, getEnvironmentConfig } from './environmentConfig';
-import { errorHandler, ERROR_TYPES, ERROR_SEVERITY } from './errorHandling';
+import { errorHandler, ERROR_TYPES, ERROR_SEVERITY } from './errorHandling.jsx';
 import { analyticsCollector } from './analytics';
 
 // OAuth-specific error types

@@ -1,8 +1,21 @@
 import React, { useState } from 'react';
 import { useUser } from '../contexts/UserContext';
+import ErrorRecoveryModal from './ErrorRecoveryModal';
 
 const AuthForm = ({ isSignUp = false, onSuccess }) => {
-  const { signIn, signUp, signInWithGoogle, signInWithApple, loginAsGuest, loginAsDeveloper, error, setError } = useUser();
+  const { 
+    signIn, 
+    signUp, 
+    signInWithGoogle, 
+    signInWithApple, 
+    loginAsGuest, 
+    loginAsDeveloper, 
+    error, 
+    errorRecovery,
+    setError,
+    clearErrorRecovery,
+    retryAuthentication
+  } = useUser();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -12,6 +25,7 @@ const AuthForm = ({ isSignUp = false, onSuccess }) => {
     isChild: false
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [showErrorRecovery, setShowErrorRecovery] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -65,6 +79,10 @@ const AuthForm = ({ isSignUp = false, onSuccess }) => {
       onSuccess?.();
     } catch (error) {
       console.error('Google sign in error:', error);
+      // Show error recovery modal if error recovery data is available
+      if (errorRecovery) {
+        setShowErrorRecovery(true);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -78,6 +96,10 @@ const AuthForm = ({ isSignUp = false, onSuccess }) => {
       onSuccess?.();
     } catch (error) {
       console.error('Apple sign in error:', error);
+      // Show error recovery modal if error recovery data is available
+      if (errorRecovery) {
+        setShowErrorRecovery(true);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -85,8 +107,50 @@ const AuthForm = ({ isSignUp = false, onSuccess }) => {
 
   const handleGuestLogin = () => {
     setError(null);
+    clearErrorRecovery();
     loginAsGuest();
     onSuccess?.();
+  };
+
+  // Error recovery handlers
+  const handleErrorRecoveryClose = () => {
+    setShowErrorRecovery(false);
+    clearErrorRecovery();
+  };
+
+  const handleRetryAuthentication = async () => {
+    setIsLoading(true);
+    try {
+      // Determine which provider to retry based on error recovery context
+      const provider = errorRecovery?.context?.provider || 'google';
+      await retryAuthentication(provider);
+      setShowErrorRecovery(false);
+      onSuccess?.();
+    } catch (error) {
+      console.error('Retry authentication failed:', error);
+      // Keep the modal open to show updated error state
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleFallbackAuth = (fallbackOptions) => {
+    setShowErrorRecovery(false);
+    clearErrorRecovery();
+    // The fallback options will be handled by the modal component
+    // For now, just close the modal and let user try different methods
+  };
+
+  const handleGuestModeFromRecovery = () => {
+    setShowErrorRecovery(false);
+    handleGuestLogin();
+  };
+
+  const handleContactSupport = (supportInfo) => {
+    setShowErrorRecovery(false);
+    clearErrorRecovery();
+    // In a real app, this would open a support ticket or contact form
+    alert(`Support needed for error: ${supportInfo.errorId}\n\nPlease contact support with this error ID.`);
   };
 
   return (
@@ -311,6 +375,17 @@ const AuthForm = ({ isSignUp = false, onSuccess }) => {
           </p>
         </div>
       </div>
+
+      {/* Error Recovery Modal */}
+      <ErrorRecoveryModal
+        isOpen={showErrorRecovery}
+        onClose={handleErrorRecoveryClose}
+        errorAnalysis={errorRecovery}
+        onRetry={handleRetryAuthentication}
+        onFallback={handleFallbackAuth}
+        onGuestMode={handleGuestModeFromRecovery}
+        onContactSupport={handleContactSupport}
+      />
     </div>
   );
 };
