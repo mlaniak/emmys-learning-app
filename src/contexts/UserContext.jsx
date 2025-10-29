@@ -154,7 +154,7 @@ export const UserProvider = ({ children }) => {
         achievements: [],
         last_active: new Date().toISOString()
       },
-      is_child: false,
+      is_child: true,  // Set as child to bypass parent dashboard
       is_guest: false
     };
     
