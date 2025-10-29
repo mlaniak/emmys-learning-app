@@ -363,13 +363,52 @@ export const UserProvider = ({ children }) => {
             if (sessionData.session) {
               console.log('UserContext: Manual session established successfully:', sessionData.session);
               setUser(sessionData.session.user);
-              const profile = await getUserProfile(sessionData.session.user.id);
-              setUserProfile(profile);
-              setLoading(false);
-              // Clear hash after successful session establishment
-              console.log('UserContext: Clearing hash after successful session establishment');
-              window.history.replaceState(null, '', window.location.pathname);
-              return;
+              
+              try {
+                console.log('UserContext: Loading user profile...');
+                const profile = await getUserProfile(sessionData.session.user.id);
+                console.log('UserContext: User profile loaded:', profile);
+                setUserProfile(profile);
+                setLoading(false);
+                console.log('UserContext: Loading set to false');
+                
+                // Clear hash after successful session establishment
+                console.log('UserContext: Clearing hash after successful session establishment');
+                window.history.replaceState(null, '', window.location.pathname);
+                return;
+              } catch (profileError) {
+                console.error('UserContext: Error loading user profile:', profileError);
+                // Set a default profile if profile loading fails
+                const defaultProfile = {
+                  id: sessionData.session.user.id,
+                  display_name: sessionData.session.user.user_metadata?.display_name || sessionData.session.user.email,
+                  email: sessionData.session.user.email,
+                  avatar: 'default',
+                  preferences: {
+                    difficulty: 'medium',
+                    sound_enabled: true,
+                    music_enabled: true,
+                    theme: 'light'
+                  },
+                  progress: {
+                    score: 0,
+                    learning_streak: 0,
+                    completed_lessons: [],
+                    achievements: [],
+                    last_active: new Date().toISOString()
+                  },
+                  is_child: false,
+                  is_guest: false
+                };
+                setUserProfile(defaultProfile);
+                setLoading(false);
+                console.log('UserContext: Using default profile, loading set to false');
+                
+                // Clear hash after successful session establishment
+                console.log('UserContext: Clearing hash after successful session establishment');
+                window.history.replaceState(null, '', window.location.pathname);
+                return;
+              }
             } else {
               console.log('UserContext: setSession did not return a session');
             }
