@@ -39,7 +39,13 @@ jobs:
         cache: 'npm'
     
     - name: Install dependencies
-      run: npm ci
+      run: |
+        echo "Installing dependencies..."
+        npm install
+        echo "Dependencies installed. Checking if Vite is available..."
+        ls -la node_modules/.bin/ | grep vite || echo "Vite not found in node_modules/.bin/"
+        echo "Checking package.json for Vite..."
+        grep -A 5 -B 5 "vite" package.json || echo "Vite not found in package.json"
     
     - name: Build application
       run: npm run build
