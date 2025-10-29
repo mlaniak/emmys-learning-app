@@ -7,6 +7,7 @@ import Week8Newsletter from './Week8Newsletter';
 import Week7Newsletter from './Week7Newsletter';
 import NewsletterSelector from './NewsletterSelector';
 import FieldTrips from './FieldTrips';
+import textToSpeech from './utils/textToSpeech';
 
 // EmailJS for direct email sending
 import emailjs from '@emailjs/browser';
@@ -5376,17 +5377,62 @@ Your Student ✨
         )}
         <div className={`text-center mb-8 ${answerAnimation}`}>
           <div className="text-6xl md:text-8xl mb-4">{q.image || q.emoji}</div>
-          {q.word && <div className="text-4xl md:text-6xl font-bold text-pink-600 mb-4">{q.word}</div>}
-          <p className="text-2xl md:text-3xl font-bold text-gray-700 mb-8">{q.question}</p>
+          {q.word && (
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="text-4xl md:text-6xl font-bold text-pink-600">{q.word}</div>
+              <button
+                onClick={() => textToSpeech.speakWord(q.word)}
+                className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full transition-colors"
+                title="Listen to word"
+                aria-label="Listen to word"
+              >
+                🔊
+              </button>
+            </div>
+          )}
+          <div className="flex items-center justify-center gap-3 mb-8">
+            <p className="text-2xl md:text-3xl font-bold text-gray-700">{q.question}</p>
+            <button
+              onClick={() => textToSpeech.speakQuestion(q.question)}
+              className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full transition-colors"
+              title="Listen to question"
+              aria-label="Listen to question"
+            >
+              🔊
+            </button>
+            <button
+              onClick={() => textToSpeech.stop()}
+              className="bg-red-500 hover:bg-red-600 text-white p-3 rounded-full transition-colors"
+              title="Stop audio"
+              aria-label="Stop audio"
+            >
+              ⏹️
+            </button>
+          </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           {(q.options || []).map((opt, i) => (
-            <div key={i} onClick={() => { triggerHaptic('medium'); handleAnswer(opt, q.correct || q.answer, qs, q.explanation); }} 
-              className="p-6 md:p-8 text-2xl md:text-3xl font-bold rounded-2xl shadow-lg hover:scale-110 active:scale-105 cursor-pointer bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900 transition-transform"
-              role="button"
-              aria-label={`Answer option: ${opt}`}
-              tabIndex={0}>
-              {opt}
+            <div key={i} className="relative">
+              <div 
+                onClick={() => { triggerHaptic('medium'); handleAnswer(opt, q.correct || q.answer, qs, q.explanation); }} 
+                className="p-6 md:p-8 text-2xl md:text-3xl font-bold rounded-2xl shadow-lg hover:scale-110 active:scale-105 cursor-pointer bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900 transition-transform"
+                role="button"
+                aria-label={`Answer option: ${opt}`}
+                tabIndex={0}
+              >
+                {opt}
+              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  textToSpeech.speakAnswer(opt);
+                }}
+                className="absolute top-2 right-2 bg-purple-500 hover:bg-purple-600 text-white p-2 rounded-full transition-colors"
+                title="Listen to answer"
+                aria-label="Listen to answer"
+              >
+                🔊
+              </button>
             </div>
           ))}
         </div>
