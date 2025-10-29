@@ -269,19 +269,65 @@ const AuthForm = ({ isSignUp = false, onSuccess }) => {
           </button>
         </div>
 
-        {/* Guest Login */}
-        <div className="mt-4">
-          <button
-            onClick={handleGuestLogin}
-            className="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-xl font-semibold hover:bg-gray-200 transition-colors flex items-center justify-center"
-          >
-            <span className="text-lg mr-2">👤</span>
-            Try as Guest (No Account Needed)
-          </button>
-          <p className="text-xs text-gray-500 text-center mt-2">
-            Guest progress is saved locally and can be transferred to an account later
-          </p>
-        </div>
+    {/* Guest Login */}
+    <div className="mt-4">
+      <button
+        onClick={handleGuestLogin}
+        className="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-xl font-semibold hover:bg-gray-200 transition-colors flex items-center justify-center"
+      >
+        <span className="text-lg mr-2">👤</span>
+        Try as Guest (No Account Needed)
+      </button>
+      <p className="text-xs text-gray-500 text-center mt-2">
+        Guest progress is saved locally and can be transferred to an account later
+      </p>
+    </div>
+
+    {/* Skip Authentication - Development Only */}
+    <div className="mt-4">
+      <button
+        onClick={() => {
+          // Create a temporary user for development
+          const tempUser = {
+            id: 'dev-user-123',
+            email: 'developer@test.com'
+          };
+          const tempProfile = {
+            id: 'dev-user-123',
+            display_name: 'Developer',
+            email: 'developer@test.com',
+            avatar: 'default',
+            preferences: {
+              difficulty: 'medium',
+              sound_enabled: true,
+              music_enabled: true,
+              theme: 'light'
+            },
+            progress: {
+              score: 0,
+              learning_streak: 0,
+              completed_lessons: [],
+              achievements: [],
+              last_active: new Date().toISOString()
+            },
+            is_child: false,
+            is_guest: false
+          };
+          
+          // Set user and profile directly
+          setUser(tempUser);
+          setUserProfile(tempProfile);
+          setError(null);
+        }}
+        className="w-full bg-yellow-100 text-yellow-800 py-3 px-4 rounded-xl font-semibold hover:bg-yellow-200 transition-colors flex items-center justify-center"
+      >
+        <span className="text-lg mr-2">🚀</span>
+        Skip Authentication (Dev Mode)
+      </button>
+      <p className="text-xs text-yellow-600 text-center mt-2">
+        Development only - bypasses authentication to work on content
+      </p>
+    </div>
 
         {/* Footer */}
         <div className="text-center mt-6">
