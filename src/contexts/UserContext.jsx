@@ -411,6 +411,12 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     console.log('UserContext: useEffect started');
     
+    // Safety timeout - ensure loading never gets stuck
+    const loadingTimeout = setTimeout(() => {
+      console.log('UserContext: Loading timeout reached, forcing loading to false');
+      setLoading(false);
+    }, 10000); // 10 second timeout
+    
     // Check for guest user first
     const isGuest = localStorage.getItem('isGuest') === 'true';
     if (isGuest) {
@@ -421,6 +427,7 @@ export const UserProvider = ({ children }) => {
         setUserProfile(guestProfile);
         setLoading(false);
         console.log('UserContext: Guest profile loaded, loading set to false');
+        clearTimeout(loadingTimeout);
         return;
       }
     }
@@ -472,6 +479,7 @@ export const UserProvider = ({ children }) => {
       } finally {
         console.log('UserContext: Setting loading to false');
         setLoading(false);
+        clearTimeout(loadingTimeout);
       }
     };
 
@@ -523,10 +531,17 @@ export const UserProvider = ({ children }) => {
           localStorage.removeItem('isGuest');
           localStorage.removeItem('guestProfile');
           
+          // CRITICAL: Set loading to false after profile is set
+          console.log('UserContext: SIGNED_IN - Setting loading to false');
+          setLoading(false);
+          clearTimeout(loadingTimeout);
+          
         } else if (event === 'SIGNED_OUT') {
           console.log('UserContext: User signed out');
           setUser(null);
           setUserProfile(null);
+          setLoading(false);
+          clearTimeout(loadingTimeout);
           // Ensure hash is cleared on sign out if it contains tokens
           if (window.location.hash.includes('access_token') || window.location.hash.includes('error')) {
             console.log('UserContext: Clearing hash on SIGNED_OUT event with OAuth params');
