@@ -2939,6 +2939,9 @@ Your Student ✨
       if (questionLower.includes('plant') && questionLower.includes('underground')) {
         return "The part that grows underground helps the plant stay in place and drink water! 🌱";
       }
+      if (questionLower.includes('water') && questionLower.includes('moving') && questionLower.includes('plant')) {
+        return "This is how plants 'breathe' and move water from roots to leaves! 💧🌿";
+      }
       if (questionLower.includes('photosynthesis')) {
         return "Plants use sunlight to make their own food! 🌱☀️";
       }
@@ -5553,7 +5556,7 @@ Your Student ✨
             <div key={i} className="relative">
               <div 
                 onClick={() => { triggerHaptic('medium'); handleAnswer(opt, q.correct || q.answer, qs, q.explanation); }} 
-                className="p-6 md:p-8 pr-16 md:pr-20 text-2xl md:text-3xl font-bold rounded-2xl shadow-lg hover:scale-110 active:scale-105 cursor-pointer bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900 transition-transform"
+                className="p-6 md:p-8 pr-20 md:pr-24 text-2xl md:text-3xl font-bold rounded-2xl shadow-lg hover:scale-110 active:scale-105 cursor-pointer bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900 transition-transform"
                 role="button"
                 aria-label={`Answer option: ${opt}`}
                 tabIndex={0}
