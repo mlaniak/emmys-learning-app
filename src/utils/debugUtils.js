@@ -5,6 +5,7 @@
  */
 
 import { isDevelopment } from './environmentConfig';
+import { oauthLogger } from './oauthLogger';
 
 /**
  * Setup global debug utilities in development mode
@@ -22,20 +23,17 @@ export const setupDebugUtils = () => {
     
     // Clear OAuth logs
     clearOAuthLogs: () => {
-      const { oauthLogger } = require('./oauthLogger');
       oauthLogger.clearOAuthLogs();
       console.log('OAuth logs cleared');
     },
     
     // Export OAuth logs
     exportOAuthLogs: () => {
-      const { oauthLogger } = require('./oauthLogger');
       oauthLogger.exportOAuthLogs();
     },
     
     // Get OAuth statistics
     getOAuthStats: () => {
-      const { oauthLogger } = require('./oauthLogger');
       return {
         flows: oauthLogger.getAllOAuthFlows(),
         errors: oauthLogger.getOAuthErrorStats(),
@@ -45,7 +43,6 @@ export const setupDebugUtils = () => {
     
     // Generate debug report
     generateDebugReport: (flowId = null) => {
-      const { oauthLogger } = require('./oauthLogger');
       return oauthLogger.generateDebugReport(flowId);
     }
   };
