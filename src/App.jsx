@@ -5417,7 +5417,7 @@ Your Student ✨
             <div key={i} className="relative">
               <div 
                 onClick={() => { triggerHaptic('medium'); handleAnswer(opt, q.correct || q.answer, qs, q.explanation); }} 
-                className="p-6 md:p-8 text-2xl md:text-3xl font-bold rounded-2xl shadow-lg hover:scale-110 active:scale-105 cursor-pointer bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900 transition-transform"
+                className="p-6 md:p-8 pr-16 md:pr-20 text-2xl md:text-3xl font-bold rounded-2xl shadow-lg hover:scale-110 active:scale-105 cursor-pointer bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900 transition-transform"
                 role="button"
                 aria-label={`Answer option: ${opt}`}
                 tabIndex={0}
@@ -5429,7 +5429,7 @@ Your Student ✨
                   e.stopPropagation();
                   textToSpeech.speakAnswer(opt);
                 }}
-                className="absolute top-3 right-3 bg-purple-500 hover:bg-purple-600 text-white p-2 rounded-full transition-colors shadow-md"
+                className="absolute top-4 right-4 bg-purple-500 hover:bg-purple-600 text-white p-2 rounded-full transition-colors shadow-md z-10"
                 title="Listen to answer"
                 aria-label="Listen to answer"
               >
