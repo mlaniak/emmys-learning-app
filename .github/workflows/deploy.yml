@@ -21,7 +21,6 @@ concurrency:
 env:
   VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
   VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-  NODE_ENV: production
 
 jobs:
   build-and-deploy:
@@ -37,78 +36,66 @@ jobs:
       with:
         node-version: '20'
         cache: 'npm'
+        registry-url: 'https://registry.npmjs.org'
     
     - name: Debug environment
       run: |
         echo "=== Environment Debug ==="
-        pwd
-        ls -la
         echo "Node version: $(node --version)"
         echo "NPM version: $(npm --version)"
-        echo "Checking package.json..."
-        cat package.json | grep -A 10 -B 2 "vite"
+        echo "Checking package.json for Vite..."
+        grep -A 5 -B 5 '"vite"' package.json || echo "Vite not found in package.json"
         echo "Checking package-lock.json exists..."
         ls -la package-lock.json
     
-    - name: Clean install dependencies
+    - name: Install dependencies
       run: |
         echo "=== Installing Dependencies ==="
-        # Remove node_modules and package-lock if they exist
-        rm -rf node_modules package-lock.json || true
-        # Fresh install
-        npm install
+        echo "Node version: $(node --version)"
+        echo "NPM version: $(npm --version)"
+        
+        # Try npm ci first (preferred for CI)
+        if npm ci; then
+          echo "✅ npm ci succeeded"
+        else
+          echo "❌ npm ci failed, trying npm install..."
+          # Fallback to npm install
+          npm install
+        fi
+        
         echo "=== Installation Complete ==="
-        echo "Checking node_modules..."
-        ls -la node_modules/ | head -10
-        echo "Checking .bin directory..."
-        ls -la node_modules/.bin/ | grep vite || echo "No vite in .bin"
+        echo "Checking if Vite is installed..."
+        npm list vite || echo "Vite not found in npm list"
     
-    - name: Verify Vite installation
+    - name: Verify and fix Vite installation
       run: |
         echo "=== Vite Verification ==="
-        echo "NPM list output:"
-        npm list --depth=0 | grep vite || echo "Vite not found in npm list"
-        echo "Direct package check:"
-        ls -la node_modules/vite/ || echo "Vite package directory not found"
-        echo "Binary check:"
-        ls -la node_modules/.bin/vite || echo "Vite binary not found"
-        echo "Version check:"
-        ./node_modules/.bin/vite --version || echo "Cannot run vite --version"
+        echo "Checking Vite installation..."
+        
+        if [ -f "node_modules/.bin/vite" ]; then
+          echo "✅ Vite binary found"
+          ./node_modules/.bin/vite --version
+        else
+          echo "❌ Vite binary not found, installing manually..."
+          npm install --save-dev vite@^5.4.21
+          
+          # Verify again
+          if [ -f "node_modules/.bin/vite" ]; then
+            echo "✅ Vite installed successfully"
+            ./node_modules/.bin/vite --version
+          else
+            echo "❌ Failed to install Vite"
+            exit 1
+          fi
+        fi
     
     - name: Build application
       run: |
         echo "=== Building Application ==="
-        echo "Trying multiple build methods..."
-        
-        # Method 1: Try npm run build
-        if npm run build; then
-          echo "✅ npm run build succeeded"
-        else
-          echo "❌ npm run build failed, trying direct binary..."
-          
-          # Method 2: Try direct binary path
-          if ./node_modules/.bin/vite build; then
-            echo "✅ Direct binary succeeded"
-          else
-            echo "❌ Direct binary failed, trying npx..."
-            
-            # Method 3: Try npx (will download if needed)
-            if npx vite@5.4.21 build; then
-              echo "✅ npx succeeded"
-            else
-              echo "❌ All build methods failed"
-              echo "=== Final Diagnostics ==="
-              echo "PATH: $PATH"
-              echo "node_modules/.bin contents:"
-              ls -la node_modules/.bin/ || echo "No .bin directory"
-              echo "Vite package contents:"
-              ls -la node_modules/vite/ || echo "No vite package"
-              exit 1
-            fi
-          fi
-        fi
-      env:
-        NODE_ENV: production
+        npm run build
+        echo "=== Build Complete ==="
+        echo "Checking build output..."
+        ls -la dist/ || echo "No dist directory found"
     
     - name: Setup Pages
       uses: actions/configure-pages@v4

@@ -38,13 +38,13 @@
   - Create development-friendly debug information
   - _Requirements: 1.4, 3.2_
 
-- [ ]* 7. Write unit tests for OAuth functionality
+- [x] 7. Write unit tests for OAuth functionality
   - Test environment configuration utility
   - Test OAuth error handling logic
   - Test AuthCallback component behavior
   - _Requirements: 1.1, 1.2, 1.3, 1.4_
 
-- [ ]* 8. Create integration tests for complete OAuth flow
+- [x] 8. Create integration tests for complete OAuth flow
   - Test successful OAuth flow from start to finish
   - Test error scenarios and recovery mechanisms
   - Test cross-browser compatibility
