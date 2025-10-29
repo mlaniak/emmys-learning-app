@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../supabase/config';
+import { getOAuthConfig, isDevelopment } from '../utils/environmentConfig';
+import { handleOAuthError, oauthErrorRecovery } from '../utils/oauthErrorRecovery';
+import { startOAuthFlow, logOAuthEvent, logOAuthError, logOAuthPerformance, completeOAuthFlow, OAUTH_PROVIDERS, OAUTH_STAGES } from '../utils/oauthLogger';
 
 const UserContext = createContext();
 
@@ -16,62 +19,113 @@ export const UserProvider = ({ children }) => {
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [errorRecovery, setErrorRecovery] = useState(null);
 
   // Create user profile in Supabase
   const createUserProfile = async (user, additionalData = {}) => {
-    if (!user) return;
+    if (!user) {
+      if (isDevelopment()) {
+        console.warn('⚠️ createUserProfile called without user');
+      }
+      return;
+    }
 
     // Skip Supabase if RLS issues detected
     if (localStorage.getItem('supabaseDisabled') === 'true') {
-      console.log('Supabase disabled due to RLS issues, skipping profile creation');
+      if (isDevelopment()) {
+        console.log('🚫 Supabase disabled due to RLS issues, skipping profile creation');
+      }
       return;
     }
 
     try {
-      const { data: existingProfile } = await supabase
+      if (isDevelopment()) {
+        console.log('👤 Creating user profile for:', user.id);
+      }
+
+      const { data: existingProfile, error: selectError } = await supabase
         .from('users')
         .select('*')
         .eq('id', user.id)
         .single();
 
+      // Handle the case where no profile exists (expected for new users)
+      if (selectError && selectError.code !== 'PGRST116') {
+        // PGRST116 is "not found" which is expected for new users
+        throw selectError;
+      }
+
       if (!existingProfile) {
-        const { displayName, email } = user.user_metadata;
+        const { displayName, email } = user.user_metadata || {};
         const createdAt = new Date().toISOString();
         
-        const { error } = await supabase
-          .from('users')
-          .insert({
-            id: user.id,
-            display_name: displayName || email,
-            email: email,
-            created_at: createdAt,
-            avatar: 'default',
-            preferences: {
-              difficulty: 'medium',
-              sound_enabled: true,
-              music_enabled: true,
-              theme: 'light'
-            },
-            progress: {
-              score: 0,
-              learning_streak: 0,
-              completed_lessons: [],
-              achievements: [],
-              last_active: createdAt
-            },
-            parent_email: additionalData.parentEmail || null,
-            is_child: additionalData.isChild || false,
-            ...additionalData
-          });
+        const profileData = {
+          id: user.id,
+          display_name: displayName || email || 'User',
+          email: email || user.email,
+          created_at: createdAt,
+          avatar: 'default',
+          preferences: {
+            difficulty: 'medium',
+            sound_enabled: true,
+            music_enabled: true,
+            theme: 'light'
+          },
+          progress: {
+            score: 0,
+            learning_streak: 0,
+            completed_lessons: [],
+            achievements: [],
+            last_active: createdAt
+          },
+          parent_email: additionalData.parentEmail || null,
+          is_child: additionalData.isChild || false,
+          ...additionalData
+        };
 
-        if (error) {
-          console.error('Error creating user profile:', error);
-          setError('Failed to create user profile');
+        const { error: insertError } = await supabase
+          .from('users')
+          .insert(profileData);
+
+        if (insertError) {
+          throw insertError;
+        }
+
+        if (isDevelopment()) {
+          console.log('✅ User profile created successfully');
+        }
+      } else {
+        if (isDevelopment()) {
+          console.log('👤 User profile already exists');
         }
       }
     } catch (error) {
-      console.error('Error creating user profile:', error);
-      setError('Failed to create user profile');
+      const errorMessage = `Failed to create user profile: ${error.message}`;
+      
+      if (isDevelopment()) {
+        console.error('🚨 Error creating user profile:', {
+          error: error.message,
+          code: error.code,
+          details: error.details,
+          userId: user.id
+        });
+      }
+      
+      // Set a user-friendly error message
+      let userFriendlyMessage = 'Failed to set up your profile. You can still use the app.';
+      
+      if (error.code === '42P17' || error.message?.includes('infinite recursion')) {
+        userFriendlyMessage = 'Profile setup encountered a database issue. Using default settings.';
+        // Mark Supabase as disabled for this session
+        localStorage.setItem('supabaseDisabled', 'true');
+      }
+      
+      setError(userFriendlyMessage);
+      
+      // Don't throw the error - allow the user to continue with a default profile
+      if (isDevelopment()) {
+        console.warn('⚠️ Continuing without profile creation due to error');
+      }
     }
   };
 
@@ -209,40 +263,313 @@ export const UserProvider = ({ children }) => {
     setError(null);
   };
 
-  // Sign in with Google
-  const signInWithGoogle = async () => {
+  // Sign in with Google with enhanced error recovery
+  const signInWithGoogle = async (recoveryOptions = {}) => {
+    // Start OAuth flow logging
+    const flowId = startOAuthFlow(OAUTH_PROVIDERS.GOOGLE, {
+      redirectUrl: getOAuthConfig().redirectTo,
+      isRetry: recoveryOptions.isRetry || false
+    });
+    
+    const startTime = Date.now();
+    
     try {
       setError(null);
+      setErrorRecovery(null);
+      
+      // Get environment-aware OAuth configuration
+      const oauthConfig = getOAuthConfig();
+      
+      // Log configuration event
+      logOAuthEvent(flowId, 'configuration_loaded', {
+        stage: OAUTH_STAGES.INITIATION,
+        redirectTo: oauthConfig.redirectTo,
+        queryParams: oauthConfig.queryParams
+      });
+      
+      if (isDevelopment()) {
+        console.log('🔐 Google OAuth Configuration:', {
+          redirectTo: oauthConfig.redirectTo,
+          queryParams: oauthConfig.queryParams
+        });
+      }
+      
+      // Log OAuth initiation
+      logOAuthEvent(flowId, 'oauth_initiation_started', {
+        stage: OAUTH_STAGES.INITIATION,
+        provider: OAUTH_PROVIDERS.GOOGLE
+      });
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/emmys-learning-app`
+          redirectTo: oauthConfig.redirectTo,
+          queryParams: oauthConfig.queryParams,
         }
       });
-      if (error) throw error;
+      
+      // Log performance metric for initiation time
+      logOAuthPerformance(flowId, 'initiation_duration', Date.now() - startTime, {
+        stage: OAUTH_STAGES.INITIATION
+      });
+      
+      if (error) {
+        // Log OAuth error
+        logOAuthError(flowId, error, {
+          stage: OAUTH_STAGES.INITIATION,
+          provider: OAUTH_PROVIDERS.GOOGLE,
+          redirectTo: oauthConfig.redirectTo
+        });
+        
+        // Enhanced error handling with recovery mechanisms
+        const enhancedError = new Error(error.message);
+        enhancedError.code = error.code;
+        enhancedError.status = error.status;
+        enhancedError.details = error.details;
+        
+        // Log detailed error information in development
+        if (isDevelopment()) {
+          console.error('🚨 Google OAuth Error Details:', {
+            message: error.message,
+            code: error.code,
+            status: error.status,
+            details: error.details,
+            redirectTo: oauthConfig.redirectTo
+          });
+        }
+        
+        // Handle OAuth error with recovery mechanisms
+        const errorAnalysis = await handleOAuthError(enhancedError, {
+          provider: 'google',
+          redirectTo: oauthConfig.redirectTo,
+          userId: user?.id,
+          flowId
+        }, {
+          ...recoveryOptions,
+          retryCallback: () => signInWithGoogle({ ...recoveryOptions, isRetry: true })
+        });
+        
+        // Set error recovery state for UI to handle
+        setErrorRecovery(errorAnalysis);
+        
+        // Set user-friendly error message
+        setError(errorAnalysis.userMessage);
+        
+        // Complete flow as failed
+        completeOAuthFlow(flowId, false, {
+          error: error.message,
+          errorType: errorAnalysis.errorType,
+          recoveryStrategy: errorAnalysis.recoveryStrategy
+        });
+        
+        throw enhancedError;
+      }
+      
+      // Reset retry counts on successful OAuth initiation
+      oauthErrorRecovery.resetAllRetryCounts();
+      
+      // Log successful initiation
+      logOAuthEvent(flowId, 'oauth_redirect_initiated', {
+        stage: OAUTH_STAGES.REDIRECT,
+        provider: OAUTH_PROVIDERS.GOOGLE
+      });
+      
+      if (isDevelopment()) {
+        console.log('✅ Google OAuth initiated successfully:', data);
+      }
+      
+      // Note: Flow completion will be handled in AuthCallback component
+      // Store flowId for callback processing
+      sessionStorage.setItem('oauthFlowId', flowId);
+      
       return data;
     } catch (error) {
-      console.error('Google sign in error:', error);
-      setError(error.message);
+      // Catch any unexpected errors
+      const errorMessage = error.message || 'An unexpected error occurred during Google sign-in';
+      
+      // Log unexpected error
+      logOAuthError(flowId, error, {
+        stage: OAUTH_STAGES.INITIATION,
+        provider: OAUTH_PROVIDERS.GOOGLE,
+        type: 'unexpected_error'
+      });
+      
+      if (isDevelopment()) {
+        console.error('🚨 Unexpected Google sign-in error:', error);
+      }
+      
+      // If error recovery hasn't been set, handle it as an unexpected error
+      if (!errorRecovery) {
+        const errorAnalysis = await handleOAuthError(error, {
+          provider: 'google',
+          type: 'unexpected_error',
+          userId: user?.id,
+          flowId
+        }, recoveryOptions);
+        
+        setErrorRecovery(errorAnalysis);
+        setError(errorAnalysis.userMessage);
+      }
+      
+      // Complete flow as failed
+      completeOAuthFlow(flowId, false, {
+        error: errorMessage,
+        errorType: 'unexpected_error'
+      });
+      
       throw error;
     }
   };
 
-  // Sign in with Apple
-  const signInWithApple = async () => {
+  // Sign in with Apple with enhanced error recovery
+  const signInWithApple = async (recoveryOptions = {}) => {
+    // Start OAuth flow logging
+    const flowId = startOAuthFlow(OAUTH_PROVIDERS.APPLE, {
+      redirectUrl: getOAuthConfig().redirectTo,
+      isRetry: recoveryOptions.isRetry || false
+    });
+    
+    const startTime = Date.now();
+    
     try {
       setError(null);
+      setErrorRecovery(null);
+      
+      // Get environment-aware OAuth configuration
+      const oauthConfig = getOAuthConfig();
+      
+      // Log configuration event
+      logOAuthEvent(flowId, 'configuration_loaded', {
+        stage: OAUTH_STAGES.INITIATION,
+        redirectTo: oauthConfig.redirectTo
+      });
+      
+      if (isDevelopment()) {
+        console.log('🍎 Apple OAuth Configuration:', {
+          redirectTo: oauthConfig.redirectTo
+        });
+      }
+      
+      // Log OAuth initiation
+      logOAuthEvent(flowId, 'oauth_initiation_started', {
+        stage: OAUTH_STAGES.INITIATION,
+        provider: OAUTH_PROVIDERS.APPLE
+      });
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'apple',
         options: {
-          redirectTo: `${window.location.origin}/emmys-learning-app`
+          redirectTo: oauthConfig.redirectTo
         }
       });
-      if (error) throw error;
+      
+      // Log performance metric for initiation time
+      logOAuthPerformance(flowId, 'initiation_duration', Date.now() - startTime, {
+        stage: OAUTH_STAGES.INITIATION
+      });
+      
+      if (error) {
+        // Log OAuth error
+        logOAuthError(flowId, error, {
+          stage: OAUTH_STAGES.INITIATION,
+          provider: OAUTH_PROVIDERS.APPLE,
+          redirectTo: oauthConfig.redirectTo
+        });
+        
+        // Enhanced error handling with recovery mechanisms
+        const enhancedError = new Error(error.message);
+        enhancedError.code = error.code;
+        enhancedError.status = error.status;
+        enhancedError.details = error.details;
+        
+        if (isDevelopment()) {
+          console.error('🚨 Apple OAuth Error Details:', {
+            message: error.message,
+            code: error.code,
+            status: error.status,
+            details: error.details,
+            redirectTo: oauthConfig.redirectTo
+          });
+        }
+        
+        // Handle OAuth error with recovery mechanisms
+        const errorAnalysis = await handleOAuthError(enhancedError, {
+          provider: 'apple',
+          redirectTo: oauthConfig.redirectTo,
+          userId: user?.id,
+          flowId
+        }, {
+          ...recoveryOptions,
+          retryCallback: () => signInWithApple({ ...recoveryOptions, isRetry: true })
+        });
+        
+        // Set error recovery state for UI to handle
+        setErrorRecovery(errorAnalysis);
+        
+        // Set user-friendly error message
+        setError(errorAnalysis.userMessage);
+        
+        // Complete flow as failed
+        completeOAuthFlow(flowId, false, {
+          error: error.message,
+          errorType: errorAnalysis.errorType,
+          recoveryStrategy: errorAnalysis.recoveryStrategy
+        });
+        
+        throw enhancedError;
+      }
+      
+      // Reset retry counts on successful OAuth initiation
+      oauthErrorRecovery.resetAllRetryCounts();
+      
+      // Log successful initiation
+      logOAuthEvent(flowId, 'oauth_redirect_initiated', {
+        stage: OAUTH_STAGES.REDIRECT,
+        provider: OAUTH_PROVIDERS.APPLE
+      });
+      
+      if (isDevelopment()) {
+        console.log('✅ Apple OAuth initiated successfully:', data);
+      }
+      
+      // Note: Flow completion will be handled in AuthCallback component
+      // Store flowId for callback processing
+      sessionStorage.setItem('oauthFlowId', flowId);
+      
       return data;
     } catch (error) {
-      console.error('Apple sign in error:', error);
-      setError(error.message);
+      const errorMessage = error.message || 'An unexpected error occurred during Apple sign-in';
+      
+      // Log unexpected error
+      logOAuthError(flowId, error, {
+        stage: OAUTH_STAGES.INITIATION,
+        provider: OAUTH_PROVIDERS.APPLE,
+        type: 'unexpected_error'
+      });
+      
+      if (isDevelopment()) {
+        console.error('🚨 Unexpected Apple sign-in error:', error);
+      }
+      
+      // If error recovery hasn't been set, handle it as an unexpected error
+      if (!errorRecovery) {
+        const errorAnalysis = await handleOAuthError(error, {
+          provider: 'apple',
+          type: 'unexpected_error',
+          userId: user?.id,
+          flowId
+        }, recoveryOptions);
+        
+        setErrorRecovery(errorAnalysis);
+        setError(errorAnalysis.userMessage);
+      }
+      
+      // Complete flow as failed
+      completeOAuthFlow(flowId, false, {
+        error: errorMessage,
+        errorType: 'unexpected_error'
+      });
+      
       throw error;
     }
   };
@@ -322,6 +649,32 @@ export const UserProvider = ({ children }) => {
     } catch (error) {
       console.error('Update progress error:', error);
       setError(error.message);
+      throw error;
+    }
+  };
+
+  // Clear error recovery state
+  const clearErrorRecovery = () => {
+    setErrorRecovery(null);
+    setError(null);
+  };
+
+  // Retry authentication with error recovery
+  const retryAuthentication = async (provider = 'google', options = {}) => {
+    try {
+      clearErrorRecovery();
+      
+      if (provider === 'google') {
+        return await signInWithGoogle({ ...options, isRetry: true });
+      } else if (provider === 'apple') {
+        return await signInWithApple({ ...options, isRetry: true });
+      } else {
+        throw new Error(`Unsupported provider: ${provider}`);
+      }
+    } catch (error) {
+      if (isDevelopment()) {
+        console.error('🚨 Retry authentication failed:', error);
+      }
       throw error;
     }
   };
@@ -488,84 +841,176 @@ export const UserProvider = ({ children }) => {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('UserContext: Auth state change:', event, session);
-        
-        if (event === 'SIGNED_IN' && session?.user) {
-          console.log('UserContext: SIGNED_IN event - User authenticated:', session.user);
-          setUser(session.user);
-          
-          try {
-            console.log('UserContext: SIGNED_IN - Loading user profile...');
-            const profile = await getUserProfile(session.user.id);
-            console.log('UserContext: SIGNED_IN - User profile loaded:', profile);
-            setUserProfile(profile);
-          } catch (profileError) {
-            console.error('UserContext: SIGNED_IN - Error loading user profile:', profileError);
-            // Set a default profile if profile loading fails
-            const defaultProfile = {
-              id: session.user.id,
-              display_name: session.user.user_metadata?.display_name || session.user.email,
-              email: session.user.email,
-              avatar: 'default',
-              preferences: {
-                difficulty: 'medium',
-                sound_enabled: true,
-                music_enabled: true,
-                theme: 'light'
-              },
-              progress: {
-                score: 0,
-                learning_streak: 0,
-                completed_lessons: [],
-                achievements: [],
-                last_active: new Date().toISOString()
-              },
-              is_child: false,
-              is_guest: false
-            };
-            setUserProfile(defaultProfile);
-            console.log('UserContext: SIGNED_IN - Using default profile');
-          }
-          
-          // Clear guest data when real user signs in
-          localStorage.removeItem('isGuest');
-          localStorage.removeItem('guestProfile');
-          
-          // CRITICAL: Set loading to false after profile is set
-          console.log('UserContext: SIGNED_IN - Setting loading to false');
-          setLoading(false);
-          clearTimeout(loadingTimeout);
-          
-        } else if (event === 'SIGNED_OUT') {
-          console.log('UserContext: User signed out');
-          setUser(null);
-          setUserProfile(null);
-          setLoading(false);
-          clearTimeout(loadingTimeout);
-          // Ensure hash is cleared on sign out if it contains tokens
-          if (window.location.hash.includes('access_token') || window.location.hash.includes('error')) {
-            console.log('UserContext: Clearing hash on SIGNED_OUT event with OAuth params');
-            window.history.replaceState(null, '', window.location.pathname);
-          }
-          
-        } else if (event === 'INITIAL_SESSION' && session?.user) {
-          console.log('UserContext: Initial session detected:', session.user);
-          setUser(session.user);
-          const profile = await getUserProfile(session.user.id);
-          setUserProfile(profile);
-          // Clear guest data if an initial session is found
-          localStorage.removeItem('isGuest');
-          localStorage.removeItem('guestProfile');
-          
-        } else {
-          console.log('UserContext: No user session or other event:', event);
-          setUser(null);
-          setUserProfile(null);
+        if (isDevelopment()) {
+          console.log('🔄 Auth state change:', event, session?.user?.id);
         }
         
-        console.log('UserContext: Setting loading to false for event:', event);
-        setLoading(false);
-        console.log('UserContext: Loading state should now be false');
+        try {
+          if (event === 'SIGNED_IN' && session?.user) {
+            if (isDevelopment()) {
+              console.log('✅ SIGNED_IN event - User authenticated:', session.user.id);
+            }
+            
+            setUser(session.user);
+            setError(null); // Clear any previous errors
+            
+            try {
+              if (isDevelopment()) {
+                console.log('👤 Loading user profile...');
+              }
+              
+              const profile = await getUserProfile(session.user.id);
+              
+              if (profile) {
+                setUserProfile(profile);
+                if (isDevelopment()) {
+                  console.log('✅ User profile loaded successfully');
+                }
+              } else {
+                // Create a default profile if none exists
+                const defaultProfile = {
+                  id: session.user.id,
+                  display_name: session.user.user_metadata?.display_name || session.user.email || 'User',
+                  email: session.user.email,
+                  avatar: 'default',
+                  preferences: {
+                    difficulty: 'medium',
+                    sound_enabled: true,
+                    music_enabled: true,
+                    theme: 'light'
+                  },
+                  progress: {
+                    score: 0,
+                    learning_streak: 0,
+                    completed_lessons: [],
+                    achievements: [],
+                    last_active: new Date().toISOString()
+                  },
+                  is_child: false,
+                  is_guest: false
+                };
+                
+                setUserProfile(defaultProfile);
+                
+                // Try to create the profile in the background
+                createUserProfile(session.user).catch(error => {
+                  if (isDevelopment()) {
+                    console.warn('⚠️ Background profile creation failed:', error.message);
+                  }
+                });
+                
+                if (isDevelopment()) {
+                  console.log('👤 Using default profile');
+                }
+              }
+            } catch (profileError) {
+              if (isDevelopment()) {
+                console.error('🚨 Error loading user profile:', profileError);
+              }
+              
+              // Set error but don't block the user
+              setError('Profile loading failed. Using default settings.');
+              
+              // Set a minimal default profile
+              const minimalProfile = {
+                id: session.user.id,
+                display_name: session.user.user_metadata?.display_name || session.user.email || 'User',
+                email: session.user.email,
+                avatar: 'default',
+                preferences: {
+                  difficulty: 'medium',
+                  sound_enabled: true,
+                  music_enabled: true,
+                  theme: 'light'
+                },
+                progress: {
+                  score: 0,
+                  learning_streak: 0,
+                  completed_lessons: [],
+                  achievements: [],
+                  last_active: new Date().toISOString()
+                },
+                is_child: false,
+                is_guest: false
+              };
+              
+              setUserProfile(minimalProfile);
+            }
+            
+            // Clear guest data when real user signs in
+            localStorage.removeItem('isGuest');
+            localStorage.removeItem('guestProfile');
+            
+          } else if (event === 'SIGNED_OUT') {
+            if (isDevelopment()) {
+              console.log('👋 User signed out');
+            }
+            
+            setUser(null);
+            setUserProfile(null);
+            setError(null);
+            
+            // Clear OAuth tokens from URL if present
+            if (window.location.hash.includes('access_token') || window.location.hash.includes('error')) {
+              if (isDevelopment()) {
+                console.log('🧹 Clearing OAuth tokens from URL');
+              }
+              window.history.replaceState(null, '', window.location.pathname);
+            }
+            
+          } else if (event === 'INITIAL_SESSION' && session?.user) {
+            if (isDevelopment()) {
+              console.log('🔄 Initial session detected:', session.user.id);
+            }
+            
+            setUser(session.user);
+            
+            try {
+              const profile = await getUserProfile(session.user.id);
+              setUserProfile(profile);
+            } catch (error) {
+              if (isDevelopment()) {
+                console.error('🚨 Error loading initial session profile:', error);
+              }
+              setError('Profile loading failed. Using default settings.');
+            }
+            
+            // Clear guest data if an initial session is found
+            localStorage.removeItem('isGuest');
+            localStorage.removeItem('guestProfile');
+            
+          } else if (event === 'TOKEN_REFRESHED') {
+            if (isDevelopment()) {
+              console.log('🔄 Token refreshed');
+            }
+            // No action needed, just log for debugging
+            
+          } else {
+            if (isDevelopment()) {
+              console.log('🔄 Auth event:', event, session ? 'with session' : 'no session');
+            }
+            
+            // For other events without a user, clear the state
+            if (!session?.user) {
+              setUser(null);
+              setUserProfile(null);
+            }
+          }
+        } catch (error) {
+          if (isDevelopment()) {
+            console.error('🚨 Error in auth state change handler:', error);
+          }
+          
+          setError('Authentication error occurred. Please try signing in again.');
+        } finally {
+          // Always ensure loading is set to false
+          setLoading(false);
+          clearTimeout(loadingTimeout);
+          
+          if (isDevelopment()) {
+            console.log('✅ Loading set to false for event:', event);
+          }
+        }
       }
     );
 
@@ -577,6 +1022,7 @@ export const UserProvider = ({ children }) => {
     userProfile,
     loading,
     error,
+    errorRecovery,
     signUp,
     signIn,
     logout,
@@ -589,7 +1035,9 @@ export const UserProvider = ({ children }) => {
     updateProgress,
     getUserProfile,
     getChildren,
-    setError
+    setError,
+    clearErrorRecovery,
+    retryAuthentication
   };
 
   return (

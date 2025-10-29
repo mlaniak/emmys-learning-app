@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import AppWithAuth from './AppWithAuth.jsx'
 import App from './App.jsx'
 import './index.css'
+import { setupDebugUtils, setupDebugKeyboardShortcuts, logDebugInfo } from './utils/debugUtils'
 
 // Check if we're in developer mode (URL contains #/game) or if user is already authenticated
 const isDeveloperMode = window.location.hash.includes('#/game') || 
@@ -16,6 +17,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <MainApp />
   </React.StrictMode>,
 )
+
+// Setup debug utilities in development mode
+setupDebugUtils();
+setupDebugKeyboardShortcuts();
+logDebugInfo();
 
 // Register service worker for PWA functionality
 if ('serviceWorker' in navigator) {

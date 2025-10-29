@@ -5,12 +5,27 @@ import ProfileManager from './components/ProfileManager';
 import ProgressTracker from './components/ProgressTracker';
 import ParentDashboard from './components/ParentDashboard';
 import OfflineManager from './components/OfflineManager';
+import OAuthDebugDashboard from './components/OAuthDebugDashboard';
+import { isDevelopment } from './utils/environmentConfig';
 
 // Main App Component with Authentication
 const AppWithAuth = () => {
   const { user, userProfile, loading, logout } = useUser();
   const [showProfileManager, setShowProfileManager] = useState(false);
   const [showProgressTracker, setShowProgressTracker] = useState(false);
+  const [showOAuthDebugDashboard, setShowOAuthDebugDashboard] = useState(false);
+
+  // Listen for debug dashboard events
+  useEffect(() => {
+    const handleShowOAuthDashboard = () => {
+      if (isDevelopment()) {
+        setShowOAuthDebugDashboard(true);
+      }
+    };
+
+    window.addEventListener('showOAuthDashboard', handleShowOAuthDashboard);
+    return () => window.removeEventListener('showOAuthDashboard', handleShowOAuthDashboard);
+  }, []);
 
   console.log('AppWithAuth: Current state - loading:', loading, 'user:', user, 'userProfile:', userProfile);
   
@@ -28,7 +43,17 @@ const AppWithAuth = () => {
   }
 
   if (!user) {
-    return <AuthForm />;
+    return (
+      <>
+        <AuthForm />
+        {isDevelopment() && (
+          <OAuthDebugDashboard 
+            isOpen={showOAuthDebugDashboard}
+            onClose={() => setShowOAuthDebugDashboard(false)}
+          />
+        )}
+      </>
+    );
   }
 
   // After successful login, redirect to the main quiz app
@@ -44,13 +69,21 @@ const AppWithAuth = () => {
 
   // Show loading while redirecting
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 flex items-center justify-center">
-      <div className="text-center text-white">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
-        <div className="text-xl">Welcome back, {userProfile?.display_name || 'User'}!</div>
-        <div className="text-sm mt-2 opacity-75">Redirecting to Emmy's Learning App...</div>
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 flex items-center justify-center">
+        <div className="text-center text-white">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
+          <div className="text-xl">Welcome back, {userProfile?.display_name || 'User'}!</div>
+          <div className="text-sm mt-2 opacity-75">Redirecting to Emmy's Learning App...</div>
+        </div>
       </div>
-    </div>
+      {isDevelopment() && (
+        <OAuthDebugDashboard 
+          isOpen={showOAuthDebugDashboard}
+          onClose={() => setShowOAuthDebugDashboard(false)}
+        />
+      )}
+    </>
   );
 };
 
