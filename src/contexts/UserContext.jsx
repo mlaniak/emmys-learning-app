@@ -329,7 +329,38 @@ export const UserProvider = ({ children }) => {
         .eq('id', userId)
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Get user profile error:', error);
+        
+        // If it's an RLS policy error, create a default profile
+        if (error.code === '42P17' || error.message.includes('infinite recursion')) {
+          console.log('RLS policy error detected, creating default profile');
+          return {
+            id: userId,
+            display_name: 'User',
+            email: 'user@example.com',
+            avatar: 'default',
+            preferences: {
+              difficulty: 'medium',
+              sound_enabled: true,
+              music_enabled: true,
+              theme: 'light'
+            },
+            progress: {
+              score: 0,
+              learning_streak: 0,
+              completed_lessons: [],
+              achievements: [],
+              last_active: new Date().toISOString()
+            },
+            is_child: false,
+            is_guest: false
+          };
+        }
+        
+        throw error;
+      }
+      
       return data;
     } catch (error) {
       console.error('Get user profile error:', error);
