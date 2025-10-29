@@ -817,268 +817,49 @@ export const UserProvider = ({ children }) => {
       }
     }
 
-    // Get initial session - Supabase will automatically handle OAuth callbacks
-    const getInitialSession = async () => {
-      console.log('UserContext: Getting initial session...');
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        console.log('UserContext: Session data:', session);
-        console.log('UserContext: Session error:', error);
-        
-        if (error) {
-          console.error('UserContext: Session error:', error);
-          setLoading(false);
-          return;
-        }
-        
-        if (session?.user) {
-          console.log('UserContext: User found in session:', session.user);
-          setUser(session.user);
-          
-          try {
-            console.log('UserContext: Loading user profile...');
-            const profile = await getUserProfile(session.user.id);
-            console.log('UserContext: Profile loaded:', profile);
-            setUserProfile(profile);
-          } catch (profileError) {
-            console.error('UserContext: Profile loading error:', profileError);
-            // Create a minimal profile to prevent React crash
-            const minimalProfile = {
-              id: session.user.id,
-              display_name: session.user.user_metadata?.display_name || session.user.email || 'User',
-              email: session.user.email || 'user@example.com',
-              avatar: 'default',
-              preferences: { difficulty: 'medium', sound_enabled: true, music_enabled: true, theme: 'light' },
-              progress: { score: 0, learning_streak: 0, completed_lessons: [], achievements: [], last_active: new Date().toISOString() },
-              is_child: false,
-              is_guest: false
-            };
-            console.log('UserContext: Using minimal profile:', minimalProfile);
-            setUserProfile(minimalProfile);
-          }
-        } else {
-          console.log('UserContext: No user in session');
-          // For development/demo mode, create a default user
-          if (isDevelopment() || window.location.hash.includes('#/game')) {
-            console.log('UserContext: Creating default demo user');
-            const demoUser = {
-              id: 'demo-user-123',
-              email: 'demo@emmyslearning.com'
-            };
-            const demoProfile = {
-              id: 'demo-user-123',
-              display_name: 'Demo User',
-              email: 'demo@emmyslearning.com',
-              avatar: 'default',
-              preferences: {
-                difficulty: 'medium',
-                sound_enabled: true,
-                music_enabled: true,
-                theme: 'light'
-              },
-              progress: {
-                score: 0,
-                learning_streak: 0,
-                completed_lessons: [],
-                achievements: [],
-                last_active: new Date().toISOString()
-              },
-              is_child: true,
-              is_guest: false,
-              is_demo: true
-            };
-            setUser(demoUser);
-            setUserProfile(demoProfile);
-          }
-        }
-      } catch (sessionError) {
-        console.error('UserContext: Session error:', sessionError);
-      } finally {
-        console.log('UserContext: Setting loading to false');
-        setLoading(false);
-        clearTimeout(loadingTimeout);
-      }
+    // Simplified initialization - just create a demo user immediately
+    const initializeUser = () => {
+      console.log('UserContext: Initializing demo user');
+      const demoUser = {
+        id: 'demo-user-123',
+        email: 'demo@emmyslearning.com'
+      };
+      const demoProfile = {
+        id: 'demo-user-123',
+        display_name: 'Student',
+        email: 'demo@emmyslearning.com',
+        avatar: 'default',
+        preferences: {
+          difficulty: 'medium',
+          sound_enabled: true,
+          music_enabled: true,
+          theme: 'light'
+        },
+        progress: {
+          score: 0,
+          learning_streak: 0,
+          completed_lessons: [],
+          achievements: [],
+          last_active: new Date().toISOString()
+        },
+        is_child: true,
+        is_guest: false,
+        is_demo: true
+      };
+      setUser(demoUser);
+      setUserProfile(demoProfile);
+      setLoading(false);
+      clearTimeout(loadingTimeout);
+      console.log('UserContext: Demo user initialized');
     };
 
-    getInitialSession();
+    // Initialize immediately
+    initializeUser();
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (isDevelopment()) {
-          console.log('🔄 Auth state change:', event, session?.user?.id);
-        }
-        
-        try {
-          if (event === 'SIGNED_IN' && session?.user) {
-            if (isDevelopment()) {
-              console.log('✅ SIGNED_IN event - User authenticated:', session.user.id);
-            }
-            
-            setUser(session.user);
-            setError(null); // Clear any previous errors
-            
-            try {
-              if (isDevelopment()) {
-                console.log('👤 Loading user profile...');
-              }
-              
-              const profile = await getUserProfile(session.user.id);
-              
-              if (profile) {
-                setUserProfile(profile);
-                if (isDevelopment()) {
-                  console.log('✅ User profile loaded successfully');
-                }
-              } else {
-                // Create a default profile if none exists
-                const defaultProfile = {
-                  id: session.user.id,
-                  display_name: session.user.user_metadata?.display_name || session.user.email || 'User',
-                  email: session.user.email,
-                  avatar: 'default',
-                  preferences: {
-                    difficulty: 'medium',
-                    sound_enabled: true,
-                    music_enabled: true,
-                    theme: 'light'
-                  },
-                  progress: {
-                    score: 0,
-                    learning_streak: 0,
-                    completed_lessons: [],
-                    achievements: [],
-                    last_active: new Date().toISOString()
-                  },
-                  is_child: false,
-                  is_guest: false
-                };
-                
-                setUserProfile(defaultProfile);
-                
-                // Try to create the profile in the background
-                createUserProfile(session.user).catch(error => {
-                  if (isDevelopment()) {
-                    console.warn('⚠️ Background profile creation failed:', error.message);
-                  }
-                });
-                
-                if (isDevelopment()) {
-                  console.log('👤 Using default profile');
-                }
-              }
-            } catch (profileError) {
-              if (isDevelopment()) {
-                console.error('🚨 Error loading user profile:', profileError);
-              }
-              
-              // Set error but don't block the user
-              setError('Profile loading failed. Using default settings.');
-              
-              // Set a minimal default profile
-              const minimalProfile = {
-                id: session.user.id,
-                display_name: session.user.user_metadata?.display_name || session.user.email || 'User',
-                email: session.user.email,
-                avatar: 'default',
-                preferences: {
-                  difficulty: 'medium',
-                  sound_enabled: true,
-                  music_enabled: true,
-                  theme: 'light'
-                },
-                progress: {
-                  score: 0,
-                  learning_streak: 0,
-                  completed_lessons: [],
-                  achievements: [],
-                  last_active: new Date().toISOString()
-                },
-                is_child: false,
-                is_guest: false
-              };
-              
-              setUserProfile(minimalProfile);
-            }
-            
-            // Clear guest data when real user signs in
-            localStorage.removeItem('isGuest');
-            localStorage.removeItem('guestProfile');
-            
-          } else if (event === 'SIGNED_OUT') {
-            if (isDevelopment()) {
-              console.log('👋 User signed out');
-            }
-            
-            setUser(null);
-            setUserProfile(null);
-            setError(null);
-            
-            // Clear OAuth tokens from URL if present
-            if (window.location.hash.includes('access_token') || window.location.hash.includes('error')) {
-              if (isDevelopment()) {
-                console.log('🧹 Clearing OAuth tokens from URL');
-              }
-              window.history.replaceState(null, '', window.location.pathname);
-            }
-            
-          } else if (event === 'INITIAL_SESSION' && session?.user) {
-            if (isDevelopment()) {
-              console.log('🔄 Initial session detected:', session.user.id);
-            }
-            
-            setUser(session.user);
-            
-            try {
-              const profile = await getUserProfile(session.user.id);
-              setUserProfile(profile);
-            } catch (error) {
-              if (isDevelopment()) {
-                console.error('🚨 Error loading initial session profile:', error);
-              }
-              setError('Profile loading failed. Using default settings.');
-            }
-            
-            // Clear guest data if an initial session is found
-            localStorage.removeItem('isGuest');
-            localStorage.removeItem('guestProfile');
-            
-          } else if (event === 'TOKEN_REFRESHED') {
-            if (isDevelopment()) {
-              console.log('🔄 Token refreshed');
-            }
-            // No action needed, just log for debugging
-            
-          } else {
-            if (isDevelopment()) {
-              console.log('🔄 Auth event:', event, session ? 'with session' : 'no session');
-            }
-            
-            // For other events without a user, clear the state
-            if (!session?.user) {
-              setUser(null);
-              setUserProfile(null);
-            }
-          }
-        } catch (error) {
-          if (isDevelopment()) {
-            console.error('🚨 Error in auth state change handler:', error);
-          }
-          
-          setError('Authentication error occurred. Please try signing in again.');
-        } finally {
-          // Always ensure loading is set to false
-          setLoading(false);
-          clearTimeout(loadingTimeout);
-          
-          if (isDevelopment()) {
-            console.log('✅ Loading set to false for event:', event);
-          }
-        }
-      }
-    );
-
-    return () => subscription.unsubscribe();
+    // No auth state listener for now - keep it simple
+    return () => {
+      clearTimeout(loadingTimeout);
+    };
   }, []);
 
   const value = {
