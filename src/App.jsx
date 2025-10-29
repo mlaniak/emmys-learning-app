@@ -18,8 +18,20 @@ import emailjs from '@emailjs/browser';
 const EmmyStudyGame = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, userProfile, logout } = useUser();
+  const { user, userProfile, logout, loading, error } = useUser();
   const [currentScreen, setCurrentScreen] = useState('home');
+  
+  // Add safety check to prevent rendering issues
+  const [isInitialized, setIsInitialized] = useState(false);
+  
+  useEffect(() => {
+    // Small delay to ensure all context is ready
+    const timer = setTimeout(() => {
+      setIsInitialized(true);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
   
   const [score, setScore] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -3190,6 +3202,32 @@ Your Student ✨
         </div>
       </div>
     );
+    
+    // Safety check to prevent React errors during initialization
+    if (!isInitialized) {
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 flex items-center justify-center">
+          <div className="text-center text-white">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
+            <div className="text-xl">Initializing Emmy's Learning App...</div>
+            <div className="text-sm mt-2 opacity-75">Debug: initializing...</div>
+          </div>
+        </div>
+      );
+    }
+
+    // Show loading screen while checking authentication
+    if (loading) {
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 flex items-center justify-center">
+          <div className="text-center text-white">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
+            <div className="text-xl">Loading Emmy's Learning App...</div>
+            <div className="text-sm mt-2 opacity-75">Debug: loading={loading.toString()}</div>
+          </div>
+        </div>
+      );
+    }
     
     // Kid-friendly simplified interface
     if (!parentMode) {
