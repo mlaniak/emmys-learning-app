@@ -16,6 +16,7 @@ export const UserProvider = ({ children }) => {
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [oauthProcessed, setOauthProcessed] = useState(false);
 
   // Create user profile in Supabase
   const createUserProfile = async (user, additionalData = {}) => {
@@ -322,8 +323,9 @@ export const UserProvider = ({ children }) => {
       const hash = window.location.hash;
       console.log('UserContext: Checking for OAuth callback, hash:', hash);
       
-      if (hash.includes('access_token') || hash.includes('error')) {
+      if ((hash.includes('access_token') || hash.includes('error')) && !oauthProcessed) {
         console.log('UserContext: OAuth callback detected, processing...');
+        setOauthProcessed(true);
         try {
           // Parse the hash to extract tokens
           // The hash might be in format: #access_token=...&refresh_token=... or #/auth/callback#access_token=...
@@ -440,8 +442,8 @@ export const UserProvider = ({ children }) => {
       }
     }
 
-    // Handle OAuth callback - disabled since auth state change listener handles it
-    // handleOAuthCallback();
+    // Handle OAuth callback
+    handleOAuthCallback();
 
     // Get initial session
     const getInitialSession = async () => {
@@ -463,6 +465,7 @@ export const UserProvider = ({ children }) => {
         
         if (event === 'SIGNED_IN' && session?.user) {
           console.log('UserContext: SIGNED_IN event - User authenticated:', session.user);
+          console.log('UserContext: OAuth already processed manually:', oauthProcessed);
           setUser(session.user);
           
           try {
