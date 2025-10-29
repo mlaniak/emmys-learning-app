@@ -5490,32 +5490,7 @@ Your Student ✨
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-          {(q.options || []).map((opt, i) => (
-            <div key={i} className="relative">
-              <div 
-                onClick={() => { triggerHaptic('medium'); handleAnswer(opt, q.correct || q.answer, qs, q.explanation); }} 
-                className="p-6 md:p-8 pr-16 md:pr-20 text-2xl md:text-3xl font-bold rounded-2xl shadow-lg hover:scale-110 active:scale-105 cursor-pointer bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900 transition-transform"
-                role="button"
-                aria-label={`Answer option: ${opt}`}
-                tabIndex={0}
-              >
-                {opt}
-              </div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  textToSpeech.speakAnswer(opt);
-                }}
-                className="absolute top-4 right-4 bg-purple-500 hover:bg-purple-600 text-white p-2 rounded-full transition-colors shadow-md z-10"
-                title="Listen to answer"
-                aria-label="Listen to answer"
-              >
-                🔊
-              </button>
-            </div>
-          ))}
-        </div>
+
         {/* Help Button */}
         <div className="text-center mb-6">
           <button
@@ -5549,6 +5524,32 @@ Your Student ✨
           </div>
         )}
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          {(q.options || []).map((opt, i) => (
+            <div key={i} className="relative">
+              <div 
+                onClick={() => { triggerHaptic('medium'); handleAnswer(opt, q.correct || q.answer, qs, q.explanation); }} 
+                className="p-6 md:p-8 pr-16 md:pr-20 text-2xl md:text-3xl font-bold rounded-2xl shadow-lg hover:scale-110 active:scale-105 cursor-pointer bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900 transition-transform"
+                role="button"
+                aria-label={`Answer option: ${opt}`}
+                tabIndex={0}
+              >
+                {opt}
+              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  textToSpeech.speakAnswer(opt);
+                }}
+                className="absolute top-4 right-4 bg-purple-500 hover:bg-purple-600 text-white p-2 rounded-full transition-colors shadow-md z-10"
+                title="Listen to answer"
+                aria-label="Listen to answer"
+              >
+                🔊
+              </button>
+            </div>
+          ))}
+        </div>
         <div className="mt-8 text-center">
           <p className="text-xl md:text-2xl text-gray-600">Question {currentQuestion+1} of {questionCount}</p>
           <p className="text-2xl md:text-3xl font-bold mt-2">Score: {score} ⭐</p>
