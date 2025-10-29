@@ -409,27 +409,70 @@ export const UserProvider = ({ children }) => {
 
   // Listen for auth state changes
   useEffect(() => {
+    console.log('UserContext: useEffect started');
+    
     // Check for guest user first
     const isGuest = localStorage.getItem('isGuest') === 'true';
     if (isGuest) {
+      console.log('UserContext: Guest user detected');
       const guestProfile = JSON.parse(localStorage.getItem('guestProfile') || '{}');
       if (guestProfile.id) {
         setUser({ id: guestProfile.id, email: guestProfile.email });
         setUserProfile(guestProfile);
         setLoading(false);
+        console.log('UserContext: Guest profile loaded, loading set to false');
         return;
       }
     }
 
     // Get initial session - Supabase will automatically handle OAuth callbacks
     const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        setUser(session.user);
-        const profile = await getUserProfile(session.user.id);
-        setUserProfile(profile);
+      console.log('UserContext: Getting initial session...');
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        console.log('UserContext: Session data:', session);
+        console.log('UserContext: Session error:', error);
+        
+        if (error) {
+          console.error('UserContext: Session error:', error);
+          setLoading(false);
+          return;
+        }
+        
+        if (session?.user) {
+          console.log('UserContext: User found in session:', session.user);
+          setUser(session.user);
+          
+          try {
+            console.log('UserContext: Loading user profile...');
+            const profile = await getUserProfile(session.user.id);
+            console.log('UserContext: Profile loaded:', profile);
+            setUserProfile(profile);
+          } catch (profileError) {
+            console.error('UserContext: Profile loading error:', profileError);
+            // Create a minimal profile to prevent React crash
+            const minimalProfile = {
+              id: session.user.id,
+              display_name: session.user.user_metadata?.display_name || session.user.email || 'User',
+              email: session.user.email || 'user@example.com',
+              avatar: 'default',
+              preferences: { difficulty: 'medium', sound_enabled: true, music_enabled: true, theme: 'light' },
+              progress: { score: 0, learning_streak: 0, completed_lessons: [], achievements: [], last_active: new Date().toISOString() },
+              is_child: false,
+              is_guest: false
+            };
+            console.log('UserContext: Using minimal profile:', minimalProfile);
+            setUserProfile(minimalProfile);
+          }
+        } else {
+          console.log('UserContext: No user in session');
+        }
+      } catch (sessionError) {
+        console.error('UserContext: Session error:', sessionError);
+      } finally {
+        console.log('UserContext: Setting loading to false');
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     getInitialSession();
