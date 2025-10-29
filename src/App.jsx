@@ -12,6 +12,8 @@ import { useUser, UserProvider } from './contexts/UserContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import DebugInfo from './components/DebugInfo';
 import MinimalTestApp from './MinimalTestApp';
+import UltraMinimalTest from './UltraMinimalTest';
+import TestAppWithoutProvider from './TestAppWithoutProvider';
 
 // EmailJS for direct email sending
 import emailjs from '@emailjs/browser';
@@ -6062,16 +6064,16 @@ Your Student ✨
 
 // Main App Component with URL Routing
 const App = () => {
+  console.log('App: Rendering started');
+  
   return (
     <ErrorBoundary>
-      <UserProvider>
-        <BrowserRouter basename="/emmys-learning-app">
-          <Routes>
-            <Route path="/" element={<MinimalTestApp />} />
-            <Route path="*" element={<MinimalTestApp />} />
-          </Routes>
-        </BrowserRouter>
-      </UserProvider>
+      <BrowserRouter basename="/emmys-learning-app">
+        <Routes>
+          <Route path="/" element={<TestAppWithoutProvider />} />
+          <Route path="*" element={<TestAppWithoutProvider />} />
+        </Routes>
+      </BrowserRouter>
     </ErrorBoundary>
   );
 };
