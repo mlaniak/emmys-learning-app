@@ -2928,57 +2928,125 @@ Your Student ✨
 
   // Generate hint based on question type and content
   const generateHint = (question, options, correctAnswer, subject) => {
-    const hints = {
-      phonics: [
-        "Look at the beginning sound of the word.",
-        "Think about what sound the letters make together.",
-        "Say the word out loud to hear the sounds."
-      ],
-      math: [
-        "Count carefully step by step.",
-        "Think about what operation you need to use.",
-        "Draw a picture to help you visualize the problem."
-      ],
-      reading: [
-        "Think about what makes sense in the story.",
-        "Look for clues in the question.",
-        "Remember what you learned about story elements."
-      ],
-      science: [
-        "Think about what you know about this topic.",
-        "Consider what happens in nature.",
-        "Remember the science concepts we've learned."
-      ],
-      social: [
-        "Think about being a good citizen.",
-        "Consider what helps our community.",
-        "Remember what makes someone a good person."
-      ],
-      skipcounting: [
-        "Count by the number mentioned in the question.",
-        "Think about patterns in counting.",
-        "Start from the number given and count up."
-      ]
+    const questionLower = question.toLowerCase();
+    const correctLower = correctAnswer.toLowerCase();
+    
+    // Science-specific hints
+    if (subject === 'science') {
+      if (questionLower.includes('water') && questionLower.includes('ice')) {
+        return "When water gets very cold, it changes from liquid to solid! ❄️";
+      }
+      if (questionLower.includes('plant') && questionLower.includes('underground')) {
+        return "The part that grows underground helps the plant stay in place and drink water! 🌱";
+      }
+      if (questionLower.includes('photosynthesis')) {
+        return "Plants use sunlight to make their own food! 🌱☀️";
+      }
+      if (questionLower.includes('transpiration')) {
+        return "This is how plants 'breathe' and move water! 💧🌿";
+      }
+      if (questionLower.includes('system')) {
+        return "Think about parts that work together to do something! ⚙️";
+      }
+      if (questionLower.includes('weather')) {
+        return "Think about what happens in the sky - rain, sun, clouds! ☁️";
+      }
+      if (questionLower.includes('animal')) {
+        return "Think about what animals need to live and grow! 🐾";
+      }
+    }
+    
+    // Math-specific hints
+    if (subject === 'math') {
+      if (questionLower.includes('addition') || questionLower.includes('plus') || questionLower.includes('+')) {
+        return "Add the numbers together to find the total! ➕";
+      }
+      if (questionLower.includes('subtraction') || questionLower.includes('minus') || questionLower.includes('-')) {
+        return "Take away the smaller number from the bigger one! ➖";
+      }
+      if (questionLower.includes('tens') || questionLower.includes('ones')) {
+        return "Tens are groups of 10, ones are single numbers! 🔢";
+      }
+      if (questionLower.includes('bigger') || questionLower.includes('greater')) {
+        return "Compare the numbers - which one is larger? 📈";
+      }
+      if (questionLower.includes('smaller') || questionLower.includes('less')) {
+        return "Compare the numbers - which one is smaller? 📉";
+      }
+    }
+    
+    // Phonics-specific hints
+    if (subject === 'phonics') {
+      if (questionLower.includes('th')) {
+        return "TH makes a special sound - put your tongue between your teeth! 👅";
+      }
+      if (questionLower.includes('sh')) {
+        return "SH makes a quiet sound like 'shhh' - finger to lips! 🤫";
+      }
+      if (questionLower.includes('ch')) {
+        return "CH sounds like a train - 'choo choo'! 🚂";
+      }
+      if (questionLower.includes('wh')) {
+        return "WH sounds like you're asking 'what?' - blow air! 💨";
+      }
+      if (questionLower.includes('ck')) {
+        return "CK comes at the end and sounds like a clock 'tick tock'! ⏰";
+      }
+    }
+    
+    // Reading-specific hints
+    if (subject === 'reading') {
+      if (questionLower.includes('character')) {
+        return "Characters are the people or animals in the story! 👥";
+      }
+      if (questionLower.includes('setting')) {
+        return "Setting is WHERE and WHEN the story happens! 📍";
+      }
+      if (questionLower.includes('problem')) {
+        return "The problem is what goes wrong in the story! 😰";
+      }
+      if (questionLower.includes('solution')) {
+        return "The solution is how the problem gets fixed! ✅";
+      }
+    }
+    
+    // Citizenship-specific hints
+    if (subject === 'social') {
+      if (questionLower.includes('citizen') || questionLower.includes('community')) {
+        return "Think about being helpful and kind to others! 🤝";
+      }
+      if (questionLower.includes('respect') || questionLower.includes('kind')) {
+        return "Being respectful means treating others nicely! 😊";
+      }
+      if (questionLower.includes('help') || questionLower.includes('care')) {
+        return "Good citizens help others who need it! 💪";
+      }
+    }
+    
+    // Skip counting hints
+    if (subject === 'skipcounting') {
+      if (questionLower.includes('2')) {
+        return "Count by 2s: 2, 4, 6, 8, 10... like counting pairs! 👥";
+      }
+      if (questionLower.includes('5')) {
+        return "Count by 5s: 5, 10, 15, 20... like counting fingers! ✋";
+      }
+      if (questionLower.includes('10')) {
+        return "Count by 10s: 10, 20, 30, 40... like counting toes! 🦶";
+      }
+    }
+    
+    // Fallback hints by subject
+    const fallbackHints = {
+      phonics: "Say the word slowly and listen to each sound! 👂",
+      math: "Think step by step - what do you need to do? 🤔",
+      reading: "Look for clues in the question! 🔍",
+      science: "Think about what you know about nature! 🌿",
+      social: "Think about being a good person! 😊",
+      skipcounting: "Count by the number mentioned! 🔢"
     };
-
-    const subjectHints = hints[subject] || hints.phonics;
-    const randomHint = subjectHints[Math.floor(Math.random() * subjectHints.length)];
     
-    // Add specific hints based on question content
-    if (question.toLowerCase().includes('photosynthesis')) {
-      return "Plants use sunlight to make their own food! 🌱☀️";
-    }
-    if (question.toLowerCase().includes('transpiration')) {
-      return "This is how plants 'breathe' and move water! 💧🌿";
-    }
-    if (question.toLowerCase().includes('addition') || question.toLowerCase().includes('plus')) {
-      return "Add the numbers together to find the total! ➕";
-    }
-    if (question.toLowerCase().includes('subtraction') || question.toLowerCase().includes('minus')) {
-      return "Take away the smaller number from the bigger one! ➖";
-    }
-    
-    return randomHint;
+    return fallbackHints[subject] || "Think carefully about what you know! 💭";
   };
 
   const handleHelpClick = () => {
@@ -5470,24 +5538,14 @@ Your Student ✨
           )}
           <div className="flex items-center justify-center gap-4 mb-8">
             <p className="text-2xl md:text-3xl font-bold text-gray-700">{q.question}</p>
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <button
-                onClick={() => textToSpeech.speakQuestion(q.question)}
-                className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full transition-colors"
-                title="Listen to question"
-                aria-label="Listen to question"
-              >
-                🔊
-              </button>
-              <button
-                onClick={() => textToSpeech.stop()}
-                className="bg-red-500 hover:bg-red-600 text-white p-3 rounded-full transition-colors"
-                title="Stop audio"
-                aria-label="Stop audio"
-              >
-                ⏹️
-              </button>
-            </div>
+            <button
+              onClick={() => textToSpeech.speakQuestion(q.question)}
+              className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full transition-colors flex-shrink-0"
+              title="Listen to question"
+              aria-label="Listen to question"
+            >
+              🔊
+            </button>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
