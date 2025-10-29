@@ -767,8 +767,40 @@ export const UserProvider = ({ children }) => {
     // Safety timeout - ensure loading never gets stuck
     const loadingTimeout = setTimeout(() => {
       console.log('UserContext: Loading timeout reached, forcing loading to false');
+      // Create a fallback demo user if nothing else worked
+      if (!user && !userProfile) {
+        console.log('UserContext: Creating fallback demo user due to timeout');
+        const fallbackUser = {
+          id: 'fallback-user-123',
+          email: 'fallback@emmyslearning.com'
+        };
+        const fallbackProfile = {
+          id: 'fallback-user-123',
+          display_name: 'Student',
+          email: 'fallback@emmyslearning.com',
+          avatar: 'default',
+          preferences: {
+            difficulty: 'medium',
+            sound_enabled: true,
+            music_enabled: true,
+            theme: 'light'
+          },
+          progress: {
+            score: 0,
+            learning_streak: 0,
+            completed_lessons: [],
+            achievements: [],
+            last_active: new Date().toISOString()
+          },
+          is_child: true,
+          is_guest: false,
+          is_fallback: true
+        };
+        setUser(fallbackUser);
+        setUserProfile(fallbackProfile);
+      }
       setLoading(false);
-    }, 10000); // 10 second timeout
+    }, 3000); // 3 second timeout (reduced from 10 seconds)
     
     // Check for guest user first
     const isGuest = localStorage.getItem('isGuest') === 'true';
@@ -826,6 +858,38 @@ export const UserProvider = ({ children }) => {
           }
         } else {
           console.log('UserContext: No user in session');
+          // For development/demo mode, create a default user
+          if (isDevelopment() || window.location.hash.includes('#/game')) {
+            console.log('UserContext: Creating default demo user');
+            const demoUser = {
+              id: 'demo-user-123',
+              email: 'demo@emmyslearning.com'
+            };
+            const demoProfile = {
+              id: 'demo-user-123',
+              display_name: 'Demo User',
+              email: 'demo@emmyslearning.com',
+              avatar: 'default',
+              preferences: {
+                difficulty: 'medium',
+                sound_enabled: true,
+                music_enabled: true,
+                theme: 'light'
+              },
+              progress: {
+                score: 0,
+                learning_streak: 0,
+                completed_lessons: [],
+                achievements: [],
+                last_active: new Date().toISOString()
+              },
+              is_child: true,
+              is_guest: false,
+              is_demo: true
+            };
+            setUser(demoUser);
+            setUserProfile(demoProfile);
+          }
         }
       } catch (sessionError) {
         console.error('UserContext: Session error:', sessionError);

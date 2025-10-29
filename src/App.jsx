@@ -32,7 +32,7 @@ const EmmyStudyGame = () => {
     // Small delay to ensure all context is ready
     const timer = setTimeout(() => {
       setIsInitialized(true);
-    }, 100);
+    }, 50); // Reduced from 100ms to 50ms
     
     return () => clearTimeout(timer);
   }, []);
