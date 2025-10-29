@@ -440,8 +440,8 @@ export const UserProvider = ({ children }) => {
       }
     }
 
-    // Handle OAuth callback
-    handleOAuthCallback();
+    // Handle OAuth callback - disabled since auth state change listener handles it
+    // handleOAuthCallback();
 
     // Get initial session
     const getInitialSession = async () => {
@@ -536,6 +536,7 @@ export const UserProvider = ({ children }) => {
         
         console.log('UserContext: Setting loading to false for event:', event);
         setLoading(false);
+        console.log('UserContext: Loading state should now be false');
       }
     );
 

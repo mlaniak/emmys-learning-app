@@ -27,12 +27,16 @@ const AppWithAuth = () => {
 
   // OAuth callback is now handled in UserContext, so we don't need to render AuthCallback here
 
+  console.log('AppWithAuth: Current state - loading:', loading, 'user:', user, 'userProfile:', userProfile);
+  
   if (loading) {
+    console.log('AppWithAuth: Rendering loading screen');
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 flex items-center justify-center">
         <div className="text-center text-white">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
           <div className="text-xl">Loading Emmy's Learning App...</div>
+          <div className="text-sm mt-2 opacity-75">Debug: loading={loading.toString()}</div>
         </div>
       </div>
     );
