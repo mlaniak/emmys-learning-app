@@ -5490,40 +5490,6 @@ Your Student ✨
             </div>
           </div>
         </div>
-
-        {/* Help Button */}
-        <div className="text-center mb-6">
-          <button
-            onClick={handleHelpClick}
-            disabled={hintUsed}
-            className={`px-6 py-3 rounded-full font-bold transition-all ${
-              hintUsed 
-                ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
-                : 'bg-orange-500 hover:bg-orange-600 text-white hover:scale-105 active:scale-95'
-            }`}
-            title={hintUsed ? "Hint already used" : "Get a hint (costs half points)"}
-          >
-            {hintUsed ? '💡 Hint Used' : '💡 I Need Help'}
-          </button>
-          {hintUsed && (
-            <p className="text-sm text-orange-600 mt-2 font-medium">
-              ⚠️ You'll get half points for this question
-            </p>
-          )}
-        </div>
-
-        {/* Hint Display */}
-        {showHint && (
-          <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 mb-6 mx-4">
-            <div className="flex items-center justify-center">
-              <span className="text-2xl mr-3">💡</span>
-              <p className="text-lg font-medium text-blue-800">
-                {generateHint(q.question, q.options, q.correct || q.answer, currentScreen)}
-              </p>
-            </div>
-          </div>
-        )}
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           {(q.options || []).map((opt, i) => (
             <div key={i} className="relative">
@@ -5554,6 +5520,39 @@ Your Student ✨
           <p className="text-xl md:text-2xl text-gray-600">Question {currentQuestion+1} of {questionCount}</p>
           <p className="text-2xl md:text-3xl font-bold mt-2">Score: {score} ⭐</p>
         </div>
+
+        {/* Help Button */}
+        <div className="text-center mt-6">
+          <button
+            onClick={handleHelpClick}
+            disabled={hintUsed}
+            className={`px-6 py-3 rounded-full font-bold transition-all ${
+              hintUsed 
+                ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
+                : 'bg-orange-500 hover:bg-orange-600 text-white hover:scale-105 active:scale-95'
+            }`}
+            title={hintUsed ? "Hint already used" : "Get a hint (costs half points)"}
+          >
+            {hintUsed ? '💡 Hint Used' : '💡 I Need Help'}
+          </button>
+          {hintUsed && (
+            <p className="text-sm text-orange-600 mt-2 font-medium">
+              ⚠️ You'll get half points for this question
+            </p>
+          )}
+        </div>
+
+        {/* Hint Display */}
+        {showHint && (
+          <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 mt-4 mx-4">
+            <div className="flex items-center justify-center">
+              <span className="text-2xl mr-3">💡</span>
+              <p className="text-lg font-medium text-blue-800">
+                {generateHint(q.question, q.options, q.correct || q.answer, currentScreen)}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
       <style>{`
         .correct-bounce { animation: bounce 0.6s; }
