@@ -2812,6 +2812,10 @@ Your Student ✨
     const newScore = score + finalPoints;
     setScore(newScore);
     
+    // Reset hint state after scoring
+    setHintUsed(false);
+    setShowHint(false);
+    
     // Track this question in history to avoid repeats
     const currentQ = qs[currentQuestion];
     if (currentQ) {
@@ -2871,8 +2875,6 @@ Your Student ✨
       setAnswerAnimation(''); 
       setShowExplanation(false); 
       setCorrectAnswer('');
-      setHintUsed(false);
-      setShowHint(false);
       
       if (currentQuestion < qs.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
