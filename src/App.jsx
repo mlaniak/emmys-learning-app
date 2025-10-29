@@ -6064,16 +6064,43 @@ Your Student ✨
 
 // Main App Component with URL Routing
 const App = () => {
-  console.log('App: Rendering started');
-  
   return (
     <ErrorBoundary>
-      <BrowserRouter basename="/emmys-learning-app">
-        <Routes>
-          <Route path="/" element={<TestAppWithoutProvider />} />
-          <Route path="*" element={<TestAppWithoutProvider />} />
-        </Routes>
-      </BrowserRouter>
+      <UserProvider>
+        <BrowserRouter basename="/emmys-learning-app">
+          <Routes>
+            <Route path="/" element={<EmmyStudyGame />} />
+            
+            {/* Newsletter Routes */}
+            <Route path="/newsletter" element={<EmmyStudyGame />} />
+            <Route path="/newsletter/:week" element={<EmmyStudyGame />} />
+            
+            {/* Parent Reference Routes */}
+            <Route path="/parent-reference" element={<EmmyStudyGame />} />
+            <Route path="/parent-reference/:subject" element={<EmmyStudyGame />} />
+            <Route path="/parent-reference/:subject/:category" element={<EmmyStudyGame />} />
+            
+            {/* Game Routes */}
+            <Route path="/spelling" element={<EmmyStudyGame />} />
+            <Route path="/spelling/:mode" element={<EmmyStudyGame />} />
+            
+            {/* Progress & Achievement Routes */}
+            <Route path="/achievements" element={<EmmyStudyGame />} />
+            <Route path="/achievements/:category" element={<EmmyStudyGame />} />
+            <Route path="/progress" element={<EmmyStudyGame />} />
+            <Route path="/progress/:section" element={<EmmyStudyGame />} />
+            
+            {/* Settings Routes */}
+            <Route path="/customize" element={<EmmyStudyGame />} />
+            <Route path="/customize/:section" element={<EmmyStudyGame />} />
+            <Route path="/feedback" element={<EmmyStudyGame />} />
+            <Route path="/feedback/:category" element={<EmmyStudyGame />} />
+            
+            {/* Fallback */}
+            <Route path="*" element={<EmmyStudyGame />} />
+          </Routes>
+        </BrowserRouter>
+      </UserProvider>
     </ErrorBoundary>
   );
 };

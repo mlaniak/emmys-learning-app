@@ -1,10 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import TestAppWithoutProvider from './TestAppWithoutProvider.jsx'
+import App from './App.jsx'
 import './index.css'
-
-// Use the ultra-minimal test app to isolate React Error #310
-const App = TestAppWithoutProvider;
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
