@@ -38,17 +38,28 @@ jobs:
         node-version: '18'
         cache: 'npm'
     
+    - name: Clear npm cache
+      run: npm cache clean --force
+    
     - name: Install dependencies
       run: |
         echo "Installing dependencies..."
-        npm install
-        echo "Dependencies installed. Checking if Vite is available..."
-        ls -la node_modules/.bin/ | grep vite || echo "Vite not found in node_modules/.bin/"
-        echo "Checking package.json for Vite..."
-        grep -A 5 -B 5 "vite" package.json || echo "Vite not found in package.json"
+        npm install --verbose
+        echo "Dependencies installed successfully"
+        echo "Checking node_modules structure..."
+        ls -la node_modules/.bin/ | head -10
+        echo "Checking for Vite specifically..."
+        ls -la node_modules/.bin/vite || echo "Vite binary not found"
+        echo "Checking Vite package..."
+        ls -la node_modules/vite/ || echo "Vite package not found"
     
-    - name: Build application
-      run: npm run build
+    - name: Build application with explicit path
+      run: |
+        echo "Attempting to build with npm run build..."
+        npm run build || {
+          echo "npm run build failed, trying with npx..."
+          npx --yes vite@5.4.20 build
+        }
       env:
         NODE_ENV: production
     
