@@ -8,6 +8,7 @@ import Week7Newsletter from './Week7Newsletter';
 import NewsletterSelector from './NewsletterSelector';
 import FieldTrips from './FieldTrips';
 import textToSpeech from './utils/textToSpeech';
+import { useUser, UserProvider } from './contexts/UserContext';
 
 // EmailJS for direct email sending
 import emailjs from '@emailjs/browser';
@@ -15,6 +16,7 @@ import emailjs from '@emailjs/browser';
 const EmmyStudyGame = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, userProfile, logout } = useUser();
   const [currentScreen, setCurrentScreen] = useState('home');
   
   const [score, setScore] = useState(0);
@@ -3193,6 +3195,57 @@ Your Student ✨
       <>
         {questionSelectorModal}
       <div className={`min-h-screen bg-gradient-to-br ${currentTheme.colors} p-4 md:p-8`}>
+        {/* User Header - Only show if user is logged in */}
+        {user && userProfile && (
+          <div className="absolute top-4 right-4 z-40">
+            <div className="bg-white rounded-full shadow-lg border-2 border-purple-200 p-2">
+              <div className="flex items-center space-x-3">
+                {/* User Avatar */}
+                <div className="text-2xl">
+                  {userProfile?.avatar === 'girl' ? '👧' : 
+                   userProfile?.avatar === 'boy' ? '👦' : 
+                   userProfile?.avatar === 'princess' ? '👸' : 
+                   userProfile?.avatar === 'superhero' ? '🦸' : 
+                   userProfile?.avatar === 'robot' ? '🤖' : 
+                   userProfile?.avatar === 'unicorn' ? '🦄' : 
+                   userProfile?.avatar === 'dinosaur' ? '🦕' : '👤'}
+                </div>
+                
+                {/* User Info */}
+                <div className="text-sm">
+                  <div className="font-semibold text-gray-900">{userProfile?.display_name}</div>
+                  <div className="text-gray-500">{userProfile?.progress?.score || 0} points</div>
+                </div>
+                
+                {/* Action Buttons */}
+                <div className="flex space-x-1">
+                  <button
+                    onClick={() => {
+                      // Open profile manager (you can implement this)
+                      console.log('Open profile manager');
+                    }}
+                    className="bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-full transition-colors"
+                    title="Profile Settings"
+                  >
+                    ⚙️
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      logout();
+                      // Redirect to auth page
+                      window.location.href = `${window.location.origin}/emmys-learning-app`;
+                    }}
+                    className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition-colors"
+                    title="Logout"
+                  >
+                    🚪
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
           {/* Mode Toggle - Top Left */}
           <div className="absolute top-4 left-4 z-30">
             <div className="bg-white rounded-full p-1 shadow-lg border-2 border-purple-200">
@@ -5968,39 +6021,41 @@ Your Student ✨
 // Main App Component with URL Routing
 const App = () => {
   return (
-    <BrowserRouter basename="/emmys-learning-app">
-      <Routes>
-        <Route path="/" element={<EmmyStudyGame />} />
-        
-        {/* Newsletter Routes */}
-        <Route path="/newsletter" element={<EmmyStudyGame />} />
-        <Route path="/newsletter/:week" element={<EmmyStudyGame />} />
-        
-        {/* Parent Reference Routes */}
-        <Route path="/parent-reference" element={<EmmyStudyGame />} />
-        <Route path="/parent-reference/:subject" element={<EmmyStudyGame />} />
-        <Route path="/parent-reference/:subject/:category" element={<EmmyStudyGame />} />
-        
-        {/* Game Routes */}
-        <Route path="/spelling" element={<EmmyStudyGame />} />
-        <Route path="/spelling/:mode" element={<EmmyStudyGame />} />
-        
-        {/* Progress & Achievement Routes */}
-        <Route path="/achievements" element={<EmmyStudyGame />} />
-        <Route path="/achievements/:category" element={<EmmyStudyGame />} />
-        <Route path="/progress" element={<EmmyStudyGame />} />
-        <Route path="/progress/:section" element={<EmmyStudyGame />} />
-        
-        {/* Settings Routes */}
-        <Route path="/customize" element={<EmmyStudyGame />} />
-        <Route path="/customize/:section" element={<EmmyStudyGame />} />
-        <Route path="/feedback" element={<EmmyStudyGame />} />
-        <Route path="/feedback/:category" element={<EmmyStudyGame />} />
-        
-        {/* Fallback */}
-        <Route path="*" element={<EmmyStudyGame />} />
-      </Routes>
-    </BrowserRouter>
+    <UserProvider>
+      <BrowserRouter basename="/emmys-learning-app">
+        <Routes>
+          <Route path="/" element={<EmmyStudyGame />} />
+          
+          {/* Newsletter Routes */}
+          <Route path="/newsletter" element={<EmmyStudyGame />} />
+          <Route path="/newsletter/:week" element={<EmmyStudyGame />} />
+          
+          {/* Parent Reference Routes */}
+          <Route path="/parent-reference" element={<EmmyStudyGame />} />
+          <Route path="/parent-reference/:subject" element={<EmmyStudyGame />} />
+          <Route path="/parent-reference/:subject/:category" element={<EmmyStudyGame />} />
+          
+          {/* Game Routes */}
+          <Route path="/spelling" element={<EmmyStudyGame />} />
+          <Route path="/spelling/:mode" element={<EmmyStudyGame />} />
+          
+          {/* Progress & Achievement Routes */}
+          <Route path="/achievements" element={<EmmyStudyGame />} />
+          <Route path="/achievements/:category" element={<EmmyStudyGame />} />
+          <Route path="/progress" element={<EmmyStudyGame />} />
+          <Route path="/progress/:section" element={<EmmyStudyGame />} />
+          
+          {/* Settings Routes */}
+          <Route path="/customize" element={<EmmyStudyGame />} />
+          <Route path="/customize/:section" element={<EmmyStudyGame />} />
+          <Route path="/feedback" element={<EmmyStudyGame />} />
+          <Route path="/feedback/:category" element={<EmmyStudyGame />} />
+          
+          {/* Fallback */}
+          <Route path="*" element={<EmmyStudyGame />} />
+        </Routes>
+      </BrowserRouter>
+    </UserProvider>
   );
 };
 
