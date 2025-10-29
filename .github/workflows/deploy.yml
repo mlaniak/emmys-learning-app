@@ -35,8 +35,8 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '20'
-        cache: 'npm'
         registry-url: 'https://registry.npmjs.org'
+        # Note: Removed cache: 'npm' since we're doing a clean install
     
     - name: Debug environment
       run: |
@@ -45,49 +45,47 @@ jobs:
         echo "NPM version: $(npm --version)"
         echo "Checking package.json for Vite..."
         grep -A 5 -B 5 '"vite"' package.json || echo "Vite not found in package.json"
-        echo "Checking package-lock.json exists..."
-        ls -la package-lock.json
+        echo "Initial state (before clean install):"
+        ls -la package-lock.json 2>/dev/null || echo "No package-lock.json (will be created during install)"
+        ls -la node_modules 2>/dev/null || echo "No node_modules (will be created during install)"
     
-    - name: Install dependencies
+    - name: Clean install to fix Rollup native module bug
       run: |
-        echo "=== Installing Dependencies ==="
+        echo "=== Clean Install to Fix Rollup Bug ==="
         echo "Node version: $(node --version)"
         echo "NPM version: $(npm --version)"
         
-        # Try npm ci first (preferred for CI)
-        if npm ci; then
-          echo "✅ npm ci succeeded"
-        else
-          echo "❌ npm ci failed, trying npm install..."
-          # Fallback to npm install
-          npm install
-        fi
+        # Remove node_modules and package-lock.json to fix Rollup native module bug
+        # This is a known npm issue: https://github.com/npm/cli/issues/4828
+        echo "Removing node_modules and package-lock.json..."
+        rm -rf node_modules package-lock.json
+        
+        # Fresh install to rebuild all dependencies
+        echo "Running fresh npm install..."
+        npm install
         
         echo "=== Installation Complete ==="
         echo "Checking if Vite is installed..."
         npm list vite || echo "Vite not found in npm list"
     
-    - name: Verify and fix Vite installation
+    - name: Verify Vite and Rollup installation
       run: |
-        echo "=== Vite Verification ==="
+        echo "=== Vite and Rollup Verification ==="
         echo "Checking Vite installation..."
         
         if [ -f "node_modules/.bin/vite" ]; then
           echo "✅ Vite binary found"
           ./node_modules/.bin/vite --version
         else
-          echo "❌ Vite binary not found, installing manually..."
-          npm install --save-dev vite@^5.4.21
-          
-          # Verify again
-          if [ -f "node_modules/.bin/vite" ]; then
-            echo "✅ Vite installed successfully"
-            ./node_modules/.bin/vite --version
-          else
-            echo "❌ Failed to install Vite"
-            exit 1
-          fi
+          echo "❌ Vite binary not found"
+          exit 1
         fi
+        
+        echo "Checking Rollup native modules..."
+        find node_modules -name "*rollup*linux*" -type f 2>/dev/null || echo "No Rollup native modules found (this is expected after clean install)"
+        
+        echo "Verifying build tools are working..."
+        npm list @rollup/rollup-linux-x64-gnu 2>/dev/null || echo "Rollup native module not explicitly listed (this is normal)"
     
     - name: Build application
       run: |
