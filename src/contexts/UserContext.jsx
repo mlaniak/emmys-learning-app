@@ -462,20 +462,51 @@ export const UserProvider = ({ children }) => {
         console.log('UserContext: Auth state change:', event, session);
         
         if (event === 'SIGNED_IN' && session?.user) {
-          console.log('UserContext: User authenticated:', session.user);
+          console.log('UserContext: SIGNED_IN event - User authenticated:', session.user);
           setUser(session.user);
-          const profile = await getUserProfile(session.user.id);
-          console.log('UserContext: User profile loaded:', profile);
-          setUserProfile(profile);
+          
+          try {
+            console.log('UserContext: SIGNED_IN - Loading user profile...');
+            const profile = await getUserProfile(session.user.id);
+            console.log('UserContext: SIGNED_IN - User profile loaded:', profile);
+            setUserProfile(profile);
+          } catch (profileError) {
+            console.error('UserContext: SIGNED_IN - Error loading user profile:', profileError);
+            // Set a default profile if profile loading fails
+            const defaultProfile = {
+              id: session.user.id,
+              display_name: session.user.user_metadata?.display_name || session.user.email,
+              email: session.user.email,
+              avatar: 'default',
+              preferences: {
+                difficulty: 'medium',
+                sound_enabled: true,
+                music_enabled: true,
+                theme: 'light'
+              },
+              progress: {
+                score: 0,
+                learning_streak: 0,
+                completed_lessons: [],
+                achievements: [],
+                last_active: new Date().toISOString()
+              },
+              is_child: false,
+              is_guest: false
+            };
+            setUserProfile(defaultProfile);
+            console.log('UserContext: SIGNED_IN - Using default profile');
+          }
+          
           // Clear guest data when real user signs in
           localStorage.removeItem('isGuest');
           localStorage.removeItem('guestProfile');
           
           // Clean up URL only after successful sign in with delay
-          console.log('UserContext: Cleaning up URL after successful SIGNED_IN event');
+          console.log('UserContext: SIGNED_IN - Cleaning up URL after successful SIGNED_IN event');
           setTimeout(() => {
             window.history.replaceState(null, '', window.location.pathname);
-            console.log('UserContext: URL cleaned up after SIGNED_IN');
+            console.log('UserContext: SIGNED_IN - URL cleaned up');
           }, 500);
           
         } else if (event === 'SIGNED_OUT') {
@@ -502,6 +533,8 @@ export const UserProvider = ({ children }) => {
           setUser(null);
           setUserProfile(null);
         }
+        
+        console.log('UserContext: Setting loading to false for event:', event);
         setLoading(false);
       }
     );
