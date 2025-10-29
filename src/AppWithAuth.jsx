@@ -35,8 +35,10 @@ const AppWithAuth = () => {
   useEffect(() => {
     if (user && userProfile) {
       console.log('AppWithAuth: User logged in, redirecting to main app');
-      // Redirect to the main quiz app with developer mode enabled
-      window.location.href = `${window.location.origin}/emmys-learning-app/#/game`;
+      // Use a timeout to prevent React error during render
+      setTimeout(() => {
+        window.location.href = `${window.location.origin}/emmys-learning-app/#/game`;
+      }, 100);
     }
   }, [user, userProfile]);
 

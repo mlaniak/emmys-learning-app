@@ -1,11 +1,19 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import AppWithAuth from './AppWithAuth.jsx'
 import App from './App.jsx'
 import './index.css'
 
+// Check if we're in developer mode (URL contains #/game) or if user is already authenticated
+const isDeveloperMode = window.location.hash.includes('#/game') || 
+                       localStorage.getItem('developerMode') === 'true';
+
+// Use AppWithAuth for authentication flow, App for the main quiz interface
+const MainApp = isDeveloperMode ? App : AppWithAuth;
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
+    <MainApp />
   </React.StrictMode>,
 )
 
