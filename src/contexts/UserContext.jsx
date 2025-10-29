@@ -21,6 +21,12 @@ export const UserProvider = ({ children }) => {
   const createUserProfile = async (user, additionalData = {}) => {
     if (!user) return;
 
+    // Skip Supabase if RLS issues detected
+    if (localStorage.getItem('supabaseDisabled') === 'true') {
+      console.log('Supabase disabled due to RLS issues, skipping profile creation');
+      return;
+    }
+
     try {
       const { data: existingProfile } = await supabase
         .from('users')
@@ -332,10 +338,12 @@ export const UserProvider = ({ children }) => {
       if (error) {
         console.error('Get user profile error:', error);
         
-        // If it's an RLS policy error, create a default profile
-        if (error.code === '42P17' || error.message.includes('infinite recursion')) {
-          console.log('RLS policy error detected, creating default profile');
-          return {
+        // If it's an RLS policy error, create a default profile and skip Supabase
+        if (error.code === '42P17' || error.message.includes('infinite recursion') || error.code === 'PGRST301') {
+          console.log('RLS policy error detected, creating default profile and disabling Supabase sync');
+          
+          // Create a default profile that doesn't rely on Supabase
+          const defaultProfile = {
             id: userId,
             display_name: 'User',
             email: 'user@example.com',
@@ -356,6 +364,12 @@ export const UserProvider = ({ children }) => {
             is_child: false,
             is_guest: false
           };
+          
+          // Store in localStorage as backup
+          localStorage.setItem('userProfile', JSON.stringify(defaultProfile));
+          localStorage.setItem('supabaseDisabled', 'true');
+          
+          return defaultProfile;
         }
         
         throw error;
@@ -364,6 +378,14 @@ export const UserProvider = ({ children }) => {
       return data;
     } catch (error) {
       console.error('Get user profile error:', error);
+      
+      // Final fallback - try to get from localStorage
+      const storedProfile = localStorage.getItem('userProfile');
+      if (storedProfile) {
+        console.log('Using stored profile from localStorage');
+        return JSON.parse(storedProfile);
+      }
+      
       return null;
     }
   };
