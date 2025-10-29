@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUser } from '../contexts/UserContext';
+import textToSpeech from '../utils/textToSpeech';
 
 const ProfileManager = ({ onClose }) => {
   const { userProfile, updateUserProfile } = useUser();
   const [activeTab, setActiveTab] = useState('avatar');
   const [isLoading, setIsLoading] = useState(false);
+  const [availableVoices, setAvailableVoices] = useState([]);
+  const [currentVoice, setCurrentVoice] = useState(null);
+  const [isTestingVoice, setIsTestingVoice] = useState(false);
 
   const avatars = [
     { id: 'default', emoji: '👦', name: 'Default' },
@@ -24,6 +28,62 @@ const ProfileManager = ({ onClose }) => {
     { id: 'forest', name: 'Forest', color: 'bg-green-200', text: 'text-green-800' },
     { id: 'sunset', name: 'Sunset', color: 'bg-orange-200', text: 'text-orange-800' }
   ];
+
+  // Load voices when component mounts
+  useEffect(() => {
+    const loadVoices = () => {
+      const voices = textToSpeech.getEnglishVoices();
+      setAvailableVoices(voices);
+      const current = textToSpeech.getCurrentVoice();
+      setCurrentVoice(current);
+    };
+
+    // Load voices immediately
+    loadVoices();
+
+    // Also listen for voice changes
+    const checkVoices = setInterval(() => {
+      const voices = textToSpeech.getEnglishVoices();
+      if (voices.length > 0) {
+        setAvailableVoices(voices);
+        clearInterval(checkVoices);
+      }
+    }, 100);
+
+    return () => clearInterval(checkVoices);
+  }, []);
+
+  // Voice-related functions
+  const handleVoiceChange = async (voiceName) => {
+    setIsLoading(true);
+    try {
+      const success = textToSpeech.setVoice(voiceName);
+      if (success) {
+        setCurrentVoice(textToSpeech.getCurrentVoice());
+        await updateUserProfile({
+          preferences: {
+            ...userProfile.preferences,
+            voice: voiceName
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error updating voice:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const testVoice = (voiceName) => {
+    setIsTestingVoice(true);
+    const sampleText = "Hello! This is how I sound. I'm your learning assistant!";
+    textToSpeech.testVoice(voiceName, sampleText);
+    
+    // Reset testing state after a delay
+    setTimeout(() => {
+      setIsTestingVoice(false);
+    }, 3000);
+  };
 
   const handleAvatarChange = async (avatarId) => {
     setIsLoading(true);
@@ -164,6 +224,56 @@ const ProfileManager = ({ onClose }) => {
                     </button>
                   ))}
                 </div>
+              </div>
+
+              {/* Voice Settings */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Voice Assistant 🎤
+                </label>
+                <p className="text-xs text-gray-500 mb-3">Choose how questions and words sound when spoken aloud</p>
+                
+                {availableVoices.length > 0 ? (
+                  <div className="space-y-2 max-h-40 overflow-y-auto">
+                    {availableVoices.map((voice, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div className="flex-1">
+                          <div className="font-medium text-sm text-gray-800">
+                            {voice.name}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {voice.localService ? 'Local Voice' : 'Online Voice'} • {voice.lang}
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => testVoice(voice.name)}
+                            disabled={isTestingVoice || isLoading}
+                            className="text-blue-500 hover:text-blue-600 text-sm px-2 py-1 rounded transition-colors disabled:opacity-50"
+                          >
+                            {isTestingVoice ? '🔊' : '▶️'}
+                          </button>
+                          <button
+                            onClick={() => handleVoiceChange(voice.name)}
+                            disabled={isLoading}
+                            className={`px-3 py-1 rounded text-sm transition-colors ${
+                              currentVoice?.name === voice.name
+                                ? 'bg-purple-500 text-white'
+                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                            } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          >
+                            {currentVoice?.name === voice.name ? 'Selected' : 'Select'}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-4 text-gray-500">
+                    <div className="text-2xl mb-2">🔍</div>
+                    <p className="text-sm">Loading voices...</p>
+                  </div>
+                )}
               </div>
 
               {/* Sound Settings */}
