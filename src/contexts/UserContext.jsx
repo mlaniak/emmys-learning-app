@@ -155,13 +155,18 @@ export const UserProvider = ({ children }) => {
         last_active: new Date().toISOString()
       },
       is_child: true,  // Set as child to bypass parent dashboard
-      is_guest: false
+      is_guest: false,
+      is_developer: true  // Flag to show original game interface
     };
     
     setUser(tempUser);
     setUserProfile(tempProfile);
     setError(null);
     setLoading(false);
+    
+    // Set developer mode flag and redirect to original game
+    localStorage.setItem('developerMode', 'true');
+    window.location.href = '/emmys-learning-app/#/game';
   };
 
   // Guest login - creates a temporary local profile

@@ -1,7 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './AppWithAuth.jsx'
+import AppWithAuth from './AppWithAuth.jsx'
+import OriginalApp from './App.jsx'
 import './index.css'
+
+// Check if we're in developer mode (URL contains #/game)
+const isDeveloperMode = window.location.hash.includes('#/game') || 
+                       localStorage.getItem('developerMode') === 'true';
+
+const App = isDeveloperMode ? OriginalApp : AppWithAuth;
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
