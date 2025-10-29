@@ -7,7 +7,7 @@
 
 import { isDevelopment, getEnvironmentConfig } from './environmentConfig';
 import { errorHandler, ERROR_TYPES, ERROR_SEVERITY } from './errorHandling.jsx';
-import { analyticsCollector } from './analytics';
+import { analyticsCollector } from './analytics.jsx';
 
 // OAuth-specific error types
 export const OAUTH_ERROR_TYPES = {
