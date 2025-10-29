@@ -11,6 +11,7 @@ import textToSpeech from './utils/textToSpeech';
 import { useUser, UserProvider } from './contexts/UserContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import DebugInfo from './components/DebugInfo';
+import MinimalTestApp from './MinimalTestApp';
 
 // EmailJS for direct email sending
 import emailjs from '@emailjs/browser';
@@ -6066,35 +6067,8 @@ const App = () => {
       <UserProvider>
         <BrowserRouter basename="/emmys-learning-app">
           <Routes>
-            <Route path="/" element={<EmmyStudyGame />} />
-            
-            {/* Newsletter Routes */}
-            <Route path="/newsletter" element={<EmmyStudyGame />} />
-            <Route path="/newsletter/:week" element={<EmmyStudyGame />} />
-            
-            {/* Parent Reference Routes */}
-            <Route path="/parent-reference" element={<EmmyStudyGame />} />
-            <Route path="/parent-reference/:subject" element={<EmmyStudyGame />} />
-            <Route path="/parent-reference/:subject/:category" element={<EmmyStudyGame />} />
-            
-            {/* Game Routes */}
-            <Route path="/spelling" element={<EmmyStudyGame />} />
-            <Route path="/spelling/:mode" element={<EmmyStudyGame />} />
-            
-            {/* Progress & Achievement Routes */}
-            <Route path="/achievements" element={<EmmyStudyGame />} />
-            <Route path="/achievements/:category" element={<EmmyStudyGame />} />
-            <Route path="/progress" element={<EmmyStudyGame />} />
-            <Route path="/progress/:section" element={<EmmyStudyGame />} />
-            
-            {/* Settings Routes */}
-            <Route path="/customize" element={<EmmyStudyGame />} />
-            <Route path="/customize/:section" element={<EmmyStudyGame />} />
-            <Route path="/feedback" element={<EmmyStudyGame />} />
-            <Route path="/feedback/:category" element={<EmmyStudyGame />} />
-            
-            {/* Fallback */}
-            <Route path="*" element={<EmmyStudyGame />} />
+            <Route path="/" element={<MinimalTestApp />} />
+            <Route path="*" element={<MinimalTestApp />} />
           </Routes>
         </BrowserRouter>
       </UserProvider>
