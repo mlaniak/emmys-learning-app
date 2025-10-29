@@ -42,7 +42,7 @@ jobs:
       run: npm ci --prefer-offline
     
     - name: Build application
-      run: npm run build
+      run: npx vite build
       env:
         NODE_ENV: production
     
