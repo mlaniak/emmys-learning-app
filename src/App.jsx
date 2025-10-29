@@ -5378,11 +5378,11 @@ Your Student ✨
         <div className={`text-center mb-8 ${answerAnimation}`}>
           <div className="text-6xl md:text-8xl mb-4">{q.image || q.emoji}</div>
           {q.word && (
-            <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="flex items-center justify-center gap-4 mb-4">
               <div className="text-4xl md:text-6xl font-bold text-pink-600">{q.word}</div>
               <button
                 onClick={() => textToSpeech.speakWord(q.word)}
-                className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full transition-colors"
+                className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full transition-colors flex-shrink-0"
                 title="Listen to word"
                 aria-label="Listen to word"
               >
@@ -5390,24 +5390,26 @@ Your Student ✨
               </button>
             </div>
           )}
-          <div className="flex items-center justify-center gap-3 mb-8">
+          <div className="flex items-center justify-center gap-4 mb-8">
             <p className="text-2xl md:text-3xl font-bold text-gray-700">{q.question}</p>
-            <button
-              onClick={() => textToSpeech.speakQuestion(q.question)}
-              className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full transition-colors"
-              title="Listen to question"
-              aria-label="Listen to question"
-            >
-              🔊
-            </button>
-            <button
-              onClick={() => textToSpeech.stop()}
-              className="bg-red-500 hover:bg-red-600 text-white p-3 rounded-full transition-colors"
-              title="Stop audio"
-              aria-label="Stop audio"
-            >
-              ⏹️
-            </button>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <button
+                onClick={() => textToSpeech.speakQuestion(q.question)}
+                className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full transition-colors"
+                title="Listen to question"
+                aria-label="Listen to question"
+              >
+                🔊
+              </button>
+              <button
+                onClick={() => textToSpeech.stop()}
+                className="bg-red-500 hover:bg-red-600 text-white p-3 rounded-full transition-colors"
+                title="Stop audio"
+                aria-label="Stop audio"
+              >
+                ⏹️
+              </button>
+            </div>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
@@ -5427,7 +5429,7 @@ Your Student ✨
                   e.stopPropagation();
                   textToSpeech.speakAnswer(opt);
                 }}
-                className="absolute top-2 right-2 bg-purple-500 hover:bg-purple-600 text-white p-2 rounded-full transition-colors"
+                className="absolute top-3 right-3 bg-purple-500 hover:bg-purple-600 text-white p-2 rounded-full transition-colors shadow-md"
                 title="Listen to answer"
                 aria-label="Listen to answer"
               >
