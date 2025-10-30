@@ -5622,11 +5622,16 @@ Your Student ✨
   // Freeze the shuffled questions into state so they never change unless deps change
   const SHUFFLE_QUESTIONS = false;
   const buildQuestionList = (source, screen, count) => {
-    const base = (source || []).slice(0);
-    if (!SHUFFLE_QUESTIONS) {
-      return base.slice(0, count);
+    let base = Array.isArray(source) ? source.slice(0) : [];
+    // Fallback: if no questions resolved (build quirks), use raw set from map
+    if (base.length === 0 && questionSets && questionSets[screen]) {
+      base = questionSets[screen].slice(0);
     }
-    return smartShuffle(base, screen, count);
+    const safeCount = Number.isFinite(count) && count > 0 ? count : 10;
+    if (!SHUFFLE_QUESTIONS) {
+      return base.slice(0, safeCount);
+    }
+    return smartShuffle(base, screen, safeCount);
   };
 
   const [currentQuestions, setCurrentQuestions] = React.useState(() => buildQuestionList(fullQuestionSet, currentScreen, questionCount));
@@ -5652,7 +5657,7 @@ Your Student ✨
   }, [fullQuestionSet, currentScreen, questionCount, selectedPhonicsDifficulty, selectedMathDifficulty, selectedReadingCategory]);
 
   const qs = currentQuestions; // backward-compat for local references
-  const q = currentQuestions[currentQuestion] || {};
+  const q = (Array.isArray(currentQuestions) && currentQuestions[currentQuestion]) || {};
   const bgColors = {
     phonics: 'from-pink-200 to-pink-400', math: 'from-blue-200 to-blue-400',
     reading: 'from-green-200 to-green-400', science: 'from-teal-200 to-teal-400',
