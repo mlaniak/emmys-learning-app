@@ -3171,7 +3171,9 @@ Your Student ✨
     }, 200);
   };
 
-  if (currentScreen === 'home') {
+  // Render function - called AFTER all hooks to prevent hook order violations
+  const renderScreen = () => {
+    if (currentScreen === 'home') {
     const currentTheme = themes[progress.selectedTheme] || themes.default;
     const currentAvatar = avatars[progress.avatar] || avatars.default;
     
@@ -6295,6 +6297,9 @@ Your Student ✨
     </div>
     </OfflineManager>
   );
+  }; // End renderScreen
+  
+  return renderScreen();
 };
 
 // Main App Component with URL Routing
