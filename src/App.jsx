@@ -818,26 +818,13 @@ Your Student ✨
   const navigateTo = (screen, additionalInfo = '', params = {}) => {
     playSound('click');
     triggerHaptic('light');
-    
-    // Define game screens upfront
-    const gameScreens = ['phonics', 'math', 'reading', 'science', 'art', 'geography', 'history', 'spelling'];
-
-    // If navigating to a game module, redirect BEFORE changing any state to avoid hook-order changes
-    if (gameScreens.includes(screen)) {
-      const expectedHash = `#/${screen}`;
-      if (window.location.hash !== expectedHash) {
-        const base = `${window.location.origin}/emmys-learning-app/${expectedHash}`;
-        window.location.replace(base);
-        return; // stop further work; navigation will reload
-      }
-    }
 
     setCurrentScreen(screen);
     updateBreadcrumbs(screen, additionalInfo);
     setShowSearch(false);
     setSearchQuery('');
     
-    // Update URL based on screen and parameters
+    // Update URL based on screen and parameters - use HashRouter navigate for all routes
     if (screen === 'home') {
       navigate('/');
     } else if (screen === 'newsletter') {
@@ -869,7 +856,7 @@ Your Student ✨
         setSelectedCategory(0);
       }
     } else {
-      // Use router nav for lightweight sections (non-game)
+      // Use router navigate for all other screens including games
       navigate(`/${screen}`);
     }
     
