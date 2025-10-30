@@ -813,14 +813,8 @@ Your Student ✨
     playSound('click');
     triggerHaptic('light');
     
-    // Define game screens upfront to avoid temporal dead zone errors
+    // Define game screens upfront
     const gameScreens = ['phonics', 'math', 'reading', 'science', 'art', 'geography', 'history', 'spelling'];
-
-    // Show loading state for heavy screens
-    if (gameScreens.includes(screen)) {
-      setIsLoading(true);
-      setLoadingMessage('Loading learning content...');
-    }
     
     setCurrentScreen(screen);
     updateBreadcrumbs(screen, additionalInfo);
@@ -859,27 +853,16 @@ Your Student ✨
         setSelectedCategory(0);
       }
     } else {
-      // For game screens, use hard navigation to avoid React hook order issues
-      if (gameScreens.includes(screen)) {
-        window.location.href = `${window.location.origin}/emmys-learning-app/#/${screen}`;
-      } else {
-        navigate(`/${screen}`);
-      }
+      // Use router navigation for all screens to keep SPA stable
+      navigate(`/${screen}`);
     }
     
     // Optimized scrolling with scroll optimizer
-    if (gameScreens.includes(screen)) {
-      // Use scroll optimizer for smooth mobile scrolling
-      setTimeout(() => {
-        scrollOptimizer.smoothScrollTo(document.body, 0);
-        // Hide loading state after scroll completes
-        setTimeout(() => setIsLoading(false), 300);
-      }, 150);
-    } else {
-      // Immediate scroll for non-game screens
+    // Always scroll to top after navigation
+    setTimeout(() => {
       scrollOptimizer.smoothScrollTo(document.body, 0);
       setIsLoading(false);
-    }
+    }, 100);
   };
 
   // Adaptive Learning System
