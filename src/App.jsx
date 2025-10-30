@@ -6316,206 +6316,39 @@ const App = () => {
   };
 
   return (
-<<<<<<< HEAD
-    <>
-      {/* Splash Screen */}
-      {showSplashScreen && (
-        <SplashScreen onComplete={handleSplashComplete} />
-      )}
-
-      {/* PWA Install Prompt */}
-      <PWAInstallPrompt />
-
-      {/* PWA Install Button */}
-      <PWAInstallButton />
-
-      {/* PWA Update Notification */}
-      {pwaRegistration && (
-        <PWAUpdateNotification 
-          registration={pwaRegistration}
-          onUpdate={() => console.log('App updated')}
-          onDismiss={() => console.log('Update dismissed')}
-        />
-      )}
-
-      {/* Notification Settings Modal */}
-      <NotificationSettings 
-        isOpen={showNotificationSettings}
-        onClose={() => setShowNotificationSettings(false)}
-      />
-
-      <ErrorBoundary 
-        name="AppRoot" 
-        level="application"
-        onError={(error, errorInfo, errorEntry) => {
-          // Log critical application errors
-          console.error('Critical App Error:', error, errorInfo);
-          errorReporting.reportError(error, {
-            level: 'critical',
-            component: 'AppRoot',
-            errorInfo
-          });
-      }}
-    >
-      <ErrorRecoveryProvider>
-        <UserProvider>
-          <NetworkErrorBoundary name="NetworkLayer">
-            <BrowserRouter basename="/emmys-learning-app">
-              <AsyncErrorBoundary name="RouterLayer">
-                <Routes>
-                  <Route path="/" element={
-                    <ErrorBoundary name="HomePage" showRetry={true}>
-                      <EmmyStudyGame />
-                    </ErrorBoundary>
-                  } />
-                  
-                  {/* OAuth Callback Route */}
-                  <Route path="/auth/callback" element={
-                    <ErrorBoundary name="AuthCallback" showRetry={true}>
-                      <AuthCallback />
-                    </ErrorBoundary>
-                  } />
-                  
-                  {/* Newsletter Routes */}
-                  <Route path="/newsletter" element={
-                    <ErrorBoundary name="Newsletter" showRetry={true}>
-                      <EmmyStudyGame />
-                    </ErrorBoundary>
-                  } />
-                  <Route path="/newsletter/:week" element={
-                    <ErrorBoundary name="NewsletterWeek" showRetry={true}>
-                      <EmmyStudyGame />
-                    </ErrorBoundary>
-                  } />
-                  
-                  {/* Parent Reference Routes */}
-                  <Route path="/parent-reference" element={
-                    <ErrorBoundary name="ParentReference" showRetry={true}>
-                      <EmmyStudyGame />
-                    </ErrorBoundary>
-                  } />
-                  <Route path="/parent-reference/:subject" element={
-                    <ErrorBoundary name="ParentReferenceSubject" showRetry={true}>
-                      <EmmyStudyGame />
-                    </ErrorBoundary>
-                  } />
-                  <Route path="/parent-reference/:subject/:category" element={
-                    <ErrorBoundary name="ParentReferenceCategory" showRetry={true}>
-                      <EmmyStudyGame />
-                    </ErrorBoundary>
-                  } />
-                  
-                  {/* Game Routes */}
-                  <Route path="/spelling" element={
-                    <ErrorBoundary name="SpellingGame" showRetry={true}>
-                      <EmmyStudyGame />
-                    </ErrorBoundary>
-                  } />
-                  <Route path="/spelling/:mode" element={
-                    <ErrorBoundary name="SpellingGameMode" showRetry={true}>
-                      <EmmyStudyGame />
-                    </ErrorBoundary>
-                  } />
-                  
-                  {/* Progress & Achievement Routes */}
-                  <Route path="/achievements" element={
-                    <ErrorBoundary name="Achievements" showRetry={true}>
-                      <EmmyStudyGame />
-                    </ErrorBoundary>
-                  } />
-                  <Route path="/achievements/:category" element={
-                    <ErrorBoundary name="AchievementCategory" showRetry={true}>
-                      <EmmyStudyGame />
-                    </ErrorBoundary>
-                  } />
-                  <Route path="/progress" element={
-                    <ErrorBoundary name="Progress" showRetry={true}>
-                      <EmmyStudyGame />
-                    </ErrorBoundary>
-                  } />
-                  <Route path="/progress/:section" element={
-                    <ErrorBoundary name="ProgressSection" showRetry={true}>
-                      <EmmyStudyGame />
-                    </ErrorBoundary>
-                  } />
-                  
-                  {/* Settings Routes */}
-                  <Route path="/customize" element={
-                    <ErrorBoundary name="Customize" showRetry={true}>
-                      <EmmyStudyGame />
-                    </ErrorBoundary>
-                  } />
-                  <Route path="/customize/:section" element={
-                    <ErrorBoundary name="CustomizeSection" showRetry={true}>
-                      <EmmyStudyGame />
-                    </ErrorBoundary>
-                  } />
-                  <Route path="/feedback" element={
-                    <ErrorBoundary name="Feedback" showRetry={true}>
-                      <EmmyStudyGame />
-                    </ErrorBoundary>
-                  } />
-                  <Route path="/feedback/:category" element={
-                    <ErrorBoundary name="FeedbackCategory" showRetry={true}>
-                      <EmmyStudyGame />
-                    </ErrorBoundary>
-                  } />
-                  
-                  {/* Fallback */}
-                  <Route path="*" element={
-                    <ErrorBoundary name="NotFound" showRetry={true}>
-                      <EmmyStudyGame />
-                    </ErrorBoundary>
-                  } />
-                </Routes>
-              </AsyncErrorBoundary>
-            </BrowserRouter>
-          </NetworkErrorBoundary>
-        </UserProvider>
-      </ErrorRecoveryProvider>
-=======
     <ErrorBoundary>
       <UserProvider>
         <HashRouter>
           <Routes>
             <Route path="/" element={<EmmyStudyGame />} />
-            
             {/* OAuth Callback Route */}
             <Route path="/auth/callback" element={<AuthCallback />} />
-            
             {/* Newsletter Routes */}
             <Route path="/newsletter" element={<EmmyStudyGame />} />
             <Route path="/newsletter/:week" element={<EmmyStudyGame />} />
-            
             {/* Parent Reference Routes */}
             <Route path="/parent-reference" element={<EmmyStudyGame />} />
             <Route path="/parent-reference/:subject" element={<EmmyStudyGame />} />
             <Route path="/parent-reference/:subject/:category" element={<EmmyStudyGame />} />
-            
             {/* Game Routes */}
             <Route path="/spelling" element={<EmmyStudyGame />} />
             <Route path="/spelling/:mode" element={<EmmyStudyGame />} />
-            
             {/* Progress & Achievement Routes */}
             <Route path="/achievements" element={<EmmyStudyGame />} />
             <Route path="/achievements/:category" element={<EmmyStudyGame />} />
             <Route path="/progress" element={<EmmyStudyGame />} />
             <Route path="/progress/:section" element={<EmmyStudyGame />} />
-            
             {/* Settings Routes */}
             <Route path="/customize" element={<EmmyStudyGame />} />
             <Route path="/customize/:section" element={<EmmyStudyGame />} />
             <Route path="/feedback" element={<EmmyStudyGame />} />
             <Route path="/feedback/:category" element={<EmmyStudyGame />} />
-            
             {/* Fallback */}
             <Route path="*" element={<EmmyStudyGame />} />
           </Routes>
         </HashRouter>
       </UserProvider>
->>>>>>> 4264f7e (Use HashRouter for GH Pages deep links; fix phonics route crash)
     </ErrorBoundary>
-    </>
   );
 };
 
