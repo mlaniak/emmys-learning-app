@@ -813,9 +813,11 @@ Your Student ✨
     playSound('click');
     triggerHaptic('light');
     
+    // Define game screens upfront to avoid temporal dead zone errors
+    const gameScreens = ['phonics', 'math', 'reading', 'science', 'art', 'geography', 'history', 'spelling'];
+
     // Show loading state for heavy screens
-    const heavyScreens = ['phonics', 'math', 'reading', 'science', 'art', 'geography', 'history', 'spelling'];
-    if (heavyScreens.includes(screen)) {
+    if (gameScreens.includes(screen)) {
       setIsLoading(true);
       setLoadingMessage('Loading learning content...');
     }
@@ -866,7 +868,6 @@ Your Student ✨
     }
     
     // Optimized scrolling with scroll optimizer
-    const gameScreens = ['phonics', 'math', 'reading', 'science', 'art', 'geography', 'history', 'spelling'];
     if (gameScreens.includes(screen)) {
       // Use scroll optimizer for smooth mobile scrolling
       setTimeout(() => {
