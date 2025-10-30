@@ -45,6 +45,22 @@ const FeedbackOverlay = ({
     }
   }, [visible, feedback, isComplete, onClose]);
 
+  // Allow closing with Escape key when visible
+  useEffect(() => {
+    if (!visible) return;
+    const handleKey = (e) => {
+      if (e.key === 'Escape') {
+        setAnimationPhase('exit');
+        setTimeout(() => {
+          setShowConfetti(false);
+          onClose();
+        }, 300);
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [visible, onClose]);
+
   if (!visible || !feedback) {
     return null;
   }
@@ -147,6 +163,16 @@ const FeedbackOverlay = ({
         className={`absolute inset-0 z-50 flex items-center justify-center transition-all duration-300 bg-black/50 backdrop-blur-sm ${
           animationPhase === 'enter' ? 'opacity-100' : 'opacity-0'
         }`}
+        onClick={() => {
+          setAnimationPhase('exit');
+          setTimeout(() => {
+            setShowConfetti(false);
+            onClose();
+          }, 300);
+        }}
+        role="dialog"
+        aria-live="polite"
+        aria-modal="true"
       >
         {/* Foreground Card */}
         <div 
@@ -155,7 +181,23 @@ const FeedbackOverlay = ({
             backgroundSize: '200% 200%',
             animation: `${animationPhase === 'enter' ? 'gradient-shift 2s ease-in-out infinite' : 'none'}, ${config.animation ? '' : ''}`
           }}
+          onClick={(e) => e.stopPropagation()}
         >
+          {/* Close Button */}
+          <button
+            type="button"
+            aria-label="Close"
+            className="absolute top-3 right-3 h-10 w-10 rounded-full bg-white/25 hover:bg-white/35 active:bg-white/40 transition text-white text-2xl leading-none flex items-center justify-center"
+            onClick={() => {
+              setAnimationPhase('exit');
+              setTimeout(() => {
+                setShowConfetti(false);
+                onClose();
+              }, 300);
+            }}
+          >
+            ×
+          </button>
           {/* Main Emoji */}
           <div className="text-8xl md:text-9xl mb-4 animate-bounce">
             {config.emoji}
