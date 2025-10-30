@@ -5783,10 +5783,49 @@ Your Student ✨
           feedback={showFeedback}
           visible={!!showFeedback}
           onClose={() => {
+            // Clear overlay state
             setShowFeedback(null);
             setAnswerAnimation('');
             setShowExplanation(false);
             setCorrectAnswer('');
+
+            // Proceed to next question or finish if at the end
+            const qs = currentQuestions;
+            if (Array.isArray(qs) && currentQuestion < qs.length - 1) {
+              setCurrentQuestion(currentQuestion + 1);
+            } else if (Array.isArray(qs) && qs.length > 0) {
+              const subjectScore = Math.round((score / (questionCount * 10)) * 100);
+              const isPerfectScore = subjectScore === 100;
+
+              let newProgress = {
+                ...progress,
+                totalScore: progress.totalScore + score,
+                lastPlayed: new Date().toISOString(),
+                completedSubjects: {
+                  ...progress.completedSubjects,
+                  [currentScreen]: {
+                    completed: true,
+                    score: subjectScore,
+                    completedAt: new Date().toISOString(),
+                    questionsAnswered: questionCount,
+                    correctAnswers: Math.floor(score / 10)
+                  }
+                }
+              };
+
+              if (isPerfectScore) {
+                newProgress.stats = newProgress.stats || {};
+                newProgress.stats.perfectScores = (newProgress.stats.perfectScores || 0) + 1;
+              }
+
+              newProgress = checkAchievements(newProgress);
+              newProgress = checkUnlocks(newProgress);
+
+              saveProgress(newProgress);
+              playSound('complete');
+              triggerHaptic('success');
+              setCurrentScreen('complete');
+            }
           }}
           showExplanation={showExplanation}
           explanation={q?.explanation || ''}
