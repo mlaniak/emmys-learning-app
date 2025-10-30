@@ -742,9 +742,9 @@ Your Student ✨
   }, [location.pathname]);
 
   // Navigation helper with breadcrumb updates and URL updates
-  // Filter spelling words by month
+  // Filter spelling words by month (uses enhancedSpellingWords)
   const getSpellingWordsByMonth = (month) => {
-    if (month === 'all') return spellingWords;
+    if (month === 'all') return enhancedSpellingWords;
     
     const monthRanges = {
       'october': { start: 0, end: 10 },
@@ -753,45 +753,45 @@ Your Student ✨
       'january': { start: 30, end: 40 },
       'february': { start: 40, end: 50 },
       'march': { start: 50, end: 60 },
-      'additional': { start: 60, end: spellingWords.length }
+      'additional': { start: 60, end: enhancedSpellingWords.length }
     };
     
     const range = monthRanges[month];
-    if (!range) return spellingWords;
+    if (!range) return enhancedSpellingWords;
     
-    return spellingWords.slice(range.start, range.end);
+    return enhancedSpellingWords.slice(range.start, range.end);
   };
 
   // Filter phonics questions by difficulty
   const getPhonicsQuestionsByDifficulty = (difficulty) => {
-    return phonicsQuestions[difficulty] || phonicsQuestions.medium;
+    return enhancedPhonicQuestions[difficulty] || enhancedPhonicQuestions.medium;
   };
 
   // Filter math questions by difficulty
   const getMathQuestionsByDifficulty = (difficulty) => {
-    return mathQuestions[difficulty] || mathQuestions.medium;
+    return enhancedMathQuestions[difficulty] || enhancedMathQuestions.medium;
   };
 
   // Filter reading questions by category
   const getReadingQuestionsByCategory = (category) => {
-    if (category === 'all') return readingQuestions;
+    if (category === 'all') return enhancedReadingQuestions;
     
     // For now, return all reading questions since they're not categorized
     // In the future, we could add categories like 'story-elements', 'comprehension', etc.
-    return readingQuestions;
+    return enhancedReadingQuestions;
   };
 
   // Calculate total questions for each subject (enhanced with new content)
   const getQuestionCount = (subject) => {
     switch (subject) {
       case 'phonics':
-        return phonicsQuestions.easy.length + phonicsQuestions.medium.length + phonicsQuestions.hard.length;
+        return (enhancedPhonicQuestions.easy?.length || 0) + (enhancedPhonicQuestions.medium?.length || 0) + (enhancedPhonicQuestions.hard?.length || 0);
       case 'math':
-        return mathQuestions.easy.length + mathQuestions.medium.length + mathQuestions.hard.length;
+        return (enhancedMathQuestions.easy?.length || 0) + (enhancedMathQuestions.medium?.length || 0) + (enhancedMathQuestions.hard?.length || 0);
       case 'reading':
-        return readingQuestions.length;
+        return enhancedReadingQuestions.length;
       case 'spelling':
-        return spellingWords.length;
+        return enhancedSpellingWords.length;
       case 'science':
         return scienceQuestions.length;
       case 'art':
@@ -801,9 +801,9 @@ Your Student ✨
       case 'history':
         return historyQuestions.length;
       case 'social':
-        return socialStudiesQuestions.length;
+        return 0;
       case 'skipcounting':
-        return skipCountingQuestions.length;
+        return 0;
       default:
         return 0;
     }
