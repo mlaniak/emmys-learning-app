@@ -4,6 +4,7 @@ import AppWithAuth from './AppWithAuth.jsx'
 import App from './App.jsx'
 import './index.css'
 import { setupDebugUtils, setupDebugKeyboardShortcuts, logDebugInfo } from './utils/debugUtils'
+import { initializeMobileOptimizations } from './utils/mobilePerformanceOptimizer'
 
 // For now, always use the main App to avoid authentication complexity
 // This will allow the app to work without requiring OAuth setup
@@ -68,16 +69,118 @@ setupDebugUtils();
 setupDebugKeyboardShortcuts();
 logDebugInfo();
 
-// Register service worker for PWA functionality
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/emmys-learning-app/sw.js')
-      .then((registration) => {
-        console.log('SW registered: ', registration);
-      })
-      .catch((registrationError) => {
-        console.log('SW registration failed: ', registrationError);
+// Initialize mobile performance optimizations
+initializeMobileOptimizations();
+
+// Initialize PWA functionality with enhanced offline support
+import { initializePWA } from './utils/pwaUtils';
+import serviceWorkerManager from './utils/serviceWorkerManager';
+import { pushNotificationManager } from './utils/pushNotifications';
+import { backgroundSyncManager } from './utils/backgroundSync';
+
+// Initialize performance monitoring
+import { performanceMonitor } from './utils/performanceMonitor';
+import { performanceRegressionDetector } from './utils/performanceRegressionDetector';
+import { userCentricMetrics } from './utils/userCentricMetrics';
+
+// Initialize code splitting and resource preloading
+import codeSplittingManager from './utils/codeSplittingManager';
+import { initializeResourcePreloading } from './utils/resourcePreloader';
+import { preloadAllSubjects } from './components/subjects/LazySubjectComponents';
+
+// Initialize PWA features
+window.addEventListener('load', async () => {
+  try {
+    const pwaFeatures = await initializePWA();
+    if (pwaFeatures) {
+      console.log('PWA features initialized successfully');
+      
+      // Initialize service worker manager
+      serviceWorkerManager.initialize(pwaFeatures.registration);
+      
+      // Initialize push notifications
+      const pushResult = await pushNotificationManager.initialize();
+      console.log('Push notifications initialized:', pushResult);
+      
+      // Initialize background sync
+      const syncResult = await backgroundSyncManager.initialize();
+      console.log('Background sync initialized:', syncResult);
+      
+      // Store PWA features globally for access by components
+      window.emmyPWA = {
+        ...pwaFeatures,
+        pushNotifications: pushNotificationManager,
+        backgroundSync: backgroundSyncManager
+      };
+      window.emmyServiceWorker = serviceWorkerManager;
+      
+      // Listen for notification clicks from service worker
+      navigator.serviceWorker.addEventListener('message', event => {
+        if (event.data.type === 'NOTIFICATION_CLICKED') {
+          console.log('Notification clicked:', event.data);
+          // Handle notification click actions
+          if (event.data.action === 'start-learning') {
+            // Navigate to learning activity
+            window.location.hash = '#learning';
+          }
+        }
       });
-  });
-}
+    }
+  } catch (error) {
+    console.error('Failed to initialize PWA features:', error);
+  }
+
+  // Initialize performance monitoring systems
+  try {
+    performanceMonitor.initialize();
+    userCentricMetrics.initialize();
+    
+    // Set up performance data recording for regression detection
+    const recordPerformanceData = () => {
+      const report = performanceMonitor.getPerformanceReport();
+      performanceRegressionDetector.recordPerformanceSnapshot(report);
+    };
+
+    // Record performance data every 30 seconds
+    setInterval(recordPerformanceData, 30000);
+    
+    // Record initial performance data after 5 seconds
+    setTimeout(recordPerformanceData, 5000);
+
+    // Store performance monitoring globally for access by components
+    window.emmyPerformance = {
+      monitor: performanceMonitor,
+      regressionDetector: performanceRegressionDetector,
+      userMetrics: userCentricMetrics,
+      codeSplitting: codeSplittingManager
+    };
+
+    console.log('Performance monitoring initialized successfully');
+  } catch (error) {
+    console.error('Failed to initialize performance monitoring:', error);
+  }
+
+  // Initialize code splitting and resource preloading
+  try {
+    // Get user preferences for intelligent preloading
+    const userPreferences = JSON.parse(localStorage.getItem('emmy-learning-progress') || '{}');
+    
+    // Initialize resource preloading
+    const preloadResults = await initializeResourcePreloading({
+      favoriteSubjects: userPreferences.favoriteSubjects || [],
+      recentSubjects: userPreferences.recentSubjects || [],
+      settings: userPreferences.settings || {}
+    });
+
+    // Preload subject components based on user behavior
+    preloadAllSubjects();
+
+    // Store code splitting manager globally
+    window.emmyCodeSplitting = codeSplittingManager;
+
+    console.log('Code splitting and resource preloading initialized:', preloadResults);
+  } catch (error) {
+    console.error('Failed to initialize code splitting:', error);
+  }
+});
 

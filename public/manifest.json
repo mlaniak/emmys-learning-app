@@ -1,14 +1,143 @@
 {
   "name": "Emmy's First Grade Learning Adventure",
-  "short_name": "Emmy First Grade",
-  "description": "Interactive educational game for kids with 10 subjects and 100+ questions",
+  "short_name": "Emmy Learning",
+  "description": "Interactive educational game for kids with 10 subjects and 100+ questions. Works offline!",
   "start_url": "/emmys-learning-app/",
+  "scope": "/emmys-learning-app/",
   "display": "standalone",
   "background_color": "#f3e8ff",
   "theme_color": "#8b5cf6",
-  "orientation": "portrait",
-  "icons": [],
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/emmys-learning-app/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/emmys-learning-app/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/emmys-learning-app/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/emmys-learning-app/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/emmys-learning-app/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/emmys-learning-app/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/emmys-learning-app/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/emmys-learning-app/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/emmys-learning-app/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
   "categories": ["education", "games", "kids"],
   "lang": "en",
-  "dir": "ltr"
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Start Learning",
+      "short_name": "Learn",
+      "description": "Jump straight into learning activities",
+      "url": "/emmys-learning-app/",
+      "icons": [
+        {
+          "src": "/emmys-learning-app/icons/icon-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Math Practice",
+      "short_name": "Math",
+      "description": "Practice math problems",
+      "url": "/emmys-learning-app/?subject=math",
+      "icons": [
+        {
+          "src": "/emmys-learning-app/icons/icon-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Reading Practice",
+      "short_name": "Reading",
+      "description": "Practice reading skills",
+      "url": "/emmys-learning-app/?subject=reading",
+      "icons": [
+        {
+          "src": "/emmys-learning-app/icons/icon-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/emmys-learning-app/screenshots/desktop-1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Main learning interface on desktop"
+    },
+    {
+      "src": "/emmys-learning-app/screenshots/mobile-1.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile learning interface"
+    }
+  ],
+  "related_applications": [],
+  "offline_enabled": true,
+  "features": [
+    "offline-support",
+    "background-sync",
+    "educational-content",
+    "progress-tracking",
+    "push-notifications"
+  ],
+  "splash_pages": null,
+  "id": "emmy-learning-app",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "handle_links": "preferred",
+  "protocol_handlers": []
 }

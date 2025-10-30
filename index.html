@@ -2,16 +2,74 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- PWA and Mobile Optimization -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <meta name="theme-color" content="#8b5cf6" />
-    <meta name="description" content="Interactive educational game for kids with 10 subjects and 100+ questions" />
+    <meta name="background-color" content="#f3e8ff" />
+    <meta name="description" content="Interactive educational game for kids with 10 subjects and 100+ questions. Works offline!" />
+    
+    <!-- PWA Manifest -->
     <link rel="manifest" href="/emmys-learning-app/manifest.json" />
+    
+    <!-- App Icons -->
+    <link rel="icon" type="image/x-icon" href="/emmys-learning-app/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/emmys-learning-app/icons/icon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/emmys-learning-app/icons/icon-16x16.png" />
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="/emmys-learning-app/icons/icon-192x192.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/emmys-learning-app/icons/icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/emmys-learning-app/icons/icon-192x192.png" />
+    
+    <!-- Apple PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Emmy Learning" />
+    
+    <!-- Microsoft Tiles -->
+    <meta name="msapplication-TileImage" content="/emmys-learning-app/icons/icon-144x144.png" />
+    <meta name="msapplication-TileColor" content="#8b5cf6" />
+    <meta name="msapplication-config" content="/emmys-learning-app/browserconfig.xml" />
+    
+    <!-- Splash Screen for iOS -->
+    <link rel="apple-touch-startup-image" href="/emmys-learning-app/icons/icon-512x512.png" />
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Emmy's First Grade Learning Adventure" />
+    <meta property="og:description" content="Interactive educational game for kids with 10 subjects and 100+ questions. Works offline!" />
+    <meta property="og:image" content="/emmys-learning-app/icons/icon-512x512.png" />
+    <meta property="og:url" content="https://mlaniak.github.io/emmys-learning-app/" />
+    <meta property="og:type" content="website" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Emmy's First Grade Learning Adventure" />
+    <meta name="twitter:description" content="Interactive educational game for kids with 10 subjects and 100+ questions. Works offline!" />
+    <meta name="twitter:image" content="/emmys-learning-app/icons/icon-512x512.png" />
+    
+    <!-- Performance and Security -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="/src/main.jsx" as="script" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
     <title>Emmy's First Grade Learning Adventure</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- Fallback for users with JavaScript disabled -->
+    <noscript>
+      <div style="text-align: center; padding: 50px; font-family: Arial, sans-serif;">
+        <h1>Emmy's Learning Adventure</h1>
+        <p>This app requires JavaScript to run. Please enable JavaScript in your browser.</p>
+      </div>
+    </noscript>
   </body>
 </html>
 

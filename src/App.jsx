@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Week11Newsletter from './Week11Newsletter';
 import Week10Newsletter from './Week10Newsletter';
@@ -9,7 +9,11 @@ import NewsletterSelector from './NewsletterSelector';
 import FieldTrips from './FieldTrips';
 import textToSpeech from './utils/textToSpeech';
 import { useUser, UserProvider } from './contexts/UserContext';
-import ErrorBoundary from './components/ErrorBoundary';
+import ErrorBoundary, { NetworkErrorBoundary, AsyncErrorBoundary } from './components/ErrorBoundary';
+import { ErrorRecoveryProvider } from './components/ErrorRecoverySystem';
+import { setupGlobalErrorHandling } from './utils/errorHandling.jsx';
+import { networkRetry } from './utils/networkRetry';
+import { errorReporting } from './utils/errorReporting';
 import DebugInfo from './components/DebugInfo';
 import MinimalTestApp from './MinimalTestApp';
 import UltraMinimalTest from './UltraMinimalTest';
@@ -18,7 +22,30 @@ import AuthCallback from './components/AuthCallback';
 import FeedbackOverlay from './components/FeedbackOverlay';
 import AchievementBadge from './components/AchievementBadge';
 import ConfettiEffect from './components/ConfettiEffect';
+import AudioPreferences from './components/AudioPreferences';
+import PerformanceDashboard from './components/PerformanceDashboard';
+import LazyImage from './components/LazyImage';
+import MobileLoadingState, { GameLoadingState, LoadingOverlay } from './components/MobileLoadingState';
+import OfflineManager, { OfflineFallback, useOfflineManager } from './components/OfflineManager';
+import { ScrollOptimizer } from './utils/mobilePerformanceOptimizer';
 import { useAnimations } from './hooks/useAnimations';
+import { useAudio } from './hooks/useAudio';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
+import { PWAInstallButton, PWAStatusIndicator, PWAUpdateNotification } from './components/PWAUtilities';
+import NotificationSettings from './components/NotificationSettings';
+import SplashScreen from './components/SplashScreen';
+import { 
+  scienceQuestions, 
+  artQuestions, 
+  geographyQuestions, 
+  historyQuestions,
+  enhancedPhonicQuestions,
+  enhancedMathQuestions,
+  enhancedReadingQuestions,
+  enhancedSpellingWords,
+  subjectAchievements,
+  interactiveQuestionTypes
+} from './data/educationalContent';
 
 // EmailJS for direct email sending
 import emailjs from '@emailjs/browser';
@@ -32,8 +59,28 @@ const EmmyStudyGame = () => {
   // Add safety check to prevent rendering issues
   const [isInitialized, setIsInitialized] = useState(false);
   
+  // Mobile performance optimizations
+  const { isOnline, retryWhenOnline } = useOfflineManager();
+  const [scrollOptimizer] = useState(() => new ScrollOptimizer());
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('');
+  
   // Animation system
   const animations = useAnimations();
+  
+  // Audio system
+  const {
+    playSound,
+    playCorrect,
+    playIncorrect,
+    playComplete,
+    playClick,
+    playAchievement,
+    playCelebration,
+    triggerHaptic: audioTriggerHaptic,
+    initializeAudio,
+    isInitialized: audioInitialized
+  } = useAudio();
   
   // Achievement system state
   const [currentAchievement, setCurrentAchievement] = useState(null);
@@ -47,6 +94,27 @@ const EmmyStudyGame = () => {
     
     return () => clearTimeout(timer);
   }, []);
+
+  // Initialize audio on first user interaction
+  useEffect(() => {
+    const handleFirstInteraction = () => {
+      if (!audioInitialized) {
+        initializeAudio();
+      }
+    };
+
+    // Listen for first user interaction to initialize audio
+    const events = ['click', 'touchstart', 'keydown'];
+    events.forEach(event => {
+      document.addEventListener(event, handleFirstInteraction, { once: true });
+    });
+
+    return () => {
+      events.forEach(event => {
+        document.removeEventListener(event, handleFirstInteraction);
+      });
+    };
+  }, [audioInitialized, initializeAudio]);
   
   const [score, setScore] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -62,7 +130,6 @@ const EmmyStudyGame = () => {
   const [backgroundMusic, setBackgroundMusic] = useState(null);
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [difficulty, setDifficulty] = useState('medium');
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [parentQuizMode, setParentQuizMode] = useState(false);
   const [parentQuizWord, setParentQuizWord] = useState(0);
   const [selectedSubject, setSelectedSubject] = useState('phonics');
@@ -108,6 +175,7 @@ const EmmyStudyGame = () => {
   const [selectedNewsletter, setSelectedNewsletter] = useState(null);
   const [showShareModal, setShowShareModal] = useState(false);
   const [shareEmail, setShareEmail] = useState('');
+  const [showPerformanceDashboard, setShowPerformanceDashboard] = useState(false);
   const [shareMessage, setShareMessage] = useState('');
   const [showQuestionSelector, setShowQuestionSelector] = useState(false);
   const [selectedQuestionCount, setSelectedQuestionCount] = useState(10);
@@ -117,6 +185,7 @@ const EmmyStudyGame = () => {
   const [emailSent, setEmailSent] = useState(false);
   const [hintUsed, setHintUsed] = useState(false);
   const [showHint, setShowHint] = useState(false);
+  const [showAudioPreferences, setShowAudioPreferences] = useState(false);
   const [progress, setProgress] = useState(() => {
     const saved = localStorage.getItem('emmy-learning-progress');
     return saved ? JSON.parse(saved) : {
@@ -140,18 +209,9 @@ const EmmyStudyGame = () => {
     };
   });
 
-  // Haptic feedback for mobile devices
+  // Haptic feedback for mobile devices (wrapper for new audio system)
   const triggerHaptic = (type = 'light') => {
-    if ('vibrate' in navigator) {
-      const patterns = {
-        light: [10],
-        medium: [20],
-        heavy: [30],
-        success: [10, 10, 10],
-        error: [50, 50, 50]
-      };
-      navigator.vibrate(patterns[type] || patterns.light);
-    }
+    audioTriggerHaptic(type);
   };
 
   // Save progress to localStorage
@@ -718,7 +778,7 @@ Your Student ✨
     return readingQuestions;
   };
 
-  // Calculate total questions for each subject
+  // Calculate total questions for each subject (enhanced with new content)
   const getQuestionCount = (subject) => {
     switch (subject) {
       case 'phonics':
@@ -749,6 +809,14 @@ Your Student ✨
   const navigateTo = (screen, additionalInfo = '', params = {}) => {
     playSound('click');
     triggerHaptic('light');
+    
+    // Show loading state for heavy screens
+    const heavyScreens = ['phonics', 'math', 'reading', 'science', 'art', 'geography', 'history', 'spelling'];
+    if (heavyScreens.includes(screen)) {
+      setIsLoading(true);
+      setLoadingMessage('Loading learning content...');
+    }
+    
     setCurrentScreen(screen);
     updateBreadcrumbs(screen, additionalInfo);
     setShowSearch(false);
@@ -789,16 +857,19 @@ Your Student ✨
       navigate(`/${screen}`);
     }
     
-    // Scroll to top of page - with delay for game screens on mobile
+    // Optimized scrolling with scroll optimizer
     const gameScreens = ['phonics', 'math', 'reading', 'science', 'art', 'geography', 'history', 'spelling'];
     if (gameScreens.includes(screen)) {
-      // Add small delay for game screens to ensure proper mobile scrolling
+      // Use scroll optimizer for smooth mobile scrolling
       setTimeout(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+        scrollOptimizer.smoothScrollTo(document.body, 0);
+        // Hide loading state after scroll completes
+        setTimeout(() => setIsLoading(false), 300);
       }, 150);
     } else {
       // Immediate scroll for non-game screens
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollOptimizer.smoothScrollTo(document.body, 0);
+      setIsLoading(false);
     }
   };
 
@@ -1117,10 +1188,13 @@ Your Student ✨
     };
   };
 
+  // Use enhanced phonics questions from educational content
   const phonicsQuestions = {
+    // Merge existing questions with enhanced content
     easy: [
-    { word: 'then', question: 'Does this word have TH or SH?', options: ['TH', 'SH'], correct: 'TH', image: '⏰', explanation: 'TH makes the "th" sound like in "then" - put your tongue between your teeth!' },
-    { word: 'show', question: 'Does this word have SH or TH?', options: ['SH', 'TH'], correct: 'SH', image: '👁️', explanation: 'SH makes the "sh" sound like in "show" - put your lips together and blow!' },
+      ...enhancedPhonicQuestions.easy,
+      { word: 'then', question: 'Does this word have TH or SH?', options: ['TH', 'SH'], correct: 'TH', image: '⏰', explanation: 'TH makes the "th" sound like in "then" - put your tongue between your teeth!' },
+      { word: 'show', question: 'Does this word have SH or TH?', options: ['SH', 'TH'], correct: 'SH', image: '👁️', explanation: 'SH makes the "sh" sound like in "show" - put your lips together and blow!' },
     { word: 'chair', question: 'Does this word have CH or SH?', options: ['CH', 'SH'], correct: 'CH', image: '🪑', explanation: 'CH makes the "ch" sound like in "chair" - it sounds like a sneeze!' },
     { word: 'duck', question: 'Does this word have CK or K?', options: ['CK', 'K'], correct: 'CK', image: '🦆', explanation: 'CK makes the "k" sound at the end of short words like "duck"!' },
       { word: 'ship', question: 'Does this word have SH or CH?', options: ['SH', 'CH'], correct: 'SH', image: '🚢', explanation: 'SH makes the "sh" sound like in "ship" - put your lips together and blow!' },
@@ -1256,8 +1330,11 @@ Your Student ✨
     ]
   };
 
+  // Use enhanced math questions from educational content
   const mathQuestions = {
+    // Merge existing questions with enhanced content
     easy: [
+      ...enhancedMathQuestions.easy,
       { question: 'What is 2 + 3?', options: ['4', '5'], correct: '5', emoji: '➕' },
       { question: 'What is 7 - 2?', options: ['4', '5'], correct: '5', emoji: '➖' },
       { question: 'Which is bigger: 5 or 3?', options: ['5', '3'], correct: '5', emoji: '🔢' },
@@ -1530,7 +1607,9 @@ Your Student ✨
     ]
   };
 
+  // Use enhanced reading questions from educational content
   const readingQuestions = [
+    ...enhancedReadingQuestions,
     { question: 'WHO is in the story?', answer: 'Characters', options: ['Characters', 'Setting', 'Problem'], emoji: '👥', explanation: 'Characters are the people or animals in the story!' },
     { question: 'WHERE does the story happen?', answer: 'Setting', options: ['Characters', 'Setting', 'Problem'], emoji: '🏠', explanation: 'Setting is WHERE and WHEN the story takes place!' },
     { question: 'WHAT is the problem in the story?', answer: 'Problem', options: ['Characters', 'Setting', 'Problem'], emoji: '😰', explanation: 'The problem is what goes wrong or what needs to be fixed!' },
@@ -1664,6 +1743,7 @@ Your Student ✨
     ]
   };
 
+  // Enhanced spelling words - merge existing with new content
   const spellingWords = [
     // October Words (Test 10/31)
     { word: 'than', hint: 'compare two things' }, 
@@ -1965,8 +2045,8 @@ Your Student ✨
     { word: 'plantain', hint: 'cooking banana' }
   ];
 
+  // Use enhanced science questions from educational content - these replace the old ones completely
   const scienceQuestions = [
-    { question: 'A system is made of many...', options: ['Parts', 'Colors'], correct: 'Parts', emoji: '🔧', explanation: 'Systems are made of parts that work together!' },
     { question: 'A whole object is made of organized...', options: ['Parts', 'Water'], correct: 'Parts', emoji: '⚙️', explanation: 'All parts work together as a system!' },
     { question: 'What do plants need to grow?', options: ['Sunlight', 'Darkness'], correct: 'Sunlight', emoji: '☀️', explanation: 'Plants need sunlight to make their own food!' },
     { question: 'What do animals need to survive?', options: ['Food', 'Nothing'], correct: 'Food', emoji: '🍎', explanation: 'All animals need food to stay alive!' },
@@ -2123,9 +2203,9 @@ Your Student ✨
     { question: 'Count by 10s: 160, 170, 180, __', options: ['190', '185'], correct: '190', emoji: '🔟' }
   ];
 
-  // New subjects: Art, Geography, History
+  // Enhanced subjects: Art, Geography, History - using new educational content
+  // Art questions are now imported from educational content file
   const artQuestions = [
-    { question: 'What are the three primary colors?', options: ['Red, Blue, Yellow', 'Red, Green, Blue'], correct: 'Red, Blue, Yellow', emoji: '🎨', explanation: 'Red, Blue, and Yellow are the primary colors that can make all other colors!' },
     { question: 'What do you get when you mix red and blue?', options: ['Purple', 'Green'], correct: 'Purple', emoji: '🟣', explanation: 'Red and blue make purple when mixed together!' },
     { question: 'What do you get when you mix yellow and blue?', options: ['Green', 'Orange'], correct: 'Green', emoji: '🟢', explanation: 'Yellow and blue make green when mixed together!' },
     { question: 'What do you get when you mix red and yellow?', options: ['Orange', 'Purple'], correct: 'Orange', emoji: '🟠', explanation: 'Red and yellow make orange when mixed together!' },
@@ -2164,9 +2244,8 @@ Your Student ✨
     { question: 'What do we call the way shapes create unity in art?', options: ['Unity', 'Variety'], correct: 'Unity', emoji: '🔗', explanation: 'Unity is how shapes work together to create harmony in art!' }
   ];
 
+  // Geography questions are now imported from educational content file
   const geographyQuestions = [
-    // Map Skills Questions (Week 11 Social Studies Test)
-    { question: 'What is the name of the symbol that shows directions on a map?', options: ['Compass Rose', 'Map Key'], correct: 'Compass Rose', emoji: '🧭', explanation: 'A compass rose shows directions like North, South, East, and West!' },
     { question: 'Which direction comes between North and South on a compass?', options: ['East', 'West'], correct: 'East', emoji: '➡️', explanation: 'East is between North and South!' },
     { question: 'What country is to the north of the United States?', options: ['Canada', 'Mexico'], correct: 'Canada', emoji: '🇨🇦', explanation: 'Canada is directly north of the United States!' },
     { question: 'What is your country called?', options: ['United States of America', 'Mexico'], correct: 'United States of America', emoji: '🇺🇸', explanation: 'We live in the United States of America!' },
@@ -2212,8 +2291,8 @@ Your Student ✨
     { question: 'What is the biggest lake in Asia?', options: ['Caspian Sea', 'Lake Baikal'], correct: 'Caspian Sea', emoji: '🏞️', explanation: 'The Caspian Sea is the largest lake in Asia!' }
   ];
 
+  // History questions are now imported from educational content file
   const historyQuestions = [
-    { question: 'Who was the first president of the United States?', options: ['George Washington', 'Thomas Jefferson'], correct: 'George Washington', emoji: '👨‍💼', explanation: 'George Washington was the first president of the United States!' },
     { question: 'What year did Christopher Columbus sail to America?', options: ['1492', '1493'], correct: '1492', emoji: '⛵', explanation: 'Christopher Columbus sailed to America in 1492!' },
     { question: 'Who invented the light bulb?', options: ['Thomas Edison', 'Benjamin Franklin'], correct: 'Thomas Edison', emoji: '💡', explanation: 'Thomas Edison invented the light bulb!' },
     { question: 'What was the name of the ship that brought the Pilgrims to America?', options: ['Mayflower', 'Titanic'], correct: 'Mayflower', emoji: '🚢', explanation: 'The Mayflower brought the Pilgrims to America in 1620!' },
@@ -2468,11 +2547,16 @@ Your Student ✨
     }
   };
 
-  // Achievement System
+  // Enhanced Achievement System with subject-specific achievements
   const achievements = {
     first_steps: { id: 'first_steps', name: 'First Steps', description: 'Complete your first question!', icon: '👶', rarity: 'common', points: 10 },
     perfect_score: { id: 'perfect_score', name: 'Perfect Score', description: 'Get 100% on any subject!', icon: '💯', rarity: 'rare', points: 50 },
     subject_master: { id: 'subject_master', name: 'Subject Master', description: 'Complete all questions in a subject!', icon: '🎓', rarity: 'epic', points: 100 },
+    // Add subject-specific achievements
+    ...Object.values(subjectAchievements).flat().reduce((acc, achievement) => {
+      acc[achievement.id] = achievement;
+      return acc;
+    }, {}),
     speed_demon: { id: 'speed_demon', name: 'Speed Demon', description: 'Answer 10 questions in under 2 minutes!', icon: '⚡', rarity: 'rare', points: 75 },
     scholar: { id: 'scholar', name: 'Scholar', description: 'Complete 5 different subjects!', icon: '📚', rarity: 'epic', points: 150 },
     perfectionist: { id: 'perfectionist', name: 'Perfectionist', description: 'Get perfect scores on 3 subjects!', icon: '⭐', rarity: 'legendary', points: 200 },
@@ -2507,54 +2591,8 @@ Your Student ✨
     astronaut: { name: 'Space Emmy', emoji: '👩‍🚀', unlocked: false, unlockRequirement: 'Complete all subjects' }
   };
 
-  const playSound = (type) => {
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      
-      if (type === 'correct') {
-        // Happy ascending chord
-        [523, 659, 784, 1047].forEach((f, i) => {
-          const o = ctx.createOscillator(), g = ctx.createGain();
-          o.connect(g); g.connect(ctx.destination); o.frequency.value = f;
-          o.type = 'sine';
-          g.gain.setValueAtTime(0.2, ctx.currentTime + i*0.05);
-          g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i*0.05 + 0.4);
-          o.start(ctx.currentTime + i*0.05); o.stop(ctx.currentTime + i*0.05 + 0.4);
-        });
-      } else if (type === 'incorrect') {
-        // Sad descending tone
-        const o = ctx.createOscillator(), g = ctx.createGain();
-        o.connect(g); g.connect(ctx.destination);
-        o.frequency.setValueAtTime(400, ctx.currentTime);
-        o.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.3);
-        o.type = 'sawtooth';
-        g.gain.setValueAtTime(0.1, ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-        o.start(ctx.currentTime); o.stop(ctx.currentTime + 0.3);
-      } else if (type === 'click') {
-        // Button click sound
-        const o = ctx.createOscillator(), g = ctx.createGain();
-        o.connect(g); g.connect(ctx.destination);
-        o.frequency.value = 800;
-        o.type = 'square';
-        g.gain.setValueAtTime(0.1, ctx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
-        o.start(ctx.currentTime); o.stop(ctx.currentTime + 0.1);
-      } else if (type === 'complete') {
-        // Victory fanfare
-        [523, 659, 784, 1047, 1319].forEach((f, i) => {
-          const o = ctx.createOscillator(), g = ctx.createGain();
-          o.connect(g); g.connect(ctx.destination); o.frequency.value = f;
-          o.type = 'sine';
-          g.gain.setValueAtTime(0.15, ctx.currentTime + i*0.1);
-          g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i*0.1 + 0.5);
-          o.start(ctx.currentTime + i*0.1); o.stop(ctx.currentTime + i*0.1 + 0.5);
-        });
-      }
-    } catch (e) {
-      // Silently fail if audio context is not available
-    }
-  };
+  // Audio feedback (wrapper for new audio system)
+  // Note: The actual playSound is now provided by useAudio hook above
 
   // Background music functions
   const playBackgroundMusic = () => {
@@ -2641,19 +2679,7 @@ Your Student ✨
     });
   }, [currentScreen, drawColor]);
 
-  // Online/offline detection
-  useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
-    };
-  }, []);
+  // Online/offline detection is now handled by useOfflineManager hook
 
   // Initialize daily challenge and learning streak
   useEffect(() => {
@@ -2794,6 +2820,13 @@ Your Student ✨
         case '5':
           navigateTo('science');
           setCurrentQuestion(0);
+          break;
+        case 'd':
+          // Toggle performance dashboard (Ctrl+D or Cmd+D)
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            setShowPerformanceDashboard(!showPerformanceDashboard);
+          }
           break;
       }
     };
@@ -4746,7 +4779,7 @@ Your Student ✨
           </div>
           
           {/* Avatar Selection */}
-          <div className="bg-white rounded-2xl p-6 shadow-xl">
+          <div className="bg-white rounded-2xl p-6 shadow-xl mb-8">
             <h2 className="text-2xl font-bold text-purple-700 mb-4">👤 Avatars</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {Object.entries(avatars).map(([id, avatar]) => {
@@ -4774,6 +4807,22 @@ Your Student ✨
                 );
               })}
             </div>
+          </div>
+
+          {/* Audio & Sound Settings */}
+          <div className="bg-white rounded-2xl p-6 shadow-xl">
+            <h2 className="text-2xl font-bold text-purple-700 mb-4">🔊 Audio Settings</h2>
+            <p className="text-gray-600 mb-4">Customize sound effects, volume, and haptic feedback for the best learning experience.</p>
+            <button
+              onClick={() => {
+                playSound('click');
+                triggerHaptic('light');
+                setShowAudioPreferences(true);
+              }}
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-4 rounded-xl font-bold text-lg hover:from-purple-600 hover:to-pink-600 transition-colors shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95"
+            >
+              🎵 Open Audio Settings
+            </button>
           </div>
         </div>
       </div>
@@ -5558,17 +5607,35 @@ Your Student ✨
   };
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${bgColors[currentScreen]} p-4 md:p-8`}>
+    <OfflineManager fallbackContent={
+      <OfflineFallback 
+        title="Learning Adventure Offline"
+        message="Some features need internet connection. You can still practice with saved content!"
+        icon="🎮"
+      />
+    }>
+      <div className={`min-h-screen bg-gradient-to-br ${bgColors[currentScreen]} container-mobile`}>
       <div className="flex justify-between mb-4 gap-2">
-        <div onClick={() => { navigateTo('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="bg-white px-4 md:px-6 py-2 md:py-3 rounded-full shadow-lg hover:scale-105 cursor-pointer">← Back</div>
-        <div onClick={() => setCurrentQuestion(0)} className="bg-orange-500 px-4 md:px-6 py-2 md:py-3 rounded-full shadow-lg text-white font-bold hover:scale-105 cursor-pointer">🔄 Restart</div>
+        <button 
+          onClick={() => { navigateTo('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} 
+          className="btn-touch bg-white shadow-mobile rounded-full px-mobile hover-mobile-scale touch-feedback"
+        >
+          <span>← Back</span>
+        </button>
+        <button 
+          onClick={() => setCurrentQuestion(0)} 
+          className="btn-touch bg-orange-500 text-white font-bold shadow-mobile rounded-full px-mobile hover-mobile-scale touch-feedback"
+        >
+          <span>🔄</span>
+          <span className="hidden xs:inline ml-1">Restart</span>
+        </button>
       </div>
 
       {/* Difficulty/Category Selectors */}
       {currentScreen === 'phonics' && (
         <div className="mb-6">
-          <h2 className="text-lg md:text-xl font-bold text-center mb-4">📚 Choose Difficulty Level</h2>
-          <div className="flex justify-center gap-3">
+          <h2 className="text-mobile-lg font-bold text-center mb-4">📚 Choose Difficulty Level</h2>
+          <div className="flex justify-center gap-2 xs:gap-3 flex-wrap">
             {['easy', 'medium', 'hard'].map(level => (
               <button
                 key={level}
@@ -5578,10 +5645,10 @@ Your Student ✨
                   playSound('click');
                   triggerHaptic('light');
                 }}
-                className={`px-4 py-2 rounded-xl font-bold text-sm md:text-base transition-all transform hover:scale-105 active:scale-95 ${
+                className={`btn-touch font-bold text-mobile-sm touch-feedback ${
                   selectedPhonicsDifficulty === level
-                    ? 'bg-pink-500 text-white shadow-lg'
-                    : 'bg-pink-100 text-pink-700 hover:bg-pink-200'
+                    ? 'bg-pink-500 text-white shadow-mobile'
+                    : 'bg-pink-100 text-pink-700 hover-mobile'
                 }`}
               >
                 {level.charAt(0).toUpperCase() + level.slice(1)}
@@ -5593,8 +5660,8 @@ Your Student ✨
 
       {currentScreen === 'math' && (
         <div className="mb-6">
-          <h2 className="text-lg md:text-xl font-bold text-center mb-4">🔢 Choose Difficulty Level</h2>
-          <div className="flex justify-center gap-3">
+          <h2 className="text-mobile-lg font-bold text-center mb-4">🔢 Choose Difficulty Level</h2>
+          <div className="flex justify-center gap-2 xs:gap-3 flex-wrap">
             {['easy', 'medium', 'hard'].map(level => (
               <button
                 key={level}
@@ -5604,10 +5671,10 @@ Your Student ✨
                   playSound('click');
                   triggerHaptic('light');
                 }}
-                className={`px-4 py-2 rounded-xl font-bold text-sm md:text-base transition-all transform hover:scale-105 active:scale-95 ${
+                className={`btn-touch font-bold text-mobile-sm touch-feedback ${
                   selectedMathDifficulty === level
-                    ? 'bg-blue-500 text-white shadow-lg'
-                    : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                    ? 'bg-blue-500 text-white shadow-mobile'
+                    : 'bg-blue-100 text-blue-700 hover-mobile'
                 }`}
               >
                 {level.charAt(0).toUpperCase() + level.slice(1)}
@@ -6098,53 +6165,235 @@ Your Student ✨
           </div>
         </div>
       )}
+
+      {/* Audio Preferences Modal */}
+      <AudioPreferences 
+        isOpen={showAudioPreferences}
+        onClose={() => setShowAudioPreferences(false)}
+      />
+      
+      {/* Loading Overlay */}
+      <LoadingOverlay 
+        isVisible={isLoading}
+        type="game"
+        message={loadingMessage}
+      />
+
+      {/* Performance Dashboard */}
+      <PerformanceDashboard 
+        isVisible={showPerformanceDashboard}
+        onClose={() => setShowPerformanceDashboard(false)}
+      />
     </div>
+    </OfflineManager>
   );
 };
 
 // Main App Component with URL Routing
 const App = () => {
+  const [showSplashScreen, setShowSplashScreen] = useState(true);
+  const [showNotificationSettings, setShowNotificationSettings] = useState(false);
+  const [pwaRegistration, setPwaRegistration] = useState(null);
+
+  // Initialize global error handling on app start
+  useEffect(() => {
+    setupGlobalErrorHandling();
+    
+    // Configure error reporting for production
+    if (process.env.NODE_ENV === 'production') {
+      errorReporting.enable();
+    }
+    
+    // Set up network retry defaults
+    networkRetry.config.maxRetries = 3;
+    networkRetry.config.baseDelay = 1000;
+    
+    // Get PWA registration from global
+    if (window.emmyPWA?.registration) {
+      setPwaRegistration(window.emmyPWA.registration);
+    }
+    
+    // Check URL parameters for notification actions
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('from') === 'notification') {
+      console.log('App opened from notification');
+      // Track notification engagement
+      if (window.gtag) {
+        window.gtag('event', 'app_opened_from_notification', {
+          event_category: 'PWA'
+        });
+      }
+    }
+    
+    return () => {
+      // Cleanup on unmount
+      errorReporting.disable();
+    };
+  }, []);
+
+  const handleSplashComplete = () => {
+    setShowSplashScreen(false);
+  };
+
   return (
-    <ErrorBoundary>
-      <UserProvider>
-        <BrowserRouter basename="/emmys-learning-app">
-          <Routes>
-            <Route path="/" element={<EmmyStudyGame />} />
-            
-            {/* OAuth Callback Route */}
-            <Route path="/auth/callback" element={<AuthCallback />} />
-            
-            {/* Newsletter Routes */}
-            <Route path="/newsletter" element={<EmmyStudyGame />} />
-            <Route path="/newsletter/:week" element={<EmmyStudyGame />} />
-            
-            {/* Parent Reference Routes */}
-            <Route path="/parent-reference" element={<EmmyStudyGame />} />
-            <Route path="/parent-reference/:subject" element={<EmmyStudyGame />} />
-            <Route path="/parent-reference/:subject/:category" element={<EmmyStudyGame />} />
-            
-            {/* Game Routes */}
-            <Route path="/spelling" element={<EmmyStudyGame />} />
-            <Route path="/spelling/:mode" element={<EmmyStudyGame />} />
-            
-            {/* Progress & Achievement Routes */}
-            <Route path="/achievements" element={<EmmyStudyGame />} />
-            <Route path="/achievements/:category" element={<EmmyStudyGame />} />
-            <Route path="/progress" element={<EmmyStudyGame />} />
-            <Route path="/progress/:section" element={<EmmyStudyGame />} />
-            
-            {/* Settings Routes */}
-            <Route path="/customize" element={<EmmyStudyGame />} />
-            <Route path="/customize/:section" element={<EmmyStudyGame />} />
-            <Route path="/feedback" element={<EmmyStudyGame />} />
-            <Route path="/feedback/:category" element={<EmmyStudyGame />} />
-            
-            {/* Fallback */}
-            <Route path="*" element={<EmmyStudyGame />} />
-          </Routes>
-        </BrowserRouter>
-      </UserProvider>
+    <>
+      {/* Splash Screen */}
+      {showSplashScreen && (
+        <SplashScreen onComplete={handleSplashComplete} />
+      )}
+
+      {/* PWA Install Prompt */}
+      <PWAInstallPrompt />
+
+      {/* PWA Install Button */}
+      <PWAInstallButton />
+
+      {/* PWA Update Notification */}
+      {pwaRegistration && (
+        <PWAUpdateNotification 
+          registration={pwaRegistration}
+          onUpdate={() => console.log('App updated')}
+          onDismiss={() => console.log('Update dismissed')}
+        />
+      )}
+
+      {/* Notification Settings Modal */}
+      <NotificationSettings 
+        isOpen={showNotificationSettings}
+        onClose={() => setShowNotificationSettings(false)}
+      />
+
+      <ErrorBoundary 
+        name="AppRoot" 
+        level="application"
+        onError={(error, errorInfo, errorEntry) => {
+          // Log critical application errors
+          console.error('Critical App Error:', error, errorInfo);
+          errorReporting.reportError(error, {
+            level: 'critical',
+            component: 'AppRoot',
+            errorInfo
+          });
+      }}
+    >
+      <ErrorRecoveryProvider>
+        <UserProvider>
+          <NetworkErrorBoundary name="NetworkLayer">
+            <BrowserRouter basename="/emmys-learning-app">
+              <AsyncErrorBoundary name="RouterLayer">
+                <Routes>
+                  <Route path="/" element={
+                    <ErrorBoundary name="HomePage" showRetry={true}>
+                      <EmmyStudyGame />
+                    </ErrorBoundary>
+                  } />
+                  
+                  {/* OAuth Callback Route */}
+                  <Route path="/auth/callback" element={
+                    <ErrorBoundary name="AuthCallback" showRetry={true}>
+                      <AuthCallback />
+                    </ErrorBoundary>
+                  } />
+                  
+                  {/* Newsletter Routes */}
+                  <Route path="/newsletter" element={
+                    <ErrorBoundary name="Newsletter" showRetry={true}>
+                      <EmmyStudyGame />
+                    </ErrorBoundary>
+                  } />
+                  <Route path="/newsletter/:week" element={
+                    <ErrorBoundary name="NewsletterWeek" showRetry={true}>
+                      <EmmyStudyGame />
+                    </ErrorBoundary>
+                  } />
+                  
+                  {/* Parent Reference Routes */}
+                  <Route path="/parent-reference" element={
+                    <ErrorBoundary name="ParentReference" showRetry={true}>
+                      <EmmyStudyGame />
+                    </ErrorBoundary>
+                  } />
+                  <Route path="/parent-reference/:subject" element={
+                    <ErrorBoundary name="ParentReferenceSubject" showRetry={true}>
+                      <EmmyStudyGame />
+                    </ErrorBoundary>
+                  } />
+                  <Route path="/parent-reference/:subject/:category" element={
+                    <ErrorBoundary name="ParentReferenceCategory" showRetry={true}>
+                      <EmmyStudyGame />
+                    </ErrorBoundary>
+                  } />
+                  
+                  {/* Game Routes */}
+                  <Route path="/spelling" element={
+                    <ErrorBoundary name="SpellingGame" showRetry={true}>
+                      <EmmyStudyGame />
+                    </ErrorBoundary>
+                  } />
+                  <Route path="/spelling/:mode" element={
+                    <ErrorBoundary name="SpellingGameMode" showRetry={true}>
+                      <EmmyStudyGame />
+                    </ErrorBoundary>
+                  } />
+                  
+                  {/* Progress & Achievement Routes */}
+                  <Route path="/achievements" element={
+                    <ErrorBoundary name="Achievements" showRetry={true}>
+                      <EmmyStudyGame />
+                    </ErrorBoundary>
+                  } />
+                  <Route path="/achievements/:category" element={
+                    <ErrorBoundary name="AchievementCategory" showRetry={true}>
+                      <EmmyStudyGame />
+                    </ErrorBoundary>
+                  } />
+                  <Route path="/progress" element={
+                    <ErrorBoundary name="Progress" showRetry={true}>
+                      <EmmyStudyGame />
+                    </ErrorBoundary>
+                  } />
+                  <Route path="/progress/:section" element={
+                    <ErrorBoundary name="ProgressSection" showRetry={true}>
+                      <EmmyStudyGame />
+                    </ErrorBoundary>
+                  } />
+                  
+                  {/* Settings Routes */}
+                  <Route path="/customize" element={
+                    <ErrorBoundary name="Customize" showRetry={true}>
+                      <EmmyStudyGame />
+                    </ErrorBoundary>
+                  } />
+                  <Route path="/customize/:section" element={
+                    <ErrorBoundary name="CustomizeSection" showRetry={true}>
+                      <EmmyStudyGame />
+                    </ErrorBoundary>
+                  } />
+                  <Route path="/feedback" element={
+                    <ErrorBoundary name="Feedback" showRetry={true}>
+                      <EmmyStudyGame />
+                    </ErrorBoundary>
+                  } />
+                  <Route path="/feedback/:category" element={
+                    <ErrorBoundary name="FeedbackCategory" showRetry={true}>
+                      <EmmyStudyGame />
+                    </ErrorBoundary>
+                  } />
+                  
+                  {/* Fallback */}
+                  <Route path="*" element={
+                    <ErrorBoundary name="NotFound" showRetry={true}>
+                      <EmmyStudyGame />
+                    </ErrorBoundary>
+                  } />
+                </Routes>
+              </AsyncErrorBoundary>
+            </BrowserRouter>
+          </NetworkErrorBoundary>
+        </UserProvider>
+      </ErrorRecoveryProvider>
     </ErrorBoundary>
+    </>
   );
 };
 

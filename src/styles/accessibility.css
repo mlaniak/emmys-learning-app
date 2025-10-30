@@ -1,0 +1,1735 @@
+/* Accessibility Styles */
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Skip links */
+.skip-links {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+}
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: #000;
+  color: #fff;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 0 0 4px 4px;
+  font-weight: bold;
+  transition: top 0.2s ease-in-out;
+}
+
+.skip-link:focus,
+.skip-link.visible {
+  top: 0;
+}
+
+/* High contrast mode with WCAG AA compliant color ratios */
+.high-contrast {
+  /* Background colors - 21:1 contrast ratio (AAA level) */
+  --bg-primary: #000000;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #1a1a1a;
+  --bg-quaternary: #f5f5f5;
+  
+  /* Text colors - minimum 7:1 contrast ratio (AA level for large text, AAA for normal) */
+  --text-primary: #ffffff;
+  --text-secondary: #000000;
+  --text-muted: #cccccc;
+  --text-inverse: #333333;
+  
+  /* Border and outline colors */
+  --border-color: #ffffff;
+  --border-secondary: #cccccc;
+  --border-focus: #ffff00;
+  
+  /* Interactive element colors - WCAG AA compliant */
+  --button-bg: #ffffff;
+  --button-text: #000000;
+  --button-border: #000000;
+  --button-hover-bg: #ffff00;
+  --button-hover-text: #000000;
+  --button-hover-border: #000000;
+  --button-active-bg: #cccc00;
+  --button-active-text: #000000;
+  --button-disabled-bg: #666666;
+  --button-disabled-text: #cccccc;
+  
+  /* Link colors - 7:1 contrast ratio */
+  --link-color: #66ccff;
+  --link-visited: #cc99ff;
+  --link-hover: #99ddff;
+  --link-active: #33aaff;
+  
+  /* Status colors - WCAG AA compliant */
+  --success-bg: #004d00;
+  --success-text: #00ff00;
+  --success-border: #00cc00;
+  --error-bg: #660000;
+  --error-text: #ff6666;
+  --error-border: #ff0000;
+  --warning-bg: #663300;
+  --warning-text: #ffcc00;
+  --warning-border: #ff9900;
+  --info-bg: #003366;
+  --info-text: #66ccff;
+  --info-border: #0099ff;
+  
+  /* Focus indicators - high visibility */
+  --focus-color: #ffff00;
+  --focus-bg: #000000;
+  --focus-width: 4px;
+  --focus-offset: 2px;
+  
+  /* Form element colors */
+  --input-bg: #ffffff;
+  --input-text: #000000;
+  --input-border: #000000;
+  --input-focus-bg: #ffffff;
+  --input-focus-text: #000000;
+  --input-focus-border: #ffff00;
+  --input-placeholder: #666666;
+  
+  /* Card and surface colors */
+  --surface-primary: #1a1a1a;
+  --surface-secondary: #333333;
+  --surface-tertiary: #4d4d4d;
+  --surface-elevated: #666666;
+}
+
+/* Apply high contrast colors with proper specificity */
+.high-contrast {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+.high-contrast *:not(img):not(svg):not(video):not(canvas) {
+  background-color: inherit !important;
+  color: inherit !important;
+}
+
+/* Specific element overrides for better contrast */
+.high-contrast .bg-white,
+.high-contrast [class*="bg-white"] {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-secondary) !important;
+}
+
+.high-contrast .bg-gray,
+.high-contrast [class*="bg-gray"] {
+  background-color: var(--surface-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+.high-contrast .text-gray,
+.high-contrast [class*="text-gray"] {
+  color: var(--text-muted) !important;
+}
+
+/* Button styles with WCAG AA compliance */
+.high-contrast button,
+.high-contrast .button,
+.high-contrast [role="button"],
+.high-contrast input[type="button"],
+.high-contrast input[type="submit"],
+.high-contrast input[type="reset"] {
+  background-color: var(--button-bg) !important;
+  color: var(--button-text) !important;
+  border: 2px solid var(--button-border) !important;
+  min-height: 44px !important;
+  padding: 8px 16px !important;
+  font-weight: bold !important;
+}
+
+.high-contrast button:hover,
+.high-contrast .button:hover,
+.high-contrast [role="button"]:hover,
+.high-contrast input[type="button"]:hover,
+.high-contrast input[type="submit"]:hover,
+.high-contrast input[type="reset"]:hover {
+  background-color: var(--button-hover-bg) !important;
+  color: var(--button-hover-text) !important;
+  border-color: var(--button-hover-border) !important;
+}
+
+.high-contrast button:active,
+.high-contrast .button:active,
+.high-contrast [role="button"]:active {
+  background-color: var(--button-active-bg) !important;
+  color: var(--button-active-text) !important;
+}
+
+.high-contrast button:disabled,
+.high-contrast .button:disabled,
+.high-contrast [role="button"]:disabled,
+.high-contrast button[aria-disabled="true"],
+.high-contrast .button[aria-disabled="true"],
+.high-contrast [role="button"][aria-disabled="true"] {
+  background-color: var(--button-disabled-bg) !important;
+  color: var(--button-disabled-text) !important;
+  border-color: var(--button-disabled-text) !important;
+  opacity: 1 !important;
+}
+
+/* Link styles */
+.high-contrast a,
+.high-contrast [role="link"] {
+  color: var(--link-color) !important;
+  text-decoration: underline !important;
+  font-weight: bold !important;
+}
+
+.high-contrast a:visited {
+  color: var(--link-visited) !important;
+}
+
+.high-contrast a:hover,
+.high-contrast [role="link"]:hover {
+  color: var(--link-hover) !important;
+  text-decoration: none !important;
+  background-color: var(--bg-tertiary) !important;
+  padding: 2px 4px !important;
+}
+
+.high-contrast a:active,
+.high-contrast [role="link"]:active {
+  color: var(--link-active) !important;
+}
+
+/* Form elements */
+.high-contrast input,
+.high-contrast textarea,
+.high-contrast select {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border: 2px solid var(--input-border) !important;
+  min-height: 44px !important;
+  padding: 8px 12px !important;
+}
+
+.high-contrast input::placeholder,
+.high-contrast textarea::placeholder {
+  color: var(--input-placeholder) !important;
+  opacity: 1 !important;
+}
+
+.high-contrast input:focus,
+.high-contrast textarea:focus,
+.high-contrast select:focus {
+  background-color: var(--input-focus-bg) !important;
+  color: var(--input-focus-text) !important;
+  border-color: var(--input-focus-border) !important;
+  outline: var(--focus-width) solid var(--focus-color) !important;
+  outline-offset: var(--focus-offset) !important;
+}
+
+/* Status messages */
+.high-contrast .success,
+.high-contrast [class*="success"] {
+  background-color: var(--success-bg) !important;
+  color: var(--success-text) !important;
+  border: 2px solid var(--success-border) !important;
+}
+
+.high-contrast .error,
+.high-contrast [class*="error"] {
+  background-color: var(--error-bg) !important;
+  color: var(--error-text) !important;
+  border: 2px solid var(--error-border) !important;
+}
+
+.high-contrast .warning,
+.high-contrast [class*="warning"] {
+  background-color: var(--warning-bg) !important;
+  color: var(--warning-text) !important;
+  border: 2px solid var(--warning-border) !important;
+}
+
+.high-contrast .info,
+.high-contrast [class*="info"] {
+  background-color: var(--info-bg) !important;
+  color: var(--info-text) !important;
+  border: 2px solid var(--info-border) !important;
+}
+
+/* Cards and surfaces */
+.high-contrast .card,
+.high-contrast [class*="card"] {
+  background-color: var(--surface-primary) !important;
+  color: var(--text-primary) !important;
+  border: 2px solid var(--border-color) !important;
+}
+
+.high-contrast .modal,
+.high-contrast [role="dialog"] {
+  background-color: var(--surface-elevated) !important;
+  color: var(--text-primary) !important;
+  border: 3px solid var(--border-color) !important;
+}
+
+/* Reduced motion for users with vestibular disorders */
+.reduce-motion,
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  /* Disable all animations and transitions */
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  transition-delay: 0ms !important;
+  
+  /* Disable scroll behavior animations */
+  scroll-behavior: auto !important;
+  
+  /* Disable transform animations */
+  transform: none !important;
+  
+  /* Disable parallax and 3D effects */
+  transform-style: flat !important;
+  perspective: none !important;
+  
+  /* Disable auto-playing media */
+  animation-play-state: paused !important;
+}
+
+/* Specific overrides for common animation classes */
+.reduce-motion .animate-spin,
+.reduce-motion .animate-ping,
+.reduce-motion .animate-pulse,
+.reduce-motion .animate-bounce {
+  animation: none !important;
+}
+
+.reduce-motion .transition-all,
+.reduce-motion .transition-colors,
+.reduce-motion .transition-opacity,
+.reduce-motion .transition-shadow,
+.reduce-motion .transition-transform {
+  transition: none !important;
+}
+
+/* Disable hover effects that involve motion */
+.reduce-motion .hover-lift:hover,
+.reduce-motion .hover-glow:hover,
+.reduce-motion .hover-scale:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Disable carousel and slider auto-advance */
+.reduce-motion .carousel,
+.reduce-motion .slider {
+  animation-play-state: paused !important;
+}
+
+/* Disable loading spinners - replace with static indicators */
+.reduce-motion .loading-spinner {
+  animation: none !important;
+}
+
+.reduce-motion .loading-spinner::after {
+  content: "Loading..." !important;
+  display: block !important;
+  text-align: center !important;
+  font-weight: bold !important;
+}
+
+/* Disable parallax scrolling */
+.reduce-motion .parallax {
+  transform: none !important;
+  position: static !important;
+}
+
+/* Disable auto-scrolling elements */
+.reduce-motion .auto-scroll {
+  overflow: hidden !important;
+  scroll-behavior: auto !important;
+}
+
+/* Disable floating action buttons animation */
+.reduce-motion .fab {
+  animation: none !important;
+  transform: none !important;
+}
+
+/* Disable notification animations */
+.reduce-motion .notification-enter,
+.reduce-motion .notification-exit,
+.reduce-motion .toast-enter,
+.reduce-motion .toast-exit {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Disable modal animations */
+.reduce-motion .modal-enter,
+.reduce-motion .modal-exit,
+.reduce-motion .overlay-enter,
+.reduce-motion .overlay-exit {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Disable page transition animations */
+.reduce-motion .page-enter,
+.reduce-motion .page-exit,
+.reduce-motion .route-enter,
+.reduce-motion .route-exit {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Disable video autoplay */
+.reduce-motion video {
+  animation-play-state: paused !important;
+}
+
+.reduce-motion video[autoplay] {
+  autoplay: false !important;
+}
+
+/* Disable GIF animations */
+.reduce-motion img[src$=".gif"] {
+  animation-play-state: paused !important;
+}
+
+/* Safe animations that can remain for reduced motion users */
+.reduce-motion .safe-animation {
+  /* Allow simple opacity changes */
+  transition: opacity 0.2s ease !important;
+}
+
+.reduce-motion .safe-focus {
+  /* Allow focus indicators */
+  transition: outline 0.1s ease !important;
+}
+
+/* Respect system preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  /* Allow essential focus transitions */
+  *:focus {
+    transition: outline 0.1s ease !important;
+  }
+}
+
+/* Text scaling with responsive typography */
+:root {
+  --text-scale: 1;
+  --base-font-size: 16px;
+  --line-height-scale: 1;
+  --letter-spacing-scale: 1;
+}
+
+/* Base text scaling */
+.text-scalable {
+  font-size: calc(var(--base-font-size) * var(--text-scale));
+  line-height: calc(1.5 * var(--line-height-scale));
+  letter-spacing: calc(0.01em * var(--letter-spacing-scale));
+}
+
+/* Heading scaling with proper hierarchy */
+.text-scalable h1,
+h1.text-scalable {
+  font-size: calc(2.5rem * var(--text-scale));
+  line-height: calc(1.2 * var(--line-height-scale));
+  margin-bottom: calc(1rem * var(--text-scale));
+}
+
+.text-scalable h2,
+h2.text-scalable {
+  font-size: calc(2rem * var(--text-scale));
+  line-height: calc(1.3 * var(--line-height-scale));
+  margin-bottom: calc(0.875rem * var(--text-scale));
+}
+
+.text-scalable h3,
+h3.text-scalable {
+  font-size: calc(1.75rem * var(--text-scale));
+  line-height: calc(1.4 * var(--line-height-scale));
+  margin-bottom: calc(0.75rem * var(--text-scale));
+}
+
+.text-scalable h4,
+h4.text-scalable {
+  font-size: calc(1.5rem * var(--text-scale));
+  line-height: calc(1.4 * var(--line-height-scale));
+  margin-bottom: calc(0.625rem * var(--text-scale));
+}
+
+.text-scalable h5,
+h5.text-scalable {
+  font-size: calc(1.25rem * var(--text-scale));
+  line-height: calc(1.5 * var(--line-height-scale));
+  margin-bottom: calc(0.5rem * var(--text-scale));
+}
+
+.text-scalable h6,
+h6.text-scalable {
+  font-size: calc(1.125rem * var(--text-scale));
+  line-height: calc(1.5 * var(--line-height-scale));
+  margin-bottom: calc(0.5rem * var(--text-scale));
+}
+
+/* Body text scaling */
+.text-scalable p,
+p.text-scalable {
+  font-size: calc(1rem * var(--text-scale));
+  line-height: calc(1.6 * var(--line-height-scale));
+  margin-bottom: calc(1rem * var(--text-scale));
+}
+
+.text-scalable small,
+small.text-scalable {
+  font-size: calc(0.875rem * var(--text-scale));
+  line-height: calc(1.5 * var(--line-height-scale));
+}
+
+.text-scalable .text-xs {
+  font-size: calc(0.75rem * var(--text-scale));
+  line-height: calc(1.4 * var(--line-height-scale));
+}
+
+.text-scalable .text-sm {
+  font-size: calc(0.875rem * var(--text-scale));
+  line-height: calc(1.5 * var(--line-height-scale));
+}
+
+.text-scalable .text-base {
+  font-size: calc(1rem * var(--text-scale));
+  line-height: calc(1.5 * var(--line-height-scale));
+}
+
+.text-scalable .text-lg {
+  font-size: calc(1.125rem * var(--text-scale));
+  line-height: calc(1.5 * var(--line-height-scale));
+}
+
+.text-scalable .text-xl {
+  font-size: calc(1.25rem * var(--text-scale));
+  line-height: calc(1.4 * var(--line-height-scale));
+}
+
+.text-scalable .text-2xl {
+  font-size: calc(1.5rem * var(--text-scale));
+  line-height: calc(1.3 * var(--line-height-scale));
+}
+
+.text-scalable .text-3xl {
+  font-size: calc(1.875rem * var(--text-scale));
+  line-height: calc(1.2 * var(--line-height-scale));
+}
+
+.text-scalable .text-4xl {
+  font-size: calc(2.25rem * var(--text-scale));
+  line-height: calc(1.1 * var(--line-height-scale));
+}
+
+/* Button and interactive element scaling */
+.text-scalable button,
+.text-scalable .button,
+.text-scalable [role="button"] {
+  font-size: calc(1rem * var(--text-scale));
+  padding: calc(0.5rem * var(--text-scale)) calc(1rem * var(--text-scale));
+  min-height: calc(44px * var(--text-scale));
+  line-height: calc(1.4 * var(--line-height-scale));
+}
+
+.text-scalable input,
+.text-scalable textarea,
+.text-scalable select {
+  font-size: calc(1rem * var(--text-scale));
+  padding: calc(0.5rem * var(--text-scale)) calc(0.75rem * var(--text-scale));
+  min-height: calc(44px * var(--text-scale));
+  line-height: calc(1.4 * var(--line-height-scale));
+}
+
+/* List scaling */
+.text-scalable ul,
+.text-scalable ol {
+  margin-bottom: calc(1rem * var(--text-scale));
+  padding-left: calc(1.5rem * var(--text-scale));
+}
+
+.text-scalable li {
+  margin-bottom: calc(0.25rem * var(--text-scale));
+  line-height: calc(1.6 * var(--line-height-scale));
+}
+
+/* Table scaling */
+.text-scalable table {
+  font-size: calc(1rem * var(--text-scale));
+}
+
+.text-scalable th,
+.text-scalable td {
+  padding: calc(0.5rem * var(--text-scale)) calc(0.75rem * var(--text-scale));
+  line-height: calc(1.4 * var(--line-height-scale));
+}
+
+/* Responsive text scaling adjustments */
+@media (max-width: 768px) {
+  .text-scalable {
+    --base-font-size: 18px; /* Larger base size for mobile */
+  }
+  
+  .text-scalable h1 {
+    font-size: calc(2rem * var(--text-scale));
+  }
+  
+  .text-scalable h2 {
+    font-size: calc(1.75rem * var(--text-scale));
+  }
+  
+  .text-scalable h3 {
+    font-size: calc(1.5rem * var(--text-scale));
+  }
+}
+
+@media (max-width: 480px) {
+  .text-scalable {
+    --base-font-size: 20px; /* Even larger for small screens */
+  }
+  
+  .text-scalable h1 {
+    font-size: calc(1.75rem * var(--text-scale));
+  }
+  
+  .text-scalable h2 {
+    font-size: calc(1.5rem * var(--text-scale));
+  }
+}
+
+/* Text scaling utility classes */
+.text-scale-small {
+  --text-scale: 0.875;
+  --line-height-scale: 1.1;
+}
+
+.text-scale-normal {
+  --text-scale: 1;
+  --line-height-scale: 1;
+}
+
+.text-scale-large {
+  --text-scale: 1.2;
+  --line-height-scale: 1.1;
+}
+
+.text-scale-extra-large {
+  --text-scale: 1.5;
+  --line-height-scale: 1.2;
+  --letter-spacing-scale: 1.1;
+}
+
+.text-scale-maximum {
+  --text-scale: 2;
+  --line-height-scale: 1.3;
+  --letter-spacing-scale: 1.2;
+}
+
+/* Enhanced focus indicators that meet WCAG 2.1 AA standards */
+:root {
+  --focus-color-primary: #005fcc;
+  --focus-color-secondary: #ffff00;
+  --focus-color-error: #dc2626;
+  --focus-color-success: #16a34a;
+  --focus-width: 3px;
+  --focus-offset: 2px;
+  --focus-inner-width: 1px;
+  --focus-inner-color: #ffffff;
+}
+
+/* Base focus styles - minimum 3px outline with high contrast */
+.enhanced-focus *:focus,
+.keyboard-navigation *:focus {
+  outline: var(--focus-width) solid var(--focus-color-primary) !important;
+  outline-offset: var(--focus-offset) !important;
+  box-shadow: 0 0 0 var(--focus-inner-width) var(--focus-inner-color), 
+              0 0 0 calc(var(--focus-width) + var(--focus-inner-width)) var(--focus-color-primary) !important;
+  position: relative !important;
+  z-index: 1000 !important;
+}
+
+/* Button focus indicators with high visibility */
+.enhanced-focus button:focus,
+.enhanced-focus .button:focus,
+.enhanced-focus [role="button"]:focus,
+.enhanced-focus input[type="button"]:focus,
+.enhanced-focus input[type="submit"]:focus,
+.enhanced-focus input[type="reset"]:focus,
+.keyboard-navigation button:focus,
+.keyboard-navigation .button:focus,
+.keyboard-navigation [role="button"]:focus,
+.keyboard-navigation input[type="button"]:focus,
+.keyboard-navigation input[type="submit"]:focus,
+.keyboard-navigation input[type="reset"]:focus {
+  outline: var(--focus-width) solid var(--focus-color-secondary) !important;
+  outline-offset: var(--focus-offset) !important;
+  box-shadow: 0 0 0 var(--focus-inner-width) #000000, 
+              0 0 0 calc(var(--focus-width) + var(--focus-inner-width)) var(--focus-color-secondary),
+              0 0 8px rgba(255, 255, 0, 0.5) !important;
+  background-color: rgba(255, 255, 0, 0.1) !important;
+}
+
+/* Link focus indicators */
+.enhanced-focus a:focus,
+.enhanced-focus [role="link"]:focus,
+.keyboard-navigation a:focus,
+.keyboard-navigation [role="link"]:focus {
+  outline: var(--focus-width) solid var(--focus-color-primary) !important;
+  outline-offset: var(--focus-offset) !important;
+  background-color: rgba(0, 95, 204, 0.1) !important;
+  text-decoration: underline !important;
+  text-decoration-thickness: 3px !important;
+  text-underline-offset: 4px !important;
+}
+
+/* Form element focus indicators */
+.enhanced-focus input:focus,
+.enhanced-focus textarea:focus,
+.enhanced-focus select:focus,
+.keyboard-navigation input:focus,
+.keyboard-navigation textarea:focus,
+.keyboard-navigation select:focus {
+  outline: var(--focus-width) solid var(--focus-color-primary) !important;
+  outline-offset: var(--focus-offset) !important;
+  border-color: var(--focus-color-primary) !important;
+  box-shadow: 0 0 0 var(--focus-inner-width) var(--focus-inner-color), 
+              0 0 0 calc(var(--focus-width) + var(--focus-inner-width)) var(--focus-color-primary),
+              inset 0 0 0 2px rgba(0, 95, 204, 0.1) !important;
+}
+
+/* Checkbox and radio focus indicators */
+.enhanced-focus input[type="checkbox"]:focus,
+.enhanced-focus input[type="radio"]:focus,
+.keyboard-navigation input[type="checkbox"]:focus,
+.keyboard-navigation input[type="radio"]:focus {
+  outline: var(--focus-width) solid var(--focus-color-secondary) !important;
+  outline-offset: var(--focus-offset) !important;
+  box-shadow: 0 0 0 var(--focus-inner-width) #000000, 
+              0 0 0 calc(var(--focus-width) + var(--focus-inner-width)) var(--focus-color-secondary) !important;
+}
+
+/* Error state focus indicators */
+.enhanced-focus .error:focus,
+.enhanced-focus [aria-invalid="true"]:focus,
+.enhanced-focus .is-invalid:focus,
+.keyboard-navigation .error:focus,
+.keyboard-navigation [aria-invalid="true"]:focus,
+.keyboard-navigation .is-invalid:focus {
+  outline: var(--focus-width) solid var(--focus-color-error) !important;
+  outline-offset: var(--focus-offset) !important;
+  box-shadow: 0 0 0 var(--focus-inner-width) var(--focus-inner-color), 
+              0 0 0 calc(var(--focus-width) + var(--focus-inner-width)) var(--focus-color-error) !important;
+}
+
+/* Success state focus indicators */
+.enhanced-focus .success:focus,
+.enhanced-focus [aria-invalid="false"]:focus,
+.enhanced-focus .is-valid:focus,
+.keyboard-navigation .success:focus,
+.keyboard-navigation [aria-invalid="false"]:focus,
+.keyboard-navigation .is-valid:focus {
+  outline: var(--focus-width) solid var(--focus-color-success) !important;
+  outline-offset: var(--focus-offset) !important;
+  box-shadow: 0 0 0 var(--focus-inner-width) var(--focus-inner-color), 
+              0 0 0 calc(var(--focus-width) + var(--focus-inner-width)) var(--focus-color-success) !important;
+}
+
+/* Modal and dialog focus indicators */
+.enhanced-focus [role="dialog"]:focus,
+.enhanced-focus [role="alertdialog"]:focus,
+.enhanced-focus .modal:focus,
+.keyboard-navigation [role="dialog"]:focus,
+.keyboard-navigation [role="alertdialog"]:focus,
+.keyboard-navigation .modal:focus {
+  outline: 4px solid var(--focus-color-primary) !important;
+  outline-offset: 4px !important;
+  box-shadow: 0 0 0 2px var(--focus-inner-color), 
+              0 0 0 6px var(--focus-color-primary),
+              0 0 20px rgba(0, 95, 204, 0.3) !important;
+}
+
+/* Tab focus indicators */
+.enhanced-focus [role="tab"]:focus,
+.keyboard-navigation [role="tab"]:focus {
+  outline: var(--focus-width) solid var(--focus-color-secondary) !important;
+  outline-offset: var(--focus-offset) !important;
+  background-color: rgba(255, 255, 0, 0.2) !important;
+  border-bottom: 4px solid var(--focus-color-secondary) !important;
+}
+
+/* Menu item focus indicators */
+.enhanced-focus [role="menuitem"]:focus,
+.enhanced-focus [role="menuitemcheckbox"]:focus,
+.enhanced-focus [role="menuitemradio"]:focus,
+.keyboard-navigation [role="menuitem"]:focus,
+.keyboard-navigation [role="menuitemcheckbox"]:focus,
+.keyboard-navigation [role="menuitemradio"]:focus {
+  outline: var(--focus-width) solid var(--focus-color-primary) !important;
+  outline-offset: 0px !important;
+  background-color: rgba(0, 95, 204, 0.2) !important;
+  color: #000000 !important;
+}
+
+/* Listbox and option focus indicators */
+.enhanced-focus [role="listbox"]:focus,
+.enhanced-focus [role="option"]:focus,
+.keyboard-navigation [role="listbox"]:focus,
+.keyboard-navigation [role="option"]:focus {
+  outline: var(--focus-width) solid var(--focus-color-primary) !important;
+  outline-offset: 0px !important;
+  background-color: rgba(0, 95, 204, 0.2) !important;
+}
+
+/* Grid and cell focus indicators */
+.enhanced-focus [role="grid"]:focus,
+.enhanced-focus [role="gridcell"]:focus,
+.keyboard-navigation [role="grid"]:focus,
+.keyboard-navigation [role="gridcell"]:focus {
+  outline: var(--focus-width) solid var(--focus-color-primary) !important;
+  outline-offset: var(--focus-offset) !important;
+  box-shadow: 0 0 0 var(--focus-inner-width) var(--focus-inner-color), 
+              0 0 0 calc(var(--focus-width) + var(--focus-inner-width)) var(--focus-color-primary) !important;
+}
+
+/* Custom interactive elements */
+.enhanced-focus [data-interactive]:focus,
+.enhanced-focus .clickable:focus,
+.keyboard-navigation [data-interactive]:focus,
+.keyboard-navigation .clickable:focus {
+  outline: var(--focus-width) solid var(--focus-color-primary) !important;
+  outline-offset: var(--focus-offset) !important;
+  background-color: rgba(0, 95, 204, 0.1) !important;
+  cursor: pointer !important;
+}
+
+/* Focus indicators for disabled elements */
+.enhanced-focus *:disabled:focus,
+.enhanced-focus [aria-disabled="true"]:focus,
+.keyboard-navigation *:disabled:focus,
+.keyboard-navigation [aria-disabled="true"]:focus {
+  outline: var(--focus-width) solid #666666 !important;
+  outline-offset: var(--focus-offset) !important;
+  box-shadow: 0 0 0 var(--focus-inner-width) var(--focus-inner-color), 
+              0 0 0 calc(var(--focus-width) + var(--focus-inner-width)) #666666 !important;
+}
+
+/* High contrast mode focus adjustments */
+.high-contrast.enhanced-focus *:focus,
+.high-contrast.keyboard-navigation *:focus {
+  outline-color: var(--focus-color) !important;
+  box-shadow: 0 0 0 var(--focus-inner-width) var(--focus-bg), 
+              0 0 0 calc(var(--focus-width) + var(--focus-inner-width)) var(--focus-color) !important;
+}
+
+/* Mobile focus indicators - larger touch targets */
+@media (max-width: 768px) {
+  .enhanced-focus *:focus,
+  .keyboard-navigation *:focus {
+    --focus-width: 4px;
+    --focus-offset: 3px;
+  }
+  
+  .enhanced-focus button:focus,
+  .enhanced-focus .button:focus,
+  .enhanced-focus [role="button"]:focus,
+  .keyboard-navigation button:focus,
+  .keyboard-navigation .button:focus,
+  .keyboard-navigation [role="button"]:focus {
+    outline-width: 4px !important;
+    outline-offset: 3px !important;
+    box-shadow: 0 0 0 2px #000000, 
+                0 0 0 6px var(--focus-color-secondary),
+                0 0 12px rgba(255, 255, 0, 0.5) !important;
+  }
+}
+
+/* Focus visible polyfill support */
+.js-focus-visible *:focus:not(.focus-visible) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.js-focus-visible *.focus-visible {
+  outline: var(--focus-width) solid var(--focus-color-primary) !important;
+  outline-offset: var(--focus-offset) !important;
+}
+
+/* Keyboard navigation indicators */
+.keyboard-navigation {
+  --focus-ring-color: #005fcc;
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 2px;
+}
+
+.keyboard-navigation-container {
+  position: relative;
+}
+
+.keyboard-navigation-container:focus-within::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px dashed var(--focus-ring-color);
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+/* Interactive elements */
+[data-interactive] {
+  cursor: pointer;
+  position: relative;
+}
+
+[data-interactive]:focus {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+[data-interactive]:hover {
+  opacity: 0.8;
+}
+
+/* Screen reader mode optimizations */
+.screen-reader-mode {
+  --animation-duration: 0s;
+  --transition-duration: 0s;
+}
+
+.screen-reader-mode .decorative {
+  display: none !important;
+}
+
+.screen-reader-mode .visual-only {
+  display: none !important;
+}
+
+/* Accessibility settings modal */
+.accessibility-settings-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 20px;
+}
+
+.accessibility-settings-modal {
+  background: white;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.accessibility-settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.accessibility-settings-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-button:hover {
+  background: #f5f5f5;
+}
+
+.accessibility-settings-content {
+  padding: 24px;
+}
+
+.setting-group {
+  margin-bottom: 32px;
+}
+
+.setting-group h3 {
+  margin: 0 0 16px 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.setting-item {
+  margin-bottom: 20px;
+}
+
+.setting-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.setting-label input[type="checkbox"],
+.setting-label input[type="radio"] {
+  margin-top: 2px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.setting-description {
+  margin: 8px 0 0 30px;
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.4;
+}
+
+.text-scale-options {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.radio-option input[type="radio"] {
+  width: 16px;
+  height: 16px;
+}
+
+.accessibility-settings-footer {
+  padding: 20px 24px;
+  border-top: 1px solid #e5e5e5;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.primary-button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.primary-button:hover {
+  background: #0056b3;
+}
+
+.primary-button:focus {
+  outline: 3px solid #80bdff;
+  outline-offset: 2px;
+}
+
+/* High contrast mode for accessibility settings */
+.high-contrast .accessibility-settings-modal {
+  background: var(--bg-primary) !important;
+  border: 2px solid var(--border-color) !important;
+}
+
+.high-contrast .accessibility-settings-header {
+  border-bottom-color: var(--border-color) !important;
+}
+
+.high-contrast .accessibility-settings-footer {
+  border-top-color: var(--border-color) !important;
+}
+
+/* Focus management */
+[data-focus-trap="true"] {
+  position: relative;
+}
+
+/* Roving tabindex support */
+[role="grid"] [tabindex="0"],
+[role="listbox"] [tabindex="0"],
+[role="tablist"] [tabindex="0"] {
+  outline: none;
+}
+
+[role="grid"] [tabindex="0"]:focus,
+[role="listbox"] [tabindex="0"]:focus,
+[role="tablist"] [tabindex="0"]:focus {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Grid navigation */
+[data-keyboard-navigation="grid"] {
+  display: grid;
+  gap: 8px;
+}
+
+[data-keyboard-navigation="grid"][data-grid-columns="2"] {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+[data-keyboard-navigation="grid"][data-grid-columns="3"] {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+[data-keyboard-navigation="grid"][data-grid-columns="4"] {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* List navigation */
+[data-keyboard-navigation="list"] {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Tab navigation */
+[data-keyboard-navigation="tabs"] {
+  display: flex;
+  gap: 4px;
+}
+
+/* Responsive accessibility */
+@media (max-width: 768px) {
+  .accessibility-settings-modal {
+    margin: 10px;
+    max-height: calc(100vh - 20px);
+  }
+  
+  .skip-link {
+    left: 4px;
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+  
+  .enhanced-focus *:focus,
+  .keyboard-navigation *:focus {
+    outline-width: 2px !important;
+    outline-offset: 1px !important;
+  }
+}
+
+/* Print styles for accessibility */
+@media print {
+  .skip-links,
+  .accessibility-settings-overlay {
+    display: none !important;
+  }
+  
+  .sr-only {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    clip: auto !important;
+    white-space: normal !important;
+  }
+}
+
+/* Windows High Contrast Mode support */
+@media (forced-colors: active) {
+  .skip-link {
+    forced-color-adjust: none;
+    background: ButtonText;
+    color: ButtonFace;
+    border: 1px solid ButtonText;
+  }
+  
+  .skip-link:focus {
+    background: Highlight;
+    color: HighlightText;
+    border-color: HighlightText;
+  }
+  
+  .accessibility-settings-modal {
+    border: 1px solid ButtonText;
+  }
+  
+  .primary-button {
+    forced-color-adjust: none;
+    background: ButtonFace;
+    color: ButtonText;
+    border: 1px solid ButtonText;
+  }
+  
+  .primary-button:hover,
+  .primary-button:focus {
+    background: Highlight;
+    color: HighlightText;
+    border-color: HighlightText;
+  }
+}
+/* Acce
+ssible Image Component Styles */
+.accessible-image-container {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+}
+
+.accessible-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  transition: opacity 0.3s ease;
+}
+
+.accessible-image.loading {
+  opacity: 0;
+}
+
+.accessible-image.loaded {
+  opacity: 1;
+}
+
+.accessible-image.error {
+  display: none;
+}
+
+/* Image loading placeholder */
+.image-loading-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+  background-color: #f5f5f5;
+  border: 2px dashed #cccccc;
+  border-radius: 4px;
+  color: #666666;
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e0e0e0;
+  border-top: 3px solid #666666;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Image error placeholder */
+.image-error-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+  padding: 20px;
+  background-color: #fef2f2;
+  border: 2px solid #fecaca;
+  border-radius: 4px;
+  color: #dc2626;
+  text-align: center;
+}
+
+.error-icon {
+  margin-bottom: 8px;
+  opacity: 0.7;
+}
+
+.error-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Image caption */
+.image-caption {
+  margin-top: 8px;
+  font-size: 0.875rem;
+  color: #666666;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* High contrast mode adjustments */
+.high-contrast .image-loading-placeholder {
+  background-color: var(--surface-secondary) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.high-contrast .loading-spinner {
+  border-color: var(--text-muted) !important;
+  border-top-color: var(--text-primary) !important;
+}
+
+.high-contrast .image-error-placeholder {
+  background-color: var(--error-bg) !important;
+  border-color: var(--error-border) !important;
+  color: var(--error-text) !important;
+}
+
+.high-contrast .image-caption {
+  color: var(--text-muted) !important;
+}
+
+/* Accessible Icon Component Styles */
+.accessible-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.accessible-icon.decorative {
+  pointer-events: none;
+}
+
+.accessible-icon.semantic {
+  cursor: default;
+}
+
+.accessible-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+/* Accessible Button Component Styles */
+.accessible-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  min-height: 44px;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+/* Button variants */
+.accessible-button.variant-primary {
+  background-color: #3b82f6;
+  color: #ffffff;
+  border-color: #3b82f6;
+}
+
+.accessible-button.variant-primary:hover:not(:disabled) {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+
+.accessible-button.variant-primary:active:not(:disabled) {
+  background-color: #1d4ed8;
+  border-color: #1d4ed8;
+  transform: translateY(1px);
+}
+
+.accessible-button.variant-secondary {
+  background-color: #ffffff;
+  color: #374151;
+  border-color: #d1d5db;
+}
+
+.accessible-button.variant-secondary:hover:not(:disabled) {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.accessible-button.variant-secondary:active:not(:disabled) {
+  background-color: #f3f4f6;
+  border-color: #6b7280;
+  transform: translateY(1px);
+}
+
+.accessible-button.variant-success {
+  background-color: #16a34a;
+  color: #ffffff;
+  border-color: #16a34a;
+}
+
+.accessible-button.variant-success:hover:not(:disabled) {
+  background-color: #15803d;
+  border-color: #15803d;
+}
+
+.accessible-button.variant-danger {
+  background-color: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+}
+
+.accessible-button.variant-danger:hover:not(:disabled) {
+  background-color: #b91c1c;
+  border-color: #b91c1c;
+}
+
+.accessible-button.variant-warning {
+  background-color: #f59e0b;
+  color: #ffffff;
+  border-color: #f59e0b;
+}
+
+.accessible-button.variant-warning:hover:not(:disabled) {
+  background-color: #d97706;
+  border-color: #d97706;
+}
+
+/* Button sizes */
+.accessible-button.size-small {
+  padding: 8px 12px;
+  min-height: 36px;
+  font-size: 0.875rem;
+}
+
+.accessible-button.size-medium {
+  padding: 12px 16px;
+  min-height: 44px;
+  font-size: 1rem;
+}
+
+.accessible-button.size-large {
+  padding: 16px 24px;
+  min-height: 52px;
+  font-size: 1.125rem;
+}
+
+/* Full width button */
+.accessible-button.full-width {
+  width: 100%;
+}
+
+/* Disabled state */
+.accessible-button:disabled,
+.accessible-button.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #9ca3af !important;
+  color: #ffffff !important;
+  border-color: #9ca3af !important;
+}
+
+/* Loading state */
+.accessible-button.loading {
+  cursor: wait;
+  pointer-events: none;
+}
+
+.button-loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Focus states for buttons */
+.accessible-button:focus {
+  outline: 3px solid #93c5fd;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px #ffffff, 0 0 0 4px #3b82f6;
+}
+
+/* High contrast mode for buttons */
+.high-contrast .accessible-button {
+  background-color: var(--button-bg) !important;
+  color: var(--button-text) !important;
+  border-color: var(--button-border) !important;
+}
+
+.high-contrast .accessible-button:hover:not(:disabled) {
+  background-color: var(--button-hover-bg) !important;
+  color: var(--button-hover-text) !important;
+  border-color: var(--button-hover-border) !important;
+}
+
+.high-contrast .accessible-button:focus {
+  outline-color: var(--focus-color) !important;
+  box-shadow: 0 0 0 1px var(--focus-bg), 0 0 0 4px var(--focus-color) !important;
+}
+
+.high-contrast .accessible-button:disabled,
+.high-contrast .accessible-button.disabled {
+  background-color: var(--button-disabled-bg) !important;
+  color: var(--button-disabled-text) !important;
+  border-color: var(--button-disabled-text) !important;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .accessible-button {
+    min-height: 48px;
+    padding: 14px 18px;
+    font-size: 1.125rem;
+  }
+  
+  .accessible-button.size-small {
+    min-height: 40px;
+    padding: 10px 14px;
+    font-size: 1rem;
+  }
+  
+  .accessible-button.size-large {
+    min-height: 56px;
+    padding: 18px 28px;
+    font-size: 1.25rem;
+  }
+}
+
+/* Reduced motion support */
+.reduce-motion .accessible-button {
+  transition: none !important;
+}
+
+.reduce-motion .accessible-button:active:not(:disabled) {
+  transform: none !important;
+}
+
+.reduce-motion .loading-spinner {
+  animation: none !important;
+  border: 3px solid #666666 !important;
+}
+
+.reduce-motion .loading-spinner::after {
+  content: "●" !important;
+  display: block !important;
+  text-align: center !important;
+  line-height: 1 !important;
+  font-size: 12px !important;
+}
+
+/* Alternative text and descriptions */
+.alt-text-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.8);
+  color: #ffffff;
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.accessible-image-container:hover .alt-text-overlay,
+.accessible-image-container:focus-within .alt-text-overlay {
+  opacity: 1;
+}
+
+/* Screen reader improvements */
+.sr-announce {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Live region for dynamic announcements */
+.live-region {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Landmark improvements */
+main[role="main"],
+main {
+  outline: none;
+}
+
+main[role="main"]:focus,
+main:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 4px;
+}
+
+/* Navigation landmarks */
+nav[role="navigation"],
+nav {
+  position: relative;
+}
+
+nav[role="navigation"]::before,
+nav::before {
+  content: "Navigation";
+  position: absolute;
+  left: -10000px;
+  font-weight: bold;
+  font-size: 1.125rem;
+}
+
+/* Content landmarks */
+[role="banner"]::before {
+  content: "Header";
+  position: absolute;
+  left: -10000px;
+  font-weight: bold;
+}
+
+[role="contentinfo"]::before {
+  content: "Footer";
+  position: absolute;
+  left: -10000px;
+  font-weight: bold;
+}
+
+[role="complementary"]::before {
+  content: "Sidebar";
+  position: absolute;
+  left: -10000px;
+  font-weight: bold;
+}
+
+/* Form accessibility improvements */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.form-label.required::after {
+  content: " *";
+  color: #dc2626;
+  font-weight: bold;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  line-height: 1.4;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-input[aria-invalid="true"] {
+  border-color: #dc2626;
+}
+
+.form-input[aria-invalid="true"]:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.form-error {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.form-help {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+/* High contrast form styles */
+.high-contrast .form-label {
+  color: var(--text-primary) !important;
+}
+
+.high-contrast .form-input {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border-color: var(--input-border) !important;
+}
+
+.high-contrast .form-input:focus {
+  border-color: var(--input-focus-border) !important;
+  box-shadow: 0 0 0 3px var(--focus-color) !important;
+}
+
+.high-contrast .form-error {
+  color: var(--error-text) !important;
+}
+
+.high-contrast .form-help {
+  color: var(--text-muted) !important;
+}

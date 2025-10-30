@@ -1,26 +1,34 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useUser } from '../contexts/UserContext';
+import React, { useState, useEffect } from 'react';
+import { getDeviceType } from '../utils/responsiveUtils';
 
-const OfflineManager = () => {
-  const { userProfile, updateProgress } = useUser();
+const OfflineManager = ({ children, fallbackContent = null }) => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const [pendingSync, setPendingSync] = useState([]);
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [lastSyncTime, setLastSyncTime] = useState(null);
+  const [showOfflineMessage, setShowOfflineMessage] = useState(false);
+  const [deviceType, setDeviceType] = useState('desktop');
 
-  // Listen for online/offline events
   useEffect(() => {
+    setDeviceType(getDeviceType());
+
     const handleOnline = () => {
       setIsOnline(true);
-      syncPendingData();
+      setShowOfflineMessage(false);
+      
+      // Show brief "back online" message
+      showConnectionStatus('Back online!', 'success');
     };
 
     const handleOffline = () => {
       setIsOnline(false);
+      setShowOfflineMessage(true);
     };
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
+
+    // Initial check
+    if (!navigator.onLine) {
+      setShowOfflineMessage(true);
+    }
 
     return () => {
       window.removeEventListener('online', handleOnline);
@@ -28,168 +36,99 @@ const OfflineManager = () => {
     };
   }, []);
 
-  // Load pending sync data from localStorage
-  useEffect(() => {
-    const savedPendingSync = localStorage.getItem('pendingSync');
-    if (savedPendingSync) {
-      try {
-        setPendingSync(JSON.parse(savedPendingSync));
-      } catch (error) {
-        console.error('Error parsing pending sync data:', error);
-      }
-    }
-
-    const savedLastSync = localStorage.getItem('lastSyncTime');
-    if (savedLastSync) {
-      setLastSyncTime(new Date(savedLastSync));
-    }
-  }, []);
-
-  // Save pending sync data to localStorage
-  useEffect(() => {
-    localStorage.setItem('pendingSync', JSON.stringify(pendingSync));
-  }, [pendingSync]);
-
-  // Add data to pending sync queue
-  const queueForSync = useCallback((data) => {
-    if (!isOnline) {
-      const syncItem = {
-        id: Date.now() + Math.random(),
-        data,
-        timestamp: new Date(),
-        type: 'progress'
-      };
-      
-      setPendingSync(prev => [...prev, syncItem]);
-      return true; // Data queued successfully
-    }
-    return false; // Data can be synced immediately
-  }, [isOnline]);
-
-  // Sync pending data when online
-  const syncPendingData = async () => {
-    if (!isOnline || pendingSync.length === 0 || isSyncing) return;
-
-    setIsSyncing(true);
-    const syncItems = [...pendingSync];
+  const showConnectionStatus = (message, type) => {
+    const toast = document.createElement('div');
+    toast.className = `fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-4 py-2 rounded-lg text-white text-sm font-medium transition-all duration-300 ${
+      type === 'success' ? 'bg-green-500' : 'bg-red-500'
+    }`;
+    toast.textContent = message;
     
-    try {
-      for (const item of syncItems) {
-        try {
-          await updateProgress(item.data);
-          console.log('Synced item:', item);
-        } catch (error) {
-          console.error('Error syncing item:', item, error);
-          // Keep failed items in the queue
-          continue;
-        }
-      }
-      
-      // Remove successfully synced items
-      setPendingSync([]);
-      setLastSyncTime(new Date());
-      localStorage.setItem('lastSyncTime', new Date().toISOString());
-      
-    } catch (error) {
-      console.error('Error during sync:', error);
-    } finally {
-      setIsSyncing(false);
-    }
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
   };
 
-  // Manual sync trigger
-  const triggerSync = () => {
-    if (isOnline && pendingSync.length > 0) {
-      syncPendingData();
-    }
-  };
+  const isMobile = deviceType === 'mobile' || deviceType === 'ios' || deviceType === 'android';
 
-  // Get sync status message
-  const getSyncStatus = () => {
-    if (!isOnline) {
-      return {
-        message: 'You\'re offline - changes will sync when you\'re back online!',
-        color: 'text-orange-600',
-        icon: '📡'
-      };
-    }
-    
-    if (isSyncing) {
-      return {
-        message: 'Syncing your progress...',
-        color: 'text-blue-600',
-        icon: '🔄'
-      };
-    }
-    
-    if (pendingSync.length > 0) {
-      return {
-        message: `${pendingSync.length} changes waiting to sync`,
-        color: 'text-yellow-600',
-        icon: '⏳'
-      };
-    }
-    
-    if (lastSyncTime) {
-      return {
-        message: `Last synced: ${lastSyncTime.toLocaleTimeString()}`,
-        color: 'text-green-600',
-        icon: '✅'
-      };
-    }
-    
-    return {
-      message: 'All synced up!',
-      color: 'text-green-600',
-      icon: '✨'
-    };
-  };
-
-  const syncStatus = getSyncStatus();
+  if (!isOnline && fallbackContent) {
+    return fallbackContent;
+  }
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
-      <div className={`bg-white rounded-lg shadow-lg border-l-4 ${
-        !isOnline ? 'border-orange-400' : 
-        isSyncing ? 'border-blue-400' : 
-        pendingSync.length > 0 ? 'border-yellow-400' : 'border-green-400'
-      } p-3 max-w-sm`}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <span className="text-lg mr-2">{syncStatus.icon}</span>
-            <div>
-              <div className={`text-sm font-medium ${syncStatus.color}`}>
-                {syncStatus.message}
-              </div>
-              {pendingSync.length > 0 && (
-                <button
-                  onClick={triggerSync}
-                  disabled={!isOnline || isSyncing}
-                  className="text-xs text-purple-600 hover:text-purple-800 disabled:opacity-50"
-                >
-                  Sync now
-                </button>
-              )}
-            </div>
+    <>
+      {/* Offline indicator banner */}
+      {showOfflineMessage && (
+        <div className="fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2 text-sm font-medium z-50 safe-area-top">
+          <div className="flex items-center justify-center space-x-2">
+            <span>📡</span>
+            <span>You're offline. Some features may not work.</span>
           </div>
-          
-          {isSyncing && (
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 ml-2"></div>
-          )}
+        </div>
+      )}
+      
+      {/* Main content with offline padding if needed */}
+      <div className={showOfflineMessage ? 'pt-10' : ''}>
+        {children}
+      </div>
+    </>
+  );
+};
+
+// Offline fallback component for specific features
+export const OfflineFallback = ({ 
+  title = "You're offline",
+  message = "This feature requires an internet connection. Please check your connection and try again.",
+  icon = "📡",
+  onRetry,
+  showRetryButton = true,
+  className = ''
+}) => {
+  return (
+    <div className={`text-center p-8 ${className}`}>
+      <div className="text-6xl mb-4">{icon}</div>
+      <h2 className="text-xl font-bold text-gray-800 mb-2">{title}</h2>
+      <p className="text-gray-600 mb-6 max-w-md mx-auto">{message}</p>
+      
+      {showRetryButton && (
+        <button
+          onClick={onRetry || (() => window.location.reload())}
+          className="btn-touch bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium"
+        >
+          Try Again
+        </button>
+      )}
+      
+      <div className="mt-4 text-sm text-gray-500">
+        <div className="flex items-center justify-center space-x-2">
+          <div className={`w-2 h-2 rounded-full ${navigator.onLine ? 'bg-green-500' : 'bg-red-500'}`}></div>
+          <span>{navigator.onLine ? 'Connected' : 'Offline'}</span>
         </div>
       </div>
     </div>
   );
 };
 
-// Hook for using offline functionality
-export const useOfflineSync = () => {
-  const { userProfile, updateProgress } = useUser();
+// Hook for managing offline state
+export const useOfflineManager = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [wasOffline, setWasOffline] = useState(false);
 
   useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
+    const handleOnline = () => {
+      setIsOnline(true);
+      if (wasOffline) {
+        // Trigger any necessary data sync or refresh
+        setWasOffline(false);
+      }
+    };
+
+    const handleOffline = () => {
+      setIsOnline(false);
+      setWasOffline(true);
+    };
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
@@ -198,36 +137,121 @@ export const useOfflineSync = () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, []);
+  }, [wasOffline]);
 
-  const syncProgress = async (progressData) => {
+  const retryWhenOnline = (callback) => {
     if (isOnline) {
-      try {
-        await updateProgress(progressData);
-        return true; // Successfully synced
-      } catch (error) {
-        console.error('Sync error:', error);
-        return false; // Failed to sync
-      }
+      callback();
     } else {
-      // Queue for offline sync
-      const pendingSync = JSON.parse(localStorage.getItem('pendingSync') || '[]');
-      const syncItem = {
-        id: Date.now() + Math.random(),
-        data: progressData,
-        timestamp: new Date(),
-        type: 'progress'
+      const handleOnline = () => {
+        callback();
+        window.removeEventListener('online', handleOnline);
       };
-      pendingSync.push(syncItem);
-      localStorage.setItem('pendingSync', JSON.stringify(pendingSync));
-      return true; // Queued successfully
+      window.addEventListener('online', handleOnline);
     }
   };
 
   return {
     isOnline,
-    syncProgress
+    wasOffline,
+    retryWhenOnline
   };
 };
+
+// Component for handling network-dependent features
+export const NetworkDependentFeature = ({ 
+  children, 
+  fallback = null,
+  requiresOnline = true,
+  onOfflineAttempt
+}) => {
+  const { isOnline } = useOfflineManager();
+
+  if (requiresOnline && !isOnline) {
+    if (onOfflineAttempt) {
+      onOfflineAttempt();
+    }
+    
+    return fallback || (
+      <OfflineFallback 
+        title="Feature unavailable"
+        message="This feature requires an internet connection."
+      />
+    );
+  }
+
+  return children;
+};
+
+// Error boundary with offline handling
+export class OfflineErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { 
+      hasError: false, 
+      error: null,
+      isOnline: navigator.onLine 
+    };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('Offline Error Boundary caught an error:', error, errorInfo);
+    
+    // Check if error is network-related
+    if (error.name === 'NetworkError' || error.message.includes('fetch')) {
+      this.setState({ isNetworkError: true });
+    }
+  }
+
+  componentDidMount() {
+    window.addEventListener('online', this.handleOnline);
+    window.addEventListener('offline', this.handleOffline);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('online', this.handleOnline);
+    window.removeEventListener('offline', this.handleOffline);
+  }
+
+  handleOnline = () => {
+    this.setState({ isOnline: true });
+    
+    // Auto-retry if it was a network error
+    if (this.state.isNetworkError) {
+      this.setState({ hasError: false, error: null, isNetworkError: false });
+    }
+  };
+
+  handleOffline = () => {
+    this.setState({ isOnline: false });
+  };
+
+  render() {
+    if (this.state.hasError) {
+      const isNetworkError = this.state.isNetworkError || !this.state.isOnline;
+      
+      return (
+        <OfflineFallback
+          title={isNetworkError ? "Connection Error" : "Something went wrong"}
+          message={
+            isNetworkError 
+              ? "Please check your internet connection and try again."
+              : "An unexpected error occurred. Please try refreshing the page."
+          }
+          icon={isNetworkError ? "📡" : "⚠️"}
+          onRetry={() => {
+            this.setState({ hasError: false, error: null, isNetworkError: false });
+          }}
+        />
+      );
+    }
+
+    return this.props.children;
+  }
+}
 
 export default OfflineManager;
