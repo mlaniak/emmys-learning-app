@@ -5323,8 +5323,8 @@ Your Student ✨
     return shuffled;
   };
 
-  // Get the full question set, memoized to prevent reshuffle on unrelated renders
-  const fullQuestionSet = React.useMemo(() => {
+  // Get the full question set (avoid hooks to keep order stable across screens)
+  const fullQuestionSet = (() => {
     switch (currentScreen) {
       case 'phonics':
         return getPhonicsQuestionsByDifficulty(selectedPhonicsDifficulty);
@@ -5347,12 +5347,12 @@ Your Student ✨
       default:
         return [];
     }
-  }, [currentScreen, selectedPhonicsDifficulty, selectedMathDifficulty, selectedReadingCategory]);
+  })();
   const questionCount = selectedQuestionCount === 'custom' 
     ? parseInt(customQuestionCount) || 10
     : selectedQuestionCount;
   
-  // Freeze the shuffled questions into state so they never change unless deps change
+  // Build question list for the current screen
   const SHUFFLE_QUESTIONS = false;
   const buildQuestionList = (source, screen, count) => {
     let base = Array.isArray(source) ? source.slice(0) : [];
@@ -5366,28 +5366,7 @@ Your Student ✨
     }
     return smartShuffle(base, screen, safeCount);
   };
-
-  const [currentQuestions, setCurrentQuestions] = React.useState(() => buildQuestionList(fullQuestionSet, currentScreen, questionCount));
-  const questionsCacheRef = React.useRef({});
-  const lastKeyRef = React.useRef('');
-  React.useEffect(() => {
-    const key = `${currentScreen}|${questionCount}|${selectedPhonicsDifficulty}|${selectedMathDifficulty}|${selectedReadingCategory}`;
-    const cache = questionsCacheRef.current;
-    if (cache[key]) {
-      // Use cached stable order
-      setCurrentQuestions(cache[key]);
-      if (lastKeyRef.current !== key) {
-        setCurrentQuestion(0);
-      }
-      lastKeyRef.current = key;
-      return;
-    }
-    const built = buildQuestionList(fullQuestionSet, currentScreen, questionCount);
-    cache[key] = built;
-    setCurrentQuestions(built);
-    setCurrentQuestion(0);
-    lastKeyRef.current = key;
-  }, [fullQuestionSet, currentScreen, questionCount, selectedPhonicsDifficulty, selectedMathDifficulty, selectedReadingCategory]);
+  const currentQuestions = buildQuestionList(fullQuestionSet, currentScreen, questionCount);
 
   if (currentScreen === 'newsletter' || currentScreen.startsWith('newsletter-')) {
     // Show newsletter selector if no specific newsletter is selected
