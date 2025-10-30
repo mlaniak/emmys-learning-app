@@ -5658,6 +5658,7 @@ Your Student ✨
 
   const qs = currentQuestions; // backward-compat for local references
   const q = (Array.isArray(currentQuestions) && currentQuestions[currentQuestion]) || {};
+  const hasQuestion = q && typeof q === 'object' && (q.question || q.word) && Array.isArray(q.options) && q.options.length > 0;
   const bgColors = {
     phonics: 'from-pink-200 to-pink-400', math: 'from-blue-200 to-blue-400',
     reading: 'from-green-200 to-green-400', science: 'from-teal-200 to-teal-400',
@@ -5775,6 +5776,23 @@ Your Student ✨
       )}
 
       <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl p-6 md:p-12 relative">
+        {!hasQuestion && (
+          <div className="text-center py-10">
+            <div className="text-4xl mb-2">⏳</div>
+            <div className="font-bold text-lg mb-2">Loading questions…</div>
+            <div className="text-sm text-gray-500 mb-4">If this takes more than a second, tap Restart.</div>
+            <button
+              onClick={() => {
+                setCurrentQuestions(buildQuestionList(fullQuestionSet, currentScreen, questionCount));
+                setCurrentQuestion(0);
+              }}
+              className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-full"
+            >
+              Restart
+            </button>
+          </div>
+        )}
+        {hasQuestion && (
         <FeedbackOverlay
           feedback={showFeedback}
           visible={!!showFeedback}
@@ -5842,7 +5860,7 @@ Your Student ✨
           <p className="text-xl md:text-2xl text-gray-600">Question {currentQuestion+1} of {questionCount}</p>
           <p className="text-2xl md:text-3xl font-bold mt-2">Score: {score} ⭐</p>
         </div>
-
+        )}
         {/* Help Button */}
         <div className="text-center mt-6">
           <button
