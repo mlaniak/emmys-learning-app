@@ -26,6 +26,8 @@ const TouchButton = ({
   animationType = 'press',
   className = '',
   style = {},
+  onKeyDown: userOnKeyDown,
+  onKeyUp: userOnKeyUp,
   ...props
 }) => {
   const buttonRef = useRef(null);
@@ -92,7 +94,7 @@ const TouchButton = ({
 
   // Get button classes based on variant and size
   const getButtonClasses = () => {
-    const baseClasses = 'relative overflow-hidden transition-all duration-200 font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+    const baseClasses = 'relative overflow-hidden transition-all duration-200 font-medium rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center';
     
     const variantClasses = {
       primary: 'bg-blue-500 hover:bg-blue-600 text-white focus:ring-blue-500',
@@ -132,9 +134,35 @@ const TouchButton = ({
     )
   );
 
+  const handleKeyDown = (event) => {
+    if (userOnKeyDown) {
+      userOnKeyDown(event);
+    }
+
+    if (event.defaultPrevented) return;
+
+    if ((event.key === ' ' || event.key === 'Spacebar' || event.key === 'Enter') && !disabled && !loading) {
+      setIsPressed(true);
+      touchInteractionManager.triggerHaptic(hapticType);
+    }
+  };
+
+  const handleKeyUp = (event) => {
+    if (userOnKeyUp) {
+      userOnKeyUp(event);
+    }
+
+    if (event.defaultPrevented) return;
+
+    if (event.key === ' ' || event.key === 'Spacebar' || event.key === 'Enter') {
+      setIsPressed(false);
+    }
+  };
+
   return (
     <button
       ref={buttonRef}
+      type="button"
       className={getButtonClasses()}
       disabled={disabled || loading}
       style={{
@@ -142,15 +170,13 @@ const TouchButton = ({
         WebkitTapHighlightColor: 'transparent', // Removes default touch highlight
         ...style
       }}
+      onKeyDown={handleKeyDown}
+      onKeyUp={handleKeyUp}
       {...props}
     >
       <LongPressIndicator />
-      
-      <div className="flex items-center justify-center">
-        {loading && <LoadingSpinner />}
-        {children}
-      </div>
-      
+      {loading && <LoadingSpinner />}
+      {children}
       {/* Ripple effect container */}
       <div className="absolute inset-0 pointer-events-none" />
     </button>

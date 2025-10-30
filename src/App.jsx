@@ -3171,6 +3171,95 @@ Your Student ✨
     }, 200);
   };
 
+  // Question data preparation and shared computed values (must run before render to keep hook order stable)
+  const questionSets = {
+    phonics: getPhonicsQuestionsByDifficulty(selectedPhonicsDifficulty),
+    math: getMathQuestionsByDifficulty(selectedMathDifficulty),
+    reading: getReadingQuestionsByCategory(selectedReadingCategory),
+    science: scienceQuestions,
+    social: [],
+    skipcounting: [],
+    art: artQuestions,
+    geography: geographyQuestions,
+    history: historyQuestions
+  };
+
+  const questionCount = selectedQuestionCount === 'custom'
+    ? parseInt(customQuestionCount, 10) || 10
+    : selectedQuestionCount;
+
+  const fullQuestionSet = (() => {
+    switch (currentScreen) {
+      case 'phonics':
+        return questionSets.phonics;
+      case 'math':
+        return questionSets.math;
+      case 'reading':
+        return questionSets.reading;
+      case 'science':
+        return questionSets.science;
+      case 'social':
+        return socialStudiesQuestions;
+      case 'skipcounting':
+        return skipCountingQuestions;
+      case 'art':
+        return questionSets.art;
+      case 'geography':
+        return questionSets.geography;
+      case 'history':
+        return questionSets.history;
+      default:
+        return [];
+    }
+  })();
+
+  const SHUFFLE_QUESTIONS = false;
+  const buildQuestionList = (source, screen, count) => {
+    let base = Array.isArray(source) ? source.slice(0) : [];
+    if (base.length === 0 && questionSets && questionSets[screen]) {
+      base = questionSets[screen].slice(0);
+    }
+    const safeCount = Number.isFinite(count) && count > 0 ? count : 10;
+    if (!SHUFFLE_QUESTIONS) {
+      return base.slice(0, safeCount);
+    }
+    return smartShuffle(base, screen, safeCount);
+  };
+
+  const currentQuestions = buildQuestionList(fullQuestionSet, currentScreen, questionCount);
+  const qs = currentQuestions;
+  const q = (Array.isArray(currentQuestions) && currentQuestions[currentQuestion]) || {};
+
+  const [shuffledOptions, setShuffledOptions] = useState([]);
+  useEffect(() => {
+    const opts = (q && Array.isArray(q.options)) ? [...q.options] : [];
+    if (opts.length > 0) {
+      for (let i = opts.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [opts[i], opts[j]] = [opts[j], opts[i]];
+      }
+      setShuffledOptions(opts);
+    } else {
+      setShuffledOptions([]);
+    }
+  }, [currentQuestion, currentQuestions]);
+
+  useEffect(() => {
+    const scrollTimeout = setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 0);
+    return () => clearTimeout(scrollTimeout);
+  }, [currentScreen]);
+
+  const hasQuestion = q && typeof q === 'object' && (q.question || q.word) && Array.isArray(q.options) && q.options.length > 0;
+  const bgColors = {
+    phonics: 'from-pink-200 to-pink-400', math: 'from-blue-200 to-blue-400',
+    reading: 'from-green-200 to-green-400', science: 'from-teal-200 to-teal-400',
+    social: 'from-orange-200 to-orange-400', skipcounting: 'from-indigo-200 to-indigo-400',
+    art: 'from-rose-200 to-rose-400', geography: 'from-emerald-200 to-emerald-400',
+    history: 'from-amber-200 to-amber-400'
+  };
+
   // Render function - called AFTER all hooks to prevent hook order violations
   const renderScreen = () => {
     if (currentScreen === 'home') {
@@ -5289,74 +5378,6 @@ Your Student ✨
     );
   }
 
-  // Game question data and memoized builders MUST be declared before any early returns
-  const questionSets = {
-    phonics: getPhonicsQuestionsByDifficulty(selectedPhonicsDifficulty), 
-    math: getMathQuestionsByDifficulty(selectedMathDifficulty), 
-    reading: getReadingQuestionsByCategory(selectedReadingCategory), 
-    science: scienceQuestions, 
-    social: [],
-    skipcounting: [],
-    art: artQuestions, 
-    geography: geographyQuestions, 
-    history: historyQuestions
-  };
-  
-  // Shuffle function to randomize questions (fallback for simple cases)
-  const shuffleArray = (array) => {
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-  };
-
-  // Get the full question set (avoid hooks to keep order stable across screens)
-  const fullQuestionSet = (() => {
-    switch (currentScreen) {
-      case 'phonics':
-        return getPhonicsQuestionsByDifficulty(selectedPhonicsDifficulty);
-      case 'math':
-        return getMathQuestionsByDifficulty(selectedMathDifficulty);
-      case 'reading':
-        return getReadingQuestionsByCategory(selectedReadingCategory);
-      case 'science':
-        return scienceQuestions;
-      case 'social':
-        return socialStudiesQuestions;
-      case 'skipcounting':
-        return skipCountingQuestions;
-      case 'art':
-        return artQuestions;
-      case 'geography':
-        return geographyQuestions;
-      case 'history':
-        return historyQuestions;
-      default:
-        return [];
-    }
-  })();
-  const questionCount = selectedQuestionCount === 'custom' 
-    ? parseInt(customQuestionCount) || 10
-    : selectedQuestionCount;
-  
-  // Build question list for the current screen
-  const SHUFFLE_QUESTIONS = false;
-  const buildQuestionList = (source, screen, count) => {
-    let base = Array.isArray(source) ? source.slice(0) : [];
-    // Fallback: if no questions resolved (build quirks), use raw set from map
-    if (base.length === 0 && questionSets && questionSets[screen]) {
-      base = questionSets[screen].slice(0);
-    }
-    const safeCount = Number.isFinite(count) && count > 0 ? count : 10;
-    if (!SHUFFLE_QUESTIONS) {
-      return base.slice(0, safeCount);
-    }
-    return smartShuffle(base, screen, safeCount);
-  };
-  const currentQuestions = buildQuestionList(fullQuestionSet, currentScreen, questionCount);
-
   if (currentScreen === 'newsletter' || currentScreen.startsWith('newsletter-')) {
     // Show newsletter selector if no specific newsletter is selected
     if (!selectedNewsletter) {
@@ -5629,39 +5650,6 @@ Your Student ✨
       </div>
     );
   }
-
-  const qs = currentQuestions; // backward-compat for local references
-  const q = (Array.isArray(currentQuestions) && currentQuestions[currentQuestion]) || {};
-
-  // Shuffle the options for the current question so the correct answer isn't always first
-  const [shuffledOptions, setShuffledOptions] = useState([]);
-  useEffect(() => {
-    const opts = (q && Array.isArray(q.options)) ? [...q.options] : [];
-    if (opts.length > 0) {
-      for (let i = opts.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [opts[i], opts[j]] = [opts[j], opts[i]];
-      }
-      setShuffledOptions(opts);
-    } else {
-      setShuffledOptions([]);
-    }
-  }, [currentQuestion, currentQuestions]);
-
-  // Ensure we always start at the top when changing screens or on initial load
-  useEffect(() => {
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 0);
-  }, [currentScreen]);
-  const hasQuestion = q && typeof q === 'object' && (q.question || q.word) && Array.isArray(q.options) && q.options.length > 0;
-  const bgColors = {
-    phonics: 'from-pink-200 to-pink-400', math: 'from-blue-200 to-blue-400',
-    reading: 'from-green-200 to-green-400', science: 'from-teal-200 to-teal-400',
-    social: 'from-orange-200 to-orange-400', skipcounting: 'from-indigo-200 to-indigo-400',
-    art: 'from-rose-200 to-rose-400', geography: 'from-emerald-200 to-emerald-400', 
-    history: 'from-amber-200 to-amber-400'
-  };
 
   return (
     <OfflineManager fallbackContent={
