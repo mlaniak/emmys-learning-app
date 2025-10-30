@@ -5643,6 +5643,21 @@ Your Student ✨
 
   const qs = currentQuestions; // backward-compat for local references
   const q = (Array.isArray(currentQuestions) && currentQuestions[currentQuestion]) || {};
+
+  // Shuffle the options for the current question so the correct answer isn't always first
+  const [shuffledOptions, setShuffledOptions] = useState([]);
+  useEffect(() => {
+    const opts = (q && Array.isArray(q.options)) ? [...q.options] : [];
+    if (opts.length > 0) {
+      for (let i = opts.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [opts[i], opts[j]] = [opts[j], opts[i]];
+      }
+      setShuffledOptions(opts);
+    } else {
+      setShuffledOptions([]);
+    }
+  }, [currentQuestion, currentQuestions]);
   const hasQuestion = q && typeof q === 'object' && (q.question || q.word) && Array.isArray(q.options) && q.options.length > 0;
   const bgColors = {
     phonics: 'from-pink-200 to-pink-400', math: 'from-blue-200 to-blue-400',
@@ -5859,7 +5874,7 @@ Your Student ✨
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-          {(q.options || []).map((opt, i) => (
+          {((shuffledOptions && shuffledOptions.length > 0) ? shuffledOptions : (q.options || [])).map((opt, i) => (
             <div key={i} className="flex items-stretch gap-3">
               <div 
                 onClick={() => { triggerHaptic('medium'); handleAnswer(opt, q.correct || q.answer, qs, q.explanation); }} 
