@@ -815,7 +815,17 @@ Your Student ✨
     
     // Define game screens upfront
     const gameScreens = ['phonics', 'math', 'reading', 'science', 'art', 'geography', 'history', 'spelling'];
-    
+
+    // If navigating to a game module, redirect BEFORE changing any state to avoid hook-order changes
+    if (gameScreens.includes(screen)) {
+      const expectedHash = `#/${screen}`;
+      if (window.location.hash !== expectedHash) {
+        const base = `${window.location.origin}/emmys-learning-app/${expectedHash}`;
+        window.location.replace(base);
+        return; // stop further work; navigation will reload
+      }
+    }
+
     setCurrentScreen(screen);
     updateBreadcrumbs(screen, additionalInfo);
     setShowSearch(false);
@@ -853,16 +863,7 @@ Your Student ✨
         setSelectedCategory(0);
       }
     } else {
-      // For heavy game screens, force clean hash URL only if not already correct
-      if (gameScreens.includes(screen)) {
-        const expectedHash = `#/${screen}`;
-        if (window.location.hash !== expectedHash) {
-          const base = `${window.location.origin}/emmys-learning-app/${expectedHash}`;
-          window.location.replace(base);
-          return; // stop further work; navigation will reload
-        }
-      }
-      // Use router nav for lightweight sections
+      // Use router nav for lightweight sections (non-game)
       navigate(`/${screen}`);
     }
     
