@@ -6237,12 +6237,7 @@ Your Student ✨
         <LazyProfileManager onClose={() => setShowProfileManager(false)} />
       )}
       
-      {/* Loading Overlay */}
-      <LoadingOverlay 
-        isVisible={isLoading}
-        type="game"
-        message={loadingMessage}
-      />
+      {/* Loading overlay disabled to prevent stuck modal during gameplay */}
 
       {/* Performance Dashboard */}
       <PerformanceDashboard 
