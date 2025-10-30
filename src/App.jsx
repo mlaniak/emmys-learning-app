@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, Suspense } from 'react';
+import React, { useState, useRef, useEffect, Suspense, useMemo, useCallback } from 'react';
 import TTSIconButton from './components/TTSIconButton.jsx';
 import { HashRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { LazyProfileManager } from './components/LazyComponent';
@@ -3214,7 +3214,7 @@ Your Student ✨
   })();
 
   const SHUFFLE_QUESTIONS = false;
-  const buildQuestionList = (source, screen, count) => {
+  const buildQuestionList = useCallback((source, screen, count) => {
     let base = Array.isArray(source) ? source.slice(0) : [];
     if (base.length === 0 && questionSets && questionSets[screen]) {
       base = questionSets[screen].slice(0);
@@ -3224,25 +3224,30 @@ Your Student ✨
       return base.slice(0, safeCount);
     }
     return smartShuffle(base, screen, safeCount);
-  };
+  }, [questionSets, smartShuffle, SHUFFLE_QUESTIONS]);
 
-  const currentQuestions = buildQuestionList(fullQuestionSet, currentScreen, questionCount);
+  // Memoize currentQuestions to prevent unnecessary recalculations
+  const currentQuestions = useMemo(() => 
+    buildQuestionList(fullQuestionSet, currentScreen, questionCount),
+    [fullQuestionSet, currentScreen, questionCount, buildQuestionList]
+  );
+  
   const qs = currentQuestions;
   const q = (Array.isArray(currentQuestions) && currentQuestions[currentQuestion]) || {};
 
-  const [shuffledOptions, setShuffledOptions] = useState([]);
-  useEffect(() => {
+  // Memoize shuffled options to prevent constant re-rendering
+  const shuffledOptions = useMemo(() => {
     const opts = (q && Array.isArray(q.options)) ? [...q.options] : [];
     if (opts.length > 0) {
+      // Fisher-Yates shuffle
       for (let i = opts.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [opts[i], opts[j]] = [opts[j], opts[i]];
       }
-      setShuffledOptions(opts);
-    } else {
-      setShuffledOptions([]);
+      return opts;
     }
-  }, [currentQuestion, currentQuestions]);
+    return [];
+  }, [currentQuestion, q.options]);
 
   useEffect(() => {
     const scrollTimeout = setTimeout(() => {
@@ -5859,10 +5864,10 @@ Your Student ✨
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           {((shuffledOptions && shuffledOptions.length > 0) ? shuffledOptions : (q.options || [])).map((opt, i) => (
-            <div key={i} className="flex items-stretch gap-3">
+            <div key={`${currentQuestion}-${opt}-${i}`} className="flex items-stretch gap-3">
               <div 
                 onClick={() => { triggerHaptic('medium'); handleAnswer(opt, q.correct || q.answer, qs, q.explanation); }} 
-                className="flex-1 p-6 md:p-8 text-2xl md:text-3xl font-bold rounded-2xl shadow-lg hover:scale-110 active:scale-105 cursor-pointer bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900 transition-transform"
+                className="flex-1 p-6 md:p-8 text-2xl md:text-3xl font-bold rounded-2xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900 transition-all duration-200"
                 role="button"
                 aria-label={`Answer option: ${opt}`}
                 tabIndex={0}
@@ -5871,9 +5876,9 @@ Your Student ✨
               </div>
               <button
                 onClick={() => { textToSpeech.toggleSpeak(opt, { rate: 0.85, pitch: 1.0 }); }}
-                className="self-center bg-purple-500 hover:bg-purple-600 text-white p-3 rounded-full transition-colors shadow-md"
+                className="self-center bg-purple-500 hover:bg-purple-600 text-white p-3 rounded-full transition-colors shadow-md flex-shrink-0"
                 title="Listen to answer"
-                aria-label="Listen to answer"
+                aria-label={`Listen to answer: ${opt}`}
               >
                 🔊
               </button>
