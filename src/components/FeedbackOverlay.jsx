@@ -144,16 +144,18 @@ const FeedbackOverlay = ({
 
       {/* Feedback Overlay */}
       <div 
-        className={`absolute inset-0 flex items-center justify-center z-50 rounded-3xl transition-all duration-300 ${
+        className={`absolute inset-0 z-50 flex items-center justify-center transition-all duration-300 bg-black/50 backdrop-blur-sm ${
           animationPhase === 'enter' ? 'opacity-100' : 'opacity-0'
         }`}
-        style={{
-          background: `linear-gradient(135deg, ${config.bgColor.replace('from-', '').replace(' via-', ', ').replace(' to-', ', ')})`,
-          backgroundSize: '200% 200%',
-          animation: animationPhase === 'enter' ? 'gradient-shift 2s ease-in-out infinite' : 'none'
-        }}
       >
-        <div className={`text-center p-6 ${config.animation}`}>
+        {/* Foreground Card */}
+        <div 
+          className={`relative w-[92%] max-w-xl text-center p-6 sm:p-8 rounded-2xl shadow-2xl ring-1 ring-white/20 bg-gradient-to-br ${config.bgColor} ${config.animation}`}
+          style={{
+            backgroundSize: '200% 200%',
+            animation: `${animationPhase === 'enter' ? 'gradient-shift 2s ease-in-out infinite' : 'none'}, ${config.animation ? '' : ''}`
+          }}
+        >
           {/* Main Emoji */}
           <div className="text-8xl md:text-9xl mb-4 animate-bounce">
             {config.emoji}
@@ -193,10 +195,10 @@ const FeedbackOverlay = ({
           )}
 
           {/* Decorative Elements */}
-          <div className="absolute top-4 left-4 text-2xl opacity-50 star-twinkle">⭐</div>
-          <div className="absolute top-8 right-6 text-xl opacity-50 star-twinkle" style={{ animationDelay: '0.5s' }}>✨</div>
-          <div className="absolute bottom-6 left-8 text-2xl opacity-50 star-twinkle" style={{ animationDelay: '1s' }}>🌟</div>
-          <div className="absolute bottom-4 right-4 text-xl opacity-50 star-twinkle" style={{ animationDelay: '1.5s' }}>💫</div>
+          <div className="absolute top-4 left-4 text-2xl opacity-70 star-twinkle">⭐</div>
+          <div className="absolute top-8 right-6 text-xl opacity-70 star-twinkle" style={{ animationDelay: '0.5s' }}>✨</div>
+          <div className="absolute bottom-6 left-8 text-2xl opacity-70 star-twinkle" style={{ animationDelay: '1s' }}>🌟</div>
+          <div className="absolute bottom-4 right-4 text-xl opacity-70 star-twinkle" style={{ animationDelay: '1.5s' }}>💫</div>
         </div>
       </div>
 
