@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, Suspense } from 'react';
 import TTSIconButton from './components/TTSIconButton.jsx';
-import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { LazyProfileManager } from './components/LazyComponent';
 import Week11Newsletter from './Week11Newsletter';
 import Week10Newsletter from './Week10Newsletter';
@@ -6316,6 +6316,7 @@ const App = () => {
   };
 
   return (
+<<<<<<< HEAD
     <>
       {/* Splash Screen */}
       {showSplashScreen && (
@@ -6472,6 +6473,47 @@ const App = () => {
           </NetworkErrorBoundary>
         </UserProvider>
       </ErrorRecoveryProvider>
+=======
+    <ErrorBoundary>
+      <UserProvider>
+        <HashRouter>
+          <Routes>
+            <Route path="/" element={<EmmyStudyGame />} />
+            
+            {/* OAuth Callback Route */}
+            <Route path="/auth/callback" element={<AuthCallback />} />
+            
+            {/* Newsletter Routes */}
+            <Route path="/newsletter" element={<EmmyStudyGame />} />
+            <Route path="/newsletter/:week" element={<EmmyStudyGame />} />
+            
+            {/* Parent Reference Routes */}
+            <Route path="/parent-reference" element={<EmmyStudyGame />} />
+            <Route path="/parent-reference/:subject" element={<EmmyStudyGame />} />
+            <Route path="/parent-reference/:subject/:category" element={<EmmyStudyGame />} />
+            
+            {/* Game Routes */}
+            <Route path="/spelling" element={<EmmyStudyGame />} />
+            <Route path="/spelling/:mode" element={<EmmyStudyGame />} />
+            
+            {/* Progress & Achievement Routes */}
+            <Route path="/achievements" element={<EmmyStudyGame />} />
+            <Route path="/achievements/:category" element={<EmmyStudyGame />} />
+            <Route path="/progress" element={<EmmyStudyGame />} />
+            <Route path="/progress/:section" element={<EmmyStudyGame />} />
+            
+            {/* Settings Routes */}
+            <Route path="/customize" element={<EmmyStudyGame />} />
+            <Route path="/customize/:section" element={<EmmyStudyGame />} />
+            <Route path="/feedback" element={<EmmyStudyGame />} />
+            <Route path="/feedback/:category" element={<EmmyStudyGame />} />
+            
+            {/* Fallback */}
+            <Route path="*" element={<EmmyStudyGame />} />
+          </Routes>
+        </HashRouter>
+      </UserProvider>
+>>>>>>> 4264f7e (Use HashRouter for GH Pages deep links; fix phonics route crash)
     </ErrorBoundary>
     </>
   );
