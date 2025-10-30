@@ -5658,6 +5658,13 @@ Your Student ✨
       setShuffledOptions([]);
     }
   }, [currentQuestion, currentQuestions]);
+
+  // Ensure we always start at the top when changing screens or on initial load
+  useEffect(() => {
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 0);
+  }, [currentScreen]);
   const hasQuestion = q && typeof q === 'object' && (q.question || q.word) && Array.isArray(q.options) && q.options.length > 0;
   const bgColors = {
     phonics: 'from-pink-200 to-pink-400', math: 'from-blue-200 to-blue-400',
