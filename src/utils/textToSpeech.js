@@ -7,8 +7,20 @@ class TextToSpeech {
     this.currentUtterance = null;
     this.selectedVoice = null;
     this.preferredVoices = [
-      'Google US English', 'Microsoft Zira Desktop', 'Microsoft David Desktop',
-      'Alex', 'Samantha', 'Victoria', 'Karen', 'Moira', 'Tessa', 'Veena'
+      'Google US English',
+      'Google en-US',
+      'Google US English (Enhanced)',
+      'Samantha',
+      'Alex',
+      'Victoria',
+      'Karen',
+      'Moira',
+      'Microsoft Aria',
+      'Microsoft Zira',
+      'Microsoft Guy',
+      'Microsoft David',
+      'Veena',
+      'Tessa'
     ];
     this.voiceLoaded = false;
     
@@ -148,6 +160,16 @@ class TextToSpeech {
     this.currentUtterance = null;
   }
 
+  // Toggle speaking: stop if currently speaking, otherwise speak
+  toggleSpeak(text, options = {}) {
+    if (this.getIsPlaying()) {
+      this.stop();
+      return 'stopped';
+    }
+    this.speak(text, options);
+    return 'started';
+  }
+
   // Speak question text with natural pacing
   speakQuestion(questionText) {
     // Add natural pauses and emphasis
@@ -159,6 +181,16 @@ class TextToSpeech {
       onStart: () => console.log('Speaking question...'),
       onEnd: () => console.log('Question finished')
     });
+  }
+
+  // Toggle question speech (same button to start/stop)
+  toggleQuestion(questionText) {
+    if (this.getIsPlaying()) {
+      this.stop();
+      return 'stopped';
+    }
+    this.speakQuestion(questionText);
+    return 'started';
   }
 
   // Speak answer option
@@ -183,6 +215,16 @@ class TextToSpeech {
       onStart: () => console.log('Speaking word...'),
       onEnd: () => console.log('Word finished')
     });
+  }
+
+  // Toggle word speech (same button to start/stop)
+  toggleWord(word) {
+    if (this.getIsPlaying()) {
+      this.stop();
+      return 'stopped';
+    }
+    this.speakWord(word);
+    return 'started';
   }
 
   // Enhance text for more natural speech using SSML-like techniques

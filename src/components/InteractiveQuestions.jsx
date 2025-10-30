@@ -275,12 +275,9 @@ const InteractiveQuestions = ({ question, onAnswer, playSound, triggerHaptic }) 
 
     const playAudio = () => {
       if ('speechSynthesis' in window) {
-        setIsPlaying(true);
-        const utterance = new SpeechSynthesisUtterance(audioText || question);
-        utterance.rate = 0.8;
-        utterance.pitch = 1.1;
-        utterance.onend = () => setIsPlaying(false);
-        speechSynthesis.speak(utterance);
+        // Toggle speak using shared TTS util for consistent voice
+        const result = textToSpeech.toggleSpeak(audioText || question, { rate: 0.8, pitch: 1.05 });
+        setIsPlaying(result === 'started');
         playSound('click');
       }
     };
@@ -296,12 +293,11 @@ const InteractiveQuestions = ({ question, onAnswer, playSound, triggerHaptic }) 
         <div className="flex justify-center mb-8">
           <TouchButton
             onClick={playAudio}
-            disabled={isPlaying}
             variant={isPlaying ? 'secondary' : 'primary'}
             size="large"
-            className={`${isPlaying ? 'cursor-not-allowed opacity-75' : 'hover:scale-105'} transition-all duration-200`}
+            className={`hover:scale-105 transition-all duration-200`}
           >
-            {isPlaying ? '🔊 Playing...' : '🔊 Listen'}
+            {isPlaying ? '⏹ Stop' : '🔊 Listen'}
           </TouchButton>
         </div>
         

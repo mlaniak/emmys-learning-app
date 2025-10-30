@@ -714,6 +714,5 @@ export default {
   setupBackgroundSync,
   setupPushNotifications,
   generateManifest,
-  PWAUtilities,
   initializePWA
 };

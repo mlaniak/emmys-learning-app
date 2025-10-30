@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect, Suspense } from 'react';
+import TTSIconButton from './components/TTSIconButton.jsx';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { LazyProfileManager } from './components/LazyComponent';
 import Week11Newsletter from './Week11Newsletter';
 import Week10Newsletter from './Week10Newsletter';
 import Week9Newsletter from './Week9Newsletter';
@@ -186,6 +188,7 @@ const EmmyStudyGame = () => {
   const [hintUsed, setHintUsed] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [showAudioPreferences, setShowAudioPreferences] = useState(false);
+  const [showProfileManager, setShowProfileManager] = useState(false);
   const [progress, setProgress] = useState(() => {
     const saved = localStorage.getItem('emmy-learning-progress');
     return saved ? JSON.parse(saved) : {
@@ -2867,6 +2870,7 @@ Your Student ✨
     if (canvas) canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
   };
 
+  const AUTO_ADVANCE_ON_CORRECT = false;
   const handleAnswer = (sel, cor, qs, explanation) => {
     const startTime = Date.now();
     const ok = sel === cor;
@@ -2944,8 +2948,8 @@ Your Student ✨
       setShowWrongAnswerModal(true);
     }
     
-    // Only auto-continue for correct answers
-    if (ok) {
+    // Only auto-continue for correct answers when enabled
+    if (ok && AUTO_ADVANCE_ON_CORRECT) {
     setTimeout(() => {
       setShowFeedback(null); 
       setAnswerAnimation(''); 
@@ -3332,10 +3336,7 @@ Your Student ✨
                 {/* Action Buttons */}
                 <div className="flex space-x-1">
                   <button
-                    onClick={() => {
-                      // Open profile manager (you can implement this)
-                      console.log('Open profile manager');
-                    }}
+                    onClick={() => setShowProfileManager(true)}
                     className="bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-full transition-colors"
                     title="Profile Settings"
                   >
@@ -5589,15 +5590,69 @@ Your Student ✨
     return shuffled;
   };
 
-  // Get the full question set, use smart shuffle to avoid repeats
-  const fullQuestionSet = questionSets[currentScreen] || [];
+  // Get the full question set, memoized to prevent reshuffle on unrelated renders
+  const fullQuestionSet = React.useMemo(() => {
+    switch (currentScreen) {
+      case 'phonics':
+        return getPhonicsQuestionsByDifficulty(selectedPhonicsDifficulty);
+      case 'math':
+        return getMathQuestionsByDifficulty(selectedMathDifficulty);
+      case 'reading':
+        return getReadingQuestionsByCategory(selectedReadingCategory);
+      case 'science':
+        return scienceQuestions;
+      case 'social':
+        return socialStudiesQuestions;
+      case 'skipcounting':
+        return skipCountingQuestions;
+      case 'art':
+        return artQuestions;
+      case 'geography':
+        return geographyQuestions;
+      case 'history':
+        return historyQuestions;
+      default:
+        return [];
+    }
+  }, [currentScreen, selectedPhonicsDifficulty, selectedMathDifficulty, selectedReadingCategory]);
   const questionCount = selectedQuestionCount === 'custom' 
     ? parseInt(customQuestionCount) || 10
     : selectedQuestionCount;
   
-  // Use smart shuffle to avoid recent questions
-  const qs = smartShuffle(fullQuestionSet, currentScreen, questionCount);
-  const q = qs[currentQuestion] || {};
+  // Freeze the shuffled questions into state so they never change unless deps change
+  const SHUFFLE_QUESTIONS = false;
+  const buildQuestionList = (source, screen, count) => {
+    const base = (source || []).slice(0);
+    if (!SHUFFLE_QUESTIONS) {
+      return base.slice(0, count);
+    }
+    return smartShuffle(base, screen, count);
+  };
+
+  const [currentQuestions, setCurrentQuestions] = React.useState(() => buildQuestionList(fullQuestionSet, currentScreen, questionCount));
+  const questionsCacheRef = React.useRef({});
+  const lastKeyRef = React.useRef('');
+  React.useEffect(() => {
+    const key = `${currentScreen}|${questionCount}|${selectedPhonicsDifficulty}|${selectedMathDifficulty}|${selectedReadingCategory}`;
+    const cache = questionsCacheRef.current;
+    if (cache[key]) {
+      // Use cached stable order
+      setCurrentQuestions(cache[key]);
+      if (lastKeyRef.current !== key) {
+        setCurrentQuestion(0);
+      }
+      lastKeyRef.current = key;
+      return;
+    }
+    const built = buildQuestionList(fullQuestionSet, currentScreen, questionCount);
+    cache[key] = built;
+    setCurrentQuestions(built);
+    setCurrentQuestion(0);
+    lastKeyRef.current = key;
+  }, [fullQuestionSet, currentScreen, questionCount, selectedPhonicsDifficulty, selectedMathDifficulty, selectedReadingCategory]);
+
+  const qs = currentQuestions; // backward-compat for local references
+  const q = currentQuestions[currentQuestion] || {};
   const bgColors = {
     phonics: 'from-pink-200 to-pink-400', math: 'from-blue-200 to-blue-400',
     reading: 'from-green-200 to-green-400', science: 'from-teal-200 to-teal-400',
@@ -5735,34 +5790,32 @@ Your Student ✨
           {q.word && (
             <div className="flex items-center justify-center gap-4 mb-4">
               <div className="text-4xl md:text-6xl font-bold text-pink-600">{q.word}</div>
-              <button
-                onClick={() => textToSpeech.speakWord(q.word)}
+              <TTSIconButton
+                text={q.word}
+                mode="word"
                 className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full transition-colors flex-shrink-0"
                 title="Listen to word"
-                aria-label="Listen to word"
-              >
-                🔊
-              </button>
+                ariaLabel="Listen to word"
+              />
             </div>
           )}
           <div className="flex items-center justify-center gap-4 mb-8">
             <p className="text-2xl md:text-3xl font-bold text-gray-700">{q.question}</p>
-            <button
-              onClick={() => textToSpeech.speakQuestion(q.question)}
+            <TTSIconButton
+              text={q.question}
+              mode="question"
               className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full transition-colors flex-shrink-0"
               title="Listen to question"
-              aria-label="Listen to question"
-            >
-              🔊
-            </button>
+              ariaLabel="Listen to question"
+            />
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           {(q.options || []).map((opt, i) => (
-            <div key={i} className="relative">
+            <div key={i} className="flex items-stretch gap-3">
               <div 
                 onClick={() => { triggerHaptic('medium'); handleAnswer(opt, q.correct || q.answer, qs, q.explanation); }} 
-                className="p-6 md:p-8 pr-20 md:pr-24 text-2xl md:text-3xl font-bold rounded-2xl shadow-lg hover:scale-110 active:scale-105 cursor-pointer bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900 transition-transform"
+                className="flex-1 p-6 md:p-8 text-2xl md:text-3xl font-bold rounded-2xl shadow-lg hover:scale-110 active:scale-105 cursor-pointer bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900 transition-transform"
                 role="button"
                 aria-label={`Answer option: ${opt}`}
                 tabIndex={0}
@@ -5770,11 +5823,8 @@ Your Student ✨
                 {opt}
               </div>
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  textToSpeech.speakAnswer(opt);
-                }}
-                className="absolute top-4 right-4 bg-purple-500 hover:bg-purple-600 text-white p-2 rounded-full transition-colors shadow-md z-10"
+                onClick={() => { textToSpeech.toggleSpeak(opt, { rate: 0.85, pitch: 1.0 }); }}
+                className="self-center bg-purple-500 hover:bg-purple-600 text-white p-3 rounded-full transition-colors shadow-md"
                 title="Listen to answer"
                 aria-label="Listen to answer"
               >
@@ -6116,7 +6166,7 @@ Your Student ✨
                   setShowHint(false);
                   
                   // Continue to next question
-                  const qs = questionSets[currentScreen] || [];
+                  const qs = currentQuestions;
                   if (currentQuestion < qs.length - 1) {
                     setCurrentQuestion(currentQuestion + 1);
                   } else {
@@ -6171,6 +6221,11 @@ Your Student ✨
         isOpen={showAudioPreferences}
         onClose={() => setShowAudioPreferences(false)}
       />
+
+      {/* Profile Manager (includes Voice Picker) */}
+      {showProfileManager && (
+        <LazyProfileManager onClose={() => setShowProfileManager(false)} />
+      )}
       
       {/* Loading Overlay */}
       <LoadingOverlay 

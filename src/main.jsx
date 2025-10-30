@@ -1,13 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import AppWithAuth from './AppWithAuth.jsx'
+// import AppWithAuth from './AppWithAuth.jsx'
 import App from './App.jsx'
+// import TestSimple from './TestSimple.jsx'
+// import AppMinimal from './AppMinimal.jsx'
+// import AppUltraSimple from './AppUltraSimple.jsx'
+// import AppMinimalNoCSS from './AppMinimalNoCSS.jsx'
 import './index.css'
-import { setupDebugUtils, setupDebugKeyboardShortcuts, logDebugInfo } from './utils/debugUtils'
-import { initializeMobileOptimizations } from './utils/mobilePerformanceOptimizer'
+// import { setupDebugUtils, setupDebugKeyboardShortcuts, logDebugInfo } from './utils/debugUtils'
+// import { initializeMobileOptimizations } from './utils/mobilePerformanceOptimizer'
 
-// For now, always use the main App to avoid authentication complexity
-// This will allow the app to work without requiring OAuth setup
 const MainApp = App;
 
 // Simple error boundary for initialization
@@ -65,30 +67,31 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 )
 
 // Setup debug utilities in development mode
-setupDebugUtils();
-setupDebugKeyboardShortcuts();
-logDebugInfo();
+// setupDebugUtils();
+// setupDebugKeyboardShortcuts();
+// logDebugInfo();
 
 // Initialize mobile performance optimizations
-initializeMobileOptimizations();
+// initializeMobileOptimizations();
 
 // Initialize PWA functionality with enhanced offline support
-import { initializePWA } from './utils/pwaUtils';
-import serviceWorkerManager from './utils/serviceWorkerManager';
-import { pushNotificationManager } from './utils/pushNotifications';
-import { backgroundSyncManager } from './utils/backgroundSync';
+// import { initializePWA } from './utils/pwaUtils';
+// import serviceWorkerManager from './utils/serviceWorkerManager';
+// import { pushNotificationManager } from './utils/pushNotifications';
+// import { backgroundSyncManager } from './utils/backgroundSync';
 
 // Initialize performance monitoring
-import { performanceMonitor } from './utils/performanceMonitor';
-import { performanceRegressionDetector } from './utils/performanceRegressionDetector';
-import { userCentricMetrics } from './utils/userCentricMetrics';
+// import { performanceMonitor } from './utils/performanceMonitor';
+// import { performanceRegressionDetector } from './utils/performanceRegressionDetector';
+// import { userCentricMetrics } from './utils/userCentricMetrics';
 
 // Initialize code splitting and resource preloading
-import codeSplittingManager from './utils/codeSplittingManager';
-import { initializeResourcePreloading } from './utils/resourcePreloader';
-import { preloadAllSubjects } from './components/subjects/LazySubjectComponents';
+// import codeSplittingManager from './utils/codeSplittingManager';
+// import { initializeResourcePreloading } from './utils/resourcePreloader';
+// import { preloadAllSubjects } from './components/subjects/LazySubjectComponents';
 
 // Initialize PWA features
+/*
 window.addEventListener('load', async () => {
   try {
     const pwaFeatures = await initializePWA();
@@ -183,4 +186,5 @@ window.addEventListener('load', async () => {
     console.error('Failed to initialize code splitting:', error);
   }
 });
+*/
 

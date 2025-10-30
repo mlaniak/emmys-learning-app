@@ -1,9 +1,9 @@
+/* Import accessibility styles first */
+@import './styles/accessibility.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Import accessibility styles */
-@import './styles/accessibility.css';
 
 /* Mobile-first responsive base styles */
 @layer base {

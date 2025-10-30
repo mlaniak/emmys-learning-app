@@ -123,7 +123,7 @@ class CodeSplittingManager {
 
   // Load component modules
   async loadComponentModule(modulePath) {
-    const module = await import(modulePath);
+    const module = await import(/* @vite-ignore */ modulePath);
     
     // Validate component module structure
     if (!module.default && typeof module.default !== 'function') {
@@ -135,7 +135,7 @@ class CodeSplittingManager {
 
   // Load utility modules
   async loadUtilityModule(modulePath) {
-    const module = await import(modulePath);
+    const module = await import(/* @vite-ignore */ modulePath);
     
     // Initialize utility if it has an init method
     if (module.default && typeof module.default.init === 'function') {
