@@ -12,6 +12,24 @@ import './index.css'
 
 const MainApp = App;
 
+// Normalize GH Pages URLs BEFORE React mounts to avoid loops and blank screens
+(() => {
+  try {
+    const gameScreens = ['phonics', 'math', 'reading', 'science', 'art', 'geography', 'history', 'spelling'];
+    const segments = (window.location.pathname || '').split('/').filter(Boolean);
+    const lastSeg = segments[segments.length - 1];
+    const expectedHash = lastSeg ? `#/${lastSeg}` : '';
+    if (gameScreens.includes(lastSeg) && window.location.hash !== expectedHash) {
+      const target = `${window.location.origin}/emmys-learning-app/${expectedHash}`;
+      if (window.location.href !== target) {
+        window.location.replace(target);
+      }
+    }
+  } catch (e) {
+    // no-op: fallback to React boundary
+  }
+})();
+
 // Simple error boundary for initialization
 class InitErrorBoundary extends React.Component {
   constructor(props) {
