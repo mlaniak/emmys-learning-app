@@ -657,8 +657,14 @@ Your Student ✨
       }
       
       const pathParts = hashPath.split('/').filter(part => part);
+      const gameScreens = ['phonics', 'math', 'reading', 'science', 'art', 'geography', 'history', 'spelling'];
+      // For game routes (e.g., #/reading) do NOT rewrite the URL. Let the HashRouter handle it.
+      if (pathParts[0] && gameScreens.includes(pathParts[0])) {
+        setCurrentScreen(pathParts[0]);
+        return;
+      }
       
-      // Update the URL to the correct path without hash
+      // For non-game routes, update the URL to the correct path without hash
       window.history.replaceState(null, '', `/emmys-learning-app${hashPath}`);
       
       // Process the path
