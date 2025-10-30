@@ -857,7 +857,12 @@ Your Student ✨
         setSelectedCategory(0);
       }
     } else {
-      navigate(`/${screen}`);
+      // For game screens, use hard navigation to avoid React hook order issues
+      if (gameScreens.includes(screen)) {
+        window.location.href = `${window.location.origin}/emmys-learning-app/#/${screen}`;
+      } else {
+        navigate(`/${screen}`);
+      }
     }
     
     // Optimized scrolling with scroll optimizer
