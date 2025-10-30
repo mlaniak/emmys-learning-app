@@ -5793,6 +5793,7 @@ Your Student ✨
           </div>
         )}
         {hasQuestion && (
+        <>
         <FeedbackOverlay
           feedback={showFeedback}
           visible={!!showFeedback}
@@ -5860,6 +5861,7 @@ Your Student ✨
           <p className="text-xl md:text-2xl text-gray-600">Question {currentQuestion+1} of {questionCount}</p>
           <p className="text-2xl md:text-3xl font-bold mt-2">Score: {score} ⭐</p>
         </div>
+        </>
         )}
         {/* Help Button */}
         <div className="text-center mt-6">
