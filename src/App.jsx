@@ -2875,7 +2875,7 @@ Your Student ✨
     if (canvas) canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
   };
 
-  const AUTO_ADVANCE_ON_CORRECT = false;
+  const AUTO_ADVANCE_ON_CORRECT = true;
   const handleAnswer = (sel, cor, qs, explanation) => {
     const startTime = Date.now();
     const ok = sel === cor;
@@ -3000,7 +3000,7 @@ Your Student ✨
         triggerHaptic('success');
         setCurrentScreen('complete');
       }
-    }, 1500);
+    }, 1800);
     }
   };
 
