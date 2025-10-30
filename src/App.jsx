@@ -853,8 +853,14 @@ Your Student ✨
         setSelectedCategory(0);
       }
     } else {
-      // Use router navigation for all screens to keep SPA stable
-      navigate(`/${screen}`);
+      // For heavy game screens, force full hash URL to avoid any pathname bleed (GH Pages)
+      if (gameScreens.includes(screen)) {
+        const base = `${window.location.origin}/emmys-learning-app/#/${screen}`;
+        window.location.replace(base);
+      } else {
+        // Use router nav for lightweight sections
+        navigate(`/${screen}`);
+      }
     }
     
     // Optimized scrolling with scroll optimizer
