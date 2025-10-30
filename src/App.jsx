@@ -5300,6 +5300,95 @@ Your Student ✨
     );
   }
 
+  // Game question data and memoized builders MUST be declared before any early returns
+  const questionSets = {
+    phonics: getPhonicsQuestionsByDifficulty(selectedPhonicsDifficulty), 
+    math: getMathQuestionsByDifficulty(selectedMathDifficulty), 
+    reading: getReadingQuestionsByCategory(selectedReadingCategory), 
+    science: scienceQuestions, 
+    social: [],
+    skipcounting: [],
+    art: artQuestions, 
+    geography: geographyQuestions, 
+    history: historyQuestions
+  };
+  
+  // Shuffle function to randomize questions (fallback for simple cases)
+  const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  // Get the full question set, memoized to prevent reshuffle on unrelated renders
+  const fullQuestionSet = React.useMemo(() => {
+    switch (currentScreen) {
+      case 'phonics':
+        return getPhonicsQuestionsByDifficulty(selectedPhonicsDifficulty);
+      case 'math':
+        return getMathQuestionsByDifficulty(selectedMathDifficulty);
+      case 'reading':
+        return getReadingQuestionsByCategory(selectedReadingCategory);
+      case 'science':
+        return scienceQuestions;
+      case 'social':
+        return socialStudiesQuestions;
+      case 'skipcounting':
+        return skipCountingQuestions;
+      case 'art':
+        return artQuestions;
+      case 'geography':
+        return geographyQuestions;
+      case 'history':
+        return historyQuestions;
+      default:
+        return [];
+    }
+  }, [currentScreen, selectedPhonicsDifficulty, selectedMathDifficulty, selectedReadingCategory]);
+  const questionCount = selectedQuestionCount === 'custom' 
+    ? parseInt(customQuestionCount) || 10
+    : selectedQuestionCount;
+  
+  // Freeze the shuffled questions into state so they never change unless deps change
+  const SHUFFLE_QUESTIONS = false;
+  const buildQuestionList = (source, screen, count) => {
+    let base = Array.isArray(source) ? source.slice(0) : [];
+    // Fallback: if no questions resolved (build quirks), use raw set from map
+    if (base.length === 0 && questionSets && questionSets[screen]) {
+      base = questionSets[screen].slice(0);
+    }
+    const safeCount = Number.isFinite(count) && count > 0 ? count : 10;
+    if (!SHUFFLE_QUESTIONS) {
+      return base.slice(0, safeCount);
+    }
+    return smartShuffle(base, screen, safeCount);
+  };
+
+  const [currentQuestions, setCurrentQuestions] = React.useState(() => buildQuestionList(fullQuestionSet, currentScreen, questionCount));
+  const questionsCacheRef = React.useRef({});
+  const lastKeyRef = React.useRef('');
+  React.useEffect(() => {
+    const key = `${currentScreen}|${questionCount}|${selectedPhonicsDifficulty}|${selectedMathDifficulty}|${selectedReadingCategory}`;
+    const cache = questionsCacheRef.current;
+    if (cache[key]) {
+      // Use cached stable order
+      setCurrentQuestions(cache[key]);
+      if (lastKeyRef.current !== key) {
+        setCurrentQuestion(0);
+      }
+      lastKeyRef.current = key;
+      return;
+    }
+    const built = buildQuestionList(fullQuestionSet, currentScreen, questionCount);
+    cache[key] = built;
+    setCurrentQuestions(built);
+    setCurrentQuestion(0);
+    lastKeyRef.current = key;
+  }, [fullQuestionSet, currentScreen, questionCount, selectedPhonicsDifficulty, selectedMathDifficulty, selectedReadingCategory]);
+
   if (currentScreen === 'newsletter' || currentScreen.startsWith('newsletter-')) {
     // Show newsletter selector if no specific newsletter is selected
     if (!selectedNewsletter) {
