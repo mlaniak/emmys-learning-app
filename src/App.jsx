@@ -6306,6 +6306,20 @@ const App = () => {
   const [showNotificationSettings, setShowNotificationSettings] = useState(false);
   const [pwaRegistration, setPwaRegistration] = useState(null);
 
+  // Normalize URLs on GH Pages: if pathname accidentally contains a game path
+  // like "/emmys-learning-app/reading#/reading", rewrite it to "#/reading"
+  useEffect(() => {
+    const gameScreens = ['phonics', 'math', 'reading', 'science', 'art', 'geography', 'history', 'spelling'];
+    const segments = (window.location.pathname || '').split('/').filter(Boolean);
+    const lastSeg = segments[segments.length - 1];
+    if (gameScreens.includes(lastSeg) && !window.location.hash.includes(`/${lastSeg}`)) {
+      const target = `${window.location.origin}/emmys-learning-app/#/${lastSeg}`;
+      if (window.location.href !== target) {
+        window.location.replace(target);
+      }
+    }
+  }, []);
+
   // Initialize global error handling on app start
   useEffect(() => {
     setupGlobalErrorHandling();
