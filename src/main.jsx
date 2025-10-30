@@ -77,11 +77,9 @@ class InitErrorBoundary extends React.Component {
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <InitErrorBoundary>
-      <MainApp />
-    </InitErrorBoundary>
-  </React.StrictMode>,
+  <InitErrorBoundary>
+    <MainApp />
+  </InitErrorBoundary>
 )
 
 // Setup debug utilities in development mode
