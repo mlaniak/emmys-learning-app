@@ -186,10 +186,31 @@ export class ErrorReportingManager {
   }
 
   /**
+   * Check if we're on a static hosting platform (like GitHub Pages)
+   */
+  isStaticHosting() {
+    if (typeof window === 'undefined') return false;
+    const hostname = window.location.hostname;
+    // Check for common static hosting platforms
+    return hostname.includes('github.io') || 
+           hostname.includes('netlify.app') || 
+           hostname.includes('vercel.app') ||
+           hostname.includes('pages.dev') ||
+           hostname === 'localhost' || 
+           hostname === '127.0.0.1';
+  }
+
+  /**
    * Flush report queue to server
    */
   async flushQueue(isUnloading = false) {
     if (this.isFlushingQueue || this.reportQueue.length === 0) return;
+    
+    // Skip reporting on static hosting platforms
+    if (this.isStaticHosting()) {
+      this.reportQueue = [];
+      return;
+    }
     
     this.isFlushingQueue = true;
     const reportsToSend = [...this.reportQueue];
@@ -209,9 +230,16 @@ export class ErrorReportingManager {
         console.log(`📤 Sent ${reportsToSend.length} error reports`);
       }
     } catch (error) {
-      // Re-queue reports on failure
-      this.reportQueue.unshift(...reportsToSend);
-      console.error('Failed to send error reports:', error);
+      // Fail silently on static hosting - don't log errors that users can't fix
+      if (!this.isStaticHosting()) {
+        // Only log errors if not on static hosting
+        if (isDevelopment()) {
+          console.warn('Failed to send error reports:', error);
+        }
+        // Re-queue reports on failure (only if not static hosting)
+        this.reportQueue.unshift(...reportsToSend);
+      }
+      // On static hosting, just clear the queue silently
     } finally {
       this.isFlushingQueue = false;
     }
@@ -221,6 +249,11 @@ export class ErrorReportingManager {
    * Send reports to server
    */
   async sendReports(reports) {
+    // Skip if on static hosting
+    if (this.isStaticHosting()) {
+      return { success: true, skipped: true };
+    }
+
     const payload = {
       reports,
       metadata: {
@@ -230,20 +263,32 @@ export class ErrorReportingManager {
       }
     };
 
-    const response = await fetch(this.config.endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(this.config.apiKey && { 'Authorization': `Bearer ${this.config.apiKey}` })
-      },
-      body: JSON.stringify(payload)
-    });
+    try {
+      const response = await fetch(this.config.endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(this.config.apiKey && { 'Authorization': `Bearer ${this.config.apiKey}` })
+        },
+        body: JSON.stringify(payload)
+      });
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      if (!response.ok) {
+        // For 405 (Method Not Allowed), likely static hosting - fail silently
+        if (response.status === 405) {
+          return { success: true, skipped: true };
+        }
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      // If fetch fails completely (network error, CORS, etc.), fail silently on static hosting
+      if (this.isStaticHosting() || error.message.includes('405')) {
+        return { success: true, skipped: true };
+      }
+      throw error;
     }
-
-    return response.json();
   }
 
   /**
@@ -443,11 +488,22 @@ export class ErrorReportingManager {
   }
 }
 
+// Helper function to check if we're on static hosting
+const isStaticHosting = () => {
+  if (typeof window === 'undefined') return false;
+  const hostname = window.location.hostname;
+  return hostname.includes('github.io') || 
+         hostname.includes('netlify.app') || 
+         hostname.includes('vercel.app') ||
+         hostname.includes('pages.dev');
+};
+
 // Create default instance
 export const errorReporting = new ErrorReportingManager({
   // In a real app, these would come from environment variables
   endpoint: isDevelopment() ? '/dev/api/errors' : '/api/errors',
-  enabled: !isDevelopment(), // Disable in development by default
+  // Disable error reporting on static hosting platforms or in development
+  enabled: !isDevelopment() && !isStaticHosting(),
   privacyLevel: PRIVACY_LEVELS.STANDARD
 });
 
