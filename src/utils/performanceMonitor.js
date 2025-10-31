@@ -47,7 +47,7 @@ class PerformanceMonitor {
     this.calculateBundleSize();
 
     this.isInitialized = true;
-    console.log('Performance Monitor initialized');
+    if (import.meta.env.DEV) console.log('Performance Monitor initialized');
   }
 
   setupCoreWebVitalsTracking() {
@@ -249,7 +249,18 @@ class PerformanceMonitor {
         severity: this.calculateViolationSeverity(value, budget)
       };
 
-      console.warn(`Performance Budget Violation: ${metricName}`, violation);
+      // Do not warn in production to keep console clean on live site
+      if (import.meta.env.DEV) {
+        if (metricName !== 'maxMemoryUsage') {
+          console.warn(`Performance Budget Violation: ${metricName}`, violation);
+        } else {
+          const ratio = value / budget;
+          if (ratio > 2) {
+            console.warn(`Performance Budget Violation: ${metricName}`, violation);
+          }
+        }
+      }
+      
       this.notifyObservers('budgetViolation', violation);
     }
   }

@@ -51,13 +51,13 @@ const InteractiveQuestions = ({ question, onAnswer, playSound, triggerHaptic }) 
     const isMobile = deviceInfo.type === 'mobile' || deviceInfo.type === 'ios' || deviceInfo.type === 'android';
 
     return (
-      <div className="card-mobile max-w-2xl mx-auto">
-        <h3 className={`font-bold mb-6 text-center text-gray-800 ${
+      <div className="card-mobile max-w-xl mx-auto p-3 md:p-4">
+        <h3 className={`font-bold mb-4 text-center text-gray-800 ${
           isMobile ? 'text-lg sm:text-xl' : 'text-xl md:text-2xl'
         }`}>{question}</h3>
         
         {/* Draggable Items - Mobile optimized */}
-        <div className={`flex justify-center gap-3 mb-6 ${isMobile ? 'flex-wrap' : ''}`}>
+        <div className={`flex justify-center gap-2 mb-3 ${isMobile ? 'flex-wrap' : ''}`}>
           {options.map((option, index) => (
             <div
               key={index}
@@ -80,7 +80,7 @@ const InteractiveQuestions = ({ question, onAnswer, playSound, triggerHaptic }) 
           onDragOver={!isMobile ? handleDragOver : undefined}
           onDrop={!isMobile ? (e) => handleDrop(e, 'answer') : undefined}
           className={`border-4 border-dashed border-gray-300 rounded-lg text-center bg-gray-50 transition-all duration-200 ${
-            isMobile ? 'p-6 min-h-[80px]' : 'p-8 min-h-[100px]'
+            isMobile ? 'p-3 min-h-[56px]' : 'p-5 min-h-[72px]'
           } flex items-center justify-center`}
         >
           {droppedItems.answer ? (
@@ -211,12 +211,12 @@ const InteractiveQuestions = ({ question, onAnswer, playSound, triggerHaptic }) 
     const isMobile = deviceInfo.type === 'mobile' || deviceInfo.type === 'ios' || deviceInfo.type === 'android';
 
     return (
-      <div className="card-mobile max-w-2xl mx-auto">
-        <h3 className={`font-bold mb-6 text-center text-gray-800 ${
+      <div className="card-mobile max-w-xl mx-auto p-3 md:p-4">
+        <h3 className={`font-bold mb-4 text-center text-gray-800 ${
           isMobile ? 'text-lg sm:text-xl' : 'text-xl md:text-2xl'
         }`}>{question}</h3>
         
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-3">
           <canvas
             ref={canvasRef}
             width={isMobile ? 300 : 400}
@@ -275,8 +275,8 @@ const InteractiveQuestions = ({ question, onAnswer, playSound, triggerHaptic }) 
 
     const playAudio = () => {
       if ('speechSynthesis' in window) {
-        // Toggle speak using shared TTS util for consistent voice
-        const result = textToSpeech.toggleSpeak(audioText || question, { rate: 0.8, pitch: 1.05 });
+        // Toggle speak using shared TTS util for consistent voice with natural settings
+        const result = textToSpeech.toggleSpeak(audioText || question, { rate: 0.92, pitch: 1.02 });
         setIsPlaying(result === 'started');
         playSound('click');
       }
@@ -294,14 +294,14 @@ const InteractiveQuestions = ({ question, onAnswer, playSound, triggerHaptic }) 
           <TouchButton
             onClick={playAudio}
             variant={isPlaying ? 'secondary' : 'primary'}
-            size="large"
+            size="compact"
             className={`hover:scale-105 transition-all duration-200`}
           >
             {isPlaying ? '⏹ Stop' : '🔊 Listen'}
           </TouchButton>
         </div>
         
-        <div className={`grid gap-3 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}`}>
+        <div className={`grid gap-2 ${isMobile ? 'grid-cols-2' : 'grid-cols-2'}`}>
           {options.map((option, index) => (
             <TouchButton
               key={index}
@@ -313,8 +313,8 @@ const InteractiveQuestions = ({ question, onAnswer, playSound, triggerHaptic }) 
                 onAnswer(option, correct, [question], `You chose ${option}. ${option === correct ? 'Correct!' : 'Try again!'}`);
               }}
               variant="outline"
-              size={isMobile ? 'large' : 'medium'}
-              className="bg-purple-50 border-purple-300 text-purple-800 hover:bg-purple-100"
+              size="compact"
+              className="bg-purple-50 border-purple-300 text-purple-800 hover:bg-purple-100 px-3 py-1.5"
             >
               {option}
             </TouchButton>
@@ -358,11 +358,11 @@ const InteractiveQuestions = ({ question, onAnswer, playSound, triggerHaptic }) 
         const isMobile = deviceInfo.type === 'mobile' || deviceInfo.type === 'ios' || deviceInfo.type === 'android';
         
         return (
-          <div className="card-mobile max-w-2xl mx-auto">
-            <h3 className={`font-bold mb-6 text-center text-gray-800 ${
+          <div className="card-mobile max-w-xl mx-auto p-3 md:p-4">
+            <h3 className={`font-bold mb-4 text-center text-gray-800 ${
               isMobile ? 'text-lg sm:text-xl' : 'text-xl md:text-2xl'
             }`}>{question.question}</h3>
-            <div className={`grid gap-3 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}`}>
+            <div className={`grid gap-2 ${isMobile ? 'grid-cols-2' : 'grid-cols-2'}`}>
               {question.options.map((option, index) => (
                 <TouchButton
                   key={index}
@@ -374,8 +374,8 @@ const InteractiveQuestions = ({ question, onAnswer, playSound, triggerHaptic }) 
                     onAnswer(option, question.correct, [question], question.explanation);
                   }}
                   variant="outline"
-                  size={isMobile ? 'large' : 'medium'}
-                  className="bg-blue-50 border-blue-300 text-blue-800 hover:bg-blue-100 text-left"
+                  size="compact"
+                  className="bg-blue-50 border-blue-300 text-blue-800 hover:bg-blue-100 text-left px-3 py-1.5"
                 >
                   {option}
                 </TouchButton>

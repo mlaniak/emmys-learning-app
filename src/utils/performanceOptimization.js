@@ -292,7 +292,7 @@ export const checkPerformanceBudget = () => {
     violations.push(`Memory usage exceeded: ${currentMemory.used} bytes > ${budget.maxMemoryUsage} bytes`);
   }
 
-  if (violations.length > 0) {
+  if (violations.length > 0 && import.meta.env.DEV) {
     console.warn('Performance Budget Violations:', violations);
   }
 

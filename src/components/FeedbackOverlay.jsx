@@ -70,35 +70,15 @@ const FeedbackOverlay = ({
 
   const getFeedbackConfig = () => {
     if (isComplete) {
-      const percentage = Math.round(score);
-      if (percentage >= 90) {
-        return {
-          emoji: '🌟',
-          title: 'Perfect Score!',
-          message: 'You\'re a learning superstar!',
-          bgColor: 'from-yellow-400 via-yellow-500 to-yellow-600',
-          textColor: 'text-white',
-          animation: 'celebration-pulse'
-        };
-      } else if (percentage >= 70) {
-        return {
-          emoji: '🎉',
-          title: 'Great Job!',
-          message: 'You\'re doing amazing!',
-          bgColor: 'from-green-400 via-green-500 to-green-600',
-          textColor: 'text-white',
-          animation: 'correct-bounce'
-        };
-      } else {
-        return {
-          emoji: '👏',
-          title: 'Well Done!',
-          message: 'Keep up the great work!',
-          bgColor: 'from-blue-400 via-blue-500 to-blue-600',
-          textColor: 'text-white',
-          animation: 'gentle-bounce'
-        };
-      }
+      // Lightweight completion state to avoid branching on undefined props
+      return {
+        emoji: '🎉',
+        title: 'Great Job!',
+        message: 'You finished this set!',
+        bgColor: 'from-green-400 via-green-500 to-green-600',
+        textColor: 'text-white',
+        animation: 'correct-bounce'
+      };
     } else if (isCorrect) {
       return {
         emoji: '🎉',
@@ -160,8 +140,8 @@ const FeedbackOverlay = ({
 
       {/* Feedback Overlay */}
       <div 
-        className={`absolute inset-0 z-50 flex items-center justify-center transition-all duration-300 bg-black/50 backdrop-blur-sm ${
-          animationPhase === 'enter' ? 'opacity-100' : 'opacity-0'
+        className={`fixed inset-0 z-50 flex items-center justify-center transition-all duration-300 bg-black/50 backdrop-blur-sm ${
+          animationPhase === 'enter' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         onClick={() => {
           setAnimationPhase('exit');

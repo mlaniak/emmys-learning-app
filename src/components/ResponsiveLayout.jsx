@@ -219,9 +219,10 @@ export const TouchButton = ({
 
   const getSizeClasses = () => {
     const sizes = {
+      compact: 'px-3 py-1.5 min-h-[36px] text-sm rounded-lg',
       small: 'btn-touch text-mobile-sm',
-      medium: 'btn-touch-lg text-mobile-base',
-      large: 'btn-touch-xl text-mobile-lg',
+      medium: 'btn-touch text-mobile-base',
+      large: 'btn-touch-lg text-mobile-base',
     };
     
     return sizes[size] || sizes.medium;

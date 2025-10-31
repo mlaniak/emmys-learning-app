@@ -94,10 +94,11 @@ class AudioManager {
       });
       this.pendingSounds = [];
 
-      console.log('AudioManager initialized successfully');
+      if (import.meta.env.DEV) console.log('AudioManager initialized successfully');
       return true;
     } catch (error) {
-      console.warn('AudioManager initialization failed:', error);
+      // Suppress autoplay-policy warnings in production to avoid noisy consoles
+      if (import.meta.env.DEV) console.warn('AudioManager initialization failed:', error);
       this.isInitialized = false;
       return false;
     }

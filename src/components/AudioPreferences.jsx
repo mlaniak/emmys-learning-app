@@ -129,13 +129,15 @@ const AudioPreferences = ({ isOpen, onClose }) => {
           {/* Volume Control */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="font-semibold text-gray-700">Volume</label>
+              <label htmlFor="volume-slider" className="font-semibold text-gray-700">Volume</label>
               <span className="text-sm text-gray-500">{Math.round(volume * 100)}%</span>
             </div>
             <div className="flex items-center gap-3">
               <span className="text-lg">🔈</span>
               <input
                 type="range"
+                id="volume-slider"
+                name="volume"
                 min="0"
                 max="1"
                 step="0.1"
@@ -143,6 +145,7 @@ const AudioPreferences = ({ isOpen, onClose }) => {
                 onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
                 className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
                 disabled={isMuted}
+                aria-label="Volume control"
               />
               <span className="text-lg">🔊</span>
             </div>

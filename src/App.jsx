@@ -5664,13 +5664,13 @@ Your Student ✨
         icon="🎮"
       />
     }>
-      <div className={`min-h-screen bg-gradient-to-br ${bgColors[currentScreen]} container-mobile`}>
+      <div className={`min-h-screen bg-gradient-to-br ${bgColors[currentScreen]} container-mobile ${currentScreen === 'reading' ? 'pt-1 md:pt-2' : ''}`}>
       <div className="flex justify-between mb-4 gap-2">
         <button 
           onClick={() => { navigateTo('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }} 
-          className="btn-touch bg-white shadow-mobile rounded-full px-mobile hover-mobile-scale touch-feedback"
+          className="btn-touch bg-gray-900 text-white shadow-mobile rounded-full px-mobile hover-mobile-scale touch-feedback border border-black/10"
         >
-          <span>← Back</span>
+          <span>☰ Menu</span>
         </button>
         <button 
           onClick={() => setCurrentQuestion(0)} 
@@ -5735,9 +5735,9 @@ Your Student ✨
       )}
 
       {currentScreen === 'reading' && (
-        <div className="mb-6">
-          <h2 className="text-lg md:text-xl font-bold text-center mb-4">📖 Choose Reading Focus</h2>
-          <div className="flex justify-center gap-3">
+        <div className="mb-2">
+          <h2 className="text-base md:text-lg font-bold text-center mb-1">📖 Choose Reading Focus</h2>
+          <div className="flex justify-center gap-2">
             {[
               { value: 'all', label: 'All Questions' },
               { value: 'story-elements', label: 'Story Elements' },
@@ -5751,7 +5751,7 @@ Your Student ✨
                   playSound('click');
                   triggerHaptic('light');
                 }}
-                className={`px-4 py-2 rounded-xl font-bold text-sm md:text-base transition-all transform hover:scale-105 active:scale-95 ${
+                className={`px-3 py-1.5 rounded-xl font-semibold text-sm md:text-sm transition-all transform hover:scale-105 active:scale-95 ${
                   selectedReadingCategory === option.value
                     ? 'bg-green-500 text-white shadow-lg'
                     : 'bg-green-100 text-green-700 hover:bg-green-200'
@@ -5764,7 +5764,7 @@ Your Student ✨
         </div>
       )}
 
-      <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-2xl p-6 md:p-12 relative">
+      <div className="max-w-xl mx-auto bg-white rounded-2xl shadow-2xl p-3 md:p-5 relative">
         {!hasQuestion && (
           <div className="text-center py-10">
             <div className="text-4xl mb-2">⏳</div>
@@ -5862,12 +5862,12 @@ Your Student ✨
             />
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 gap-3 md:gap-4">
           {((shuffledOptions && shuffledOptions.length > 0) ? shuffledOptions : (q.options || [])).map((opt, i) => (
             <div key={`${currentQuestion}-${opt}-${i}`} className="flex items-stretch gap-3">
               <div 
                 onClick={() => { triggerHaptic('medium'); handleAnswer(opt, q.correct || q.answer, qs, q.explanation); }} 
-                className="flex-1 p-6 md:p-8 text-2xl md:text-3xl font-bold rounded-2xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900 transition-all duration-200"
+                className="flex-1 p-3 md:p-4 text-xl md:text-2xl font-semibold rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900 transition-all duration-200"
                 role="button"
                 aria-label={`Answer option: ${opt}`}
                 tabIndex={0}
@@ -5875,8 +5875,8 @@ Your Student ✨
                 {opt}
               </div>
               <button
-                onClick={() => { textToSpeech.toggleSpeak(opt, { rate: 0.85, pitch: 1.0 }); }}
-                className="self-center bg-purple-500 hover:bg-purple-600 text-white p-3 rounded-full transition-colors shadow-md flex-shrink-0"
+                onClick={() => { textToSpeech.toggleSpeak(opt, { rate: 0.95, pitch: 1.0 }); }}
+                className="self-center bg-purple-500 hover:bg-purple-600 text-white p-2.5 rounded-full transition-colors shadow-md flex-shrink-0"
                 title="Listen to answer"
                 aria-label={`Listen to answer: ${opt}`}
               >
