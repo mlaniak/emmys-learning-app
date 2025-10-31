@@ -5823,57 +5823,135 @@ Your Student ✨
           score={score}
           isComplete={false}
         />
-        <div className={`question-container text-center mb-8 ${answerAnimation}`}>
-          <div className="text-6xl md:text-8xl mb-4">{q.image || q.emoji}</div>
+        {/* Question Display - Enhanced for better visibility and engagement for kids */}
+        <div className={`question-container text-center mb-8 ${answerAnimation} bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 rounded-3xl p-6 md:p-8 shadow-xl border-4 border-purple-200`}>
+          <div className="text-8xl md:text-[10rem] mb-6 animate-pulse" style={{ 
+            filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.15))',
+            animation: 'pulse 2s ease-in-out infinite'
+          }}>
+            {q.image || q.emoji}
+          </div>
           {q.word && (
-            <div className="flex items-center justify-center gap-4 mb-4">
-              <div className="text-4xl md:text-6xl font-bold text-pink-600">{q.word}</div>
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <div className="text-5xl md:text-7xl font-extrabold text-pink-700" style={{
+                textShadow: '2px 2px 4px rgba(0,0,0,0.1)',
+                letterSpacing: '0.05em'
+              }}>
+                {q.word}
+              </div>
               <TTSIconButton
                 text={q.word}
                 mode="word"
-                className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full transition-colors flex-shrink-0"
+                className="bg-blue-500 hover:bg-blue-600 text-white p-4 rounded-full transition-all shadow-lg flex-shrink-0 text-2xl md:text-3xl min-w-[56px] min-h-[56px] border-2 border-white"
                 title="Listen to word"
                 ariaLabel="Listen to word"
               />
             </div>
           )}
-          <div className="flex items-center justify-center gap-4 mb-8">
-            <p className="text-2xl md:text-3xl font-bold text-gray-700">{q.question}</p>
+          <div className="flex items-center justify-center gap-4 mb-8 flex-wrap">
+            <p className="text-3xl md:text-4xl font-extrabold text-gray-800 leading-tight" style={{
+              textShadow: '1px 1px 3px rgba(0,0,0,0.1)',
+              maxWidth: '90%'
+            }}>
+              {q.question}
+            </p>
             <TTSIconButton
               text={q.question}
               mode="question"
-              className="bg-green-500 hover:bg-green-600 text-white p-3 rounded-full transition-colors flex-shrink-0"
+              className="bg-green-500 hover:bg-green-600 text-white p-4 rounded-full transition-all shadow-lg flex-shrink-0 text-2xl md:text-3xl min-w-[56px] min-h-[56px] border-2 border-white"
               title="Listen to question"
               ariaLabel="Listen to question"
             />
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-3 md:gap-4">
-          {((shuffledOptions && shuffledOptions.length > 0) ? shuffledOptions : (q.options || [])).map((opt, i) => (
-            <div key={`${currentQuestion}-${opt}-${i}`} className="flex items-stretch gap-3">
-              <div 
-                onClick={() => { if (answerLocked) return; triggerHaptic('medium'); handleAnswer(opt, q.correct || q.answer, qs, q.explanation); }} 
-                className="flex-1 p-3 md:p-4 text-xl md:text-2xl font-semibold rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900 transition-all duration-200"
-                role="button"
-                aria-label={`Answer option: ${opt}`}
-                tabIndex={0}
-              >
-                {opt}
+        {/* Answer Buttons - Optimized for 7-8 year olds: larger, more colorful, easier to tap */}
+        <div className="grid grid-cols-2 gap-4 md:gap-5 mb-6">
+          {((shuffledOptions && shuffledOptions.length > 0) ? shuffledOptions : (q.options || [])).map((opt, i) => {
+            // Colorful gradients for each button to make them more distinct and fun
+            const buttonColors = [
+              'from-blue-400 via-blue-500 to-blue-600',
+              'from-pink-400 via-pink-500 to-pink-600',
+              'from-green-400 via-green-500 to-green-600',
+              'from-purple-400 via-purple-500 to-purple-600'
+            ];
+            const textColors = [
+              'text-blue-50',
+              'text-pink-50',
+              'text-green-50',
+              'text-purple-50'
+            ];
+            const colorIndex = i % 4;
+            
+            return (
+              <div key={`${currentQuestion}-${opt}-${i}`} className="flex items-stretch gap-3">
+                <div 
+                  onClick={() => { if (answerLocked) return; triggerHaptic('medium'); handleAnswer(opt, q.correct || q.answer, qs, q.explanation); }} 
+                  className={`flex-1 p-5 md:p-6 text-2xl md:text-3xl font-bold rounded-2xl shadow-xl hover:scale-110 active:scale-95 cursor-pointer bg-gradient-to-br ${buttonColors[colorIndex]} ${textColors[colorIndex]} transition-all duration-200 border-4 border-white min-h-[80px] md:min-h-[100px] flex items-center justify-center`}
+                  style={{
+                    boxShadow: '0 8px 16px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3)',
+                    touchAction: 'manipulation'
+                  }}
+                  role="button"
+                  aria-label={`Answer option: ${opt}`}
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if ((e.key === 'Enter' || e.key === ' ') && !answerLocked) {
+                      e.preventDefault();
+                      triggerHaptic('medium');
+                      handleAnswer(opt, q.correct || q.answer, qs, q.explanation);
+                    }
+                  }}
+                >
+                  <span style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.2)' }}>{opt}</span>
+                </div>
+                <button
+                  onClick={() => { textToSpeech.toggleSpeak(opt, { rate: 0.92, pitch: 1.05 }); }}
+                  className="self-center bg-purple-500 hover:bg-purple-600 text-white p-4 rounded-full transition-all shadow-lg flex-shrink-0 min-w-[56px] min-h-[56px] md:min-w-[64px] md:min-h-[64px] text-2xl md:text-3xl flex items-center justify-center border-2 border-white"
+                  style={{ touchAction: 'manipulation' }}
+                  title="Listen to answer"
+                  aria-label={`Listen to answer: ${opt}`}
+                >
+                  🔊
+                </button>
               </div>
-              <button
-                onClick={() => { textToSpeech.toggleSpeak(opt, { rate: 0.95, pitch: 1.0 }); }}
-                className="self-center bg-purple-500 hover:bg-purple-600 text-white p-2.5 rounded-full transition-colors shadow-md flex-shrink-0"
-                title="Listen to answer"
-                aria-label={`Listen to answer: ${opt}`}
-              >
-                🔊
-              </button>
-            </div>
-          ))}
+            );
+          })}
         </div>
-        <div className="mt-8 text-center">
-          <p className="text-xl md:text-2xl text-gray-600">Question {currentQuestion+1} of {questionCount}</p>
-          <p className="text-2xl md:text-3xl font-bold mt-2">Score: {score} ⭐</p>
+        {/* Progress and Score Display - More visual and fun for kids */}
+        <div className="mt-8 mb-6">
+          {/* Progress Bar */}
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-2 px-2">
+              <span className="text-lg md:text-xl font-bold text-purple-700">
+                Question {currentQuestion+1} of {questionCount}
+              </span>
+              <span className="text-lg md:text-xl font-bold text-purple-700">
+                {Math.round(((currentQuestion + 1) / questionCount) * 100)}%
+              </span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-6 md:h-8 shadow-inner border-2 border-gray-300 overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 rounded-full transition-all duration-500 ease-out shadow-lg flex items-center justify-end pr-2"
+                style={{ width: `${((currentQuestion + 1) / questionCount) * 100}%` }}
+              >
+                {((currentQuestion + 1) / questionCount) * 100 >= 15 && (
+                  <span className="text-white text-xs md:text-sm font-bold">⭐</span>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          {/* Score Display */}
+          <div className="text-center bg-gradient-to-r from-yellow-100 to-orange-100 rounded-2xl p-4 border-4 border-yellow-300 shadow-lg">
+            <p className="text-3xl md:text-4xl font-extrabold text-yellow-800" style={{
+              textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
+            }}>
+              Score: {score} <span className="text-4xl md:text-5xl">⭐</span>
+            </p>
+            <p className="text-sm md:text-base text-yellow-700 mt-1 font-semibold">
+              Keep going! You're doing great! 🎉
+            </p>
+          </div>
         </div>
         </>
         )}
@@ -5882,29 +5960,37 @@ Your Student ✨
           <button
             onClick={handleHelpClick}
             disabled={hintUsed}
-            className={`px-6 py-3 rounded-full font-bold transition-all ${
+            className={`px-8 py-4 rounded-full font-extrabold text-lg md:text-xl transition-all shadow-lg border-4 ${
               hintUsed 
-                ? 'bg-gray-400 text-gray-600 cursor-not-allowed' 
-                : 'bg-orange-500 hover:bg-orange-600 text-white hover:scale-105 active:scale-95'
+                ? 'bg-gray-300 text-gray-600 cursor-not-allowed border-gray-400' 
+                : 'bg-gradient-to-r from-orange-400 to-orange-600 hover:from-orange-500 hover:to-orange-700 text-white hover:scale-110 active:scale-95 border-white'
             }`}
-            title={hintUsed ? "Hint already used" : "Get a hint (costs half points)"}
+            style={{ touchAction: 'manipulation' }}
+            title={hintUsed ? "Hint already used" : "Get a helpful hint!"}
           >
-            {hintUsed ? '💡 Hint Used' : '💡 I Need Help'}
+            {hintUsed ? '💡 Hint Already Used' : '💡 I Need a Hint!'}
           </button>
           {hintUsed && (
-            <p className="text-sm text-orange-600 mt-2 font-medium">
-              ⚠️ You'll get half points for this question
+            <p className="text-base md:text-lg text-orange-700 mt-3 font-bold bg-orange-100 rounded-lg px-4 py-2 border-2 border-orange-300 inline-block">
+              💪 Still doing great! Half points earned for learning!
             </p>
           )}
         </div>
 
-        {/* Hint Display */}
+        {/* Hint Display - More engaging for kids */}
         {showHint && (
-          <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4 mt-4 mx-4">
-            <div className="flex items-center justify-center">
-              <span className="text-2xl mr-3">💡</span>
-              <p className="text-lg font-medium text-blue-800">
+          <div className="bg-gradient-to-r from-blue-100 via-cyan-100 to-blue-100 border-4 border-blue-400 rounded-2xl p-5 mt-4 mx-4 shadow-xl animate-pulse">
+            <div className="flex items-center justify-center gap-3">
+              <span className="text-4xl md:text-5xl animate-bounce">💡</span>
+              <p className="text-lg md:text-xl font-bold text-blue-900 leading-relaxed" style={{
+                textShadow: '1px 1px 2px rgba(255,255,255,0.5)'
+              }}>
                 {generateHint(q.question, q.options, q.correct || q.answer, currentScreen)}
+              </p>
+            </div>
+            <div className="text-center mt-3">
+              <p className="text-sm md:text-base text-blue-700 font-semibold">
+                💪 You've got this! Keep thinking!
               </p>
             </div>
           </div>
@@ -6151,44 +6237,52 @@ Your Student ✨
         </button>
       </div>
       
-      {/* Wrong Answer Modal - Rendered at top level for proper positioning */}
+      {/* Wrong Answer Modal - More encouraging and kid-friendly */}
       {showWrongAnswerModal && wrongAnswerData && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 md:p-8">
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-yellow-50 via-orange-50 to-pink-50 rounded-3xl shadow-2xl max-w-md w-full p-6 md:p-8 border-4 border-yellow-300">
             <div className="text-center mb-6">
-              <div className="text-6xl mb-4">😅</div>
-              <h2 className="text-2xl md:text-3xl font-bold text-red-600 mb-2">Not Quite Right!</h2>
-              <p className="text-gray-600">Let's learn from this mistake</p>
+              <div className="text-7xl md:text-8xl mb-4 animate-bounce">💪</div>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-purple-700 mb-2" style={{
+                textShadow: '1px 1px 3px rgba(0,0,0,0.1)'
+              }}>
+                Great Try!
+              </h2>
+              <p className="text-lg md:text-xl text-gray-700 font-semibold">
+                Let's learn together! 📚
+              </p>
             </div>
 
             <div className="space-y-4 mb-6">
               {/* Question */}
               {wrongAnswerData.question && (
-                <div className="bg-gray-50 rounded-xl p-4">
-                  <h3 className="font-bold text-gray-700 mb-2">Question:</h3>
-                  <p className="text-gray-600">
+                <div className="bg-white rounded-2xl p-4 border-2 border-purple-200 shadow-md">
+                  <h3 className="font-bold text-purple-700 mb-2 text-lg">📝 The Question Was:</h3>
+                  <p className="text-gray-700 text-base md:text-lg">
                     {wrongAnswerData.question.question || wrongAnswerData.question.word || 'Question not available'}
                   </p>
                 </div>
               )}
 
-              {/* Your Answer */}
-              <div className="bg-red-50 rounded-xl p-4 border border-red-200">
-                <h3 className="font-bold text-red-700 mb-2">Your Answer:</h3>
-                <p className="text-red-600 font-semibold">{wrongAnswerData.selectedAnswer}</p>
+              {/* Your Answer - More encouraging */}
+              <div className="bg-gradient-to-r from-blue-100 to-blue-200 rounded-2xl p-4 border-2 border-blue-300 shadow-md">
+                <h3 className="font-bold text-blue-700 mb-2 text-lg">✨ Your Answer:</h3>
+                <p className="text-blue-800 font-bold text-lg md:text-xl">{wrongAnswerData.selectedAnswer}</p>
+                <p className="text-blue-600 text-sm mt-1">Good thinking! 🌟</p>
               </div>
 
               {/* Correct Answer */}
-              <div className="bg-green-50 rounded-xl p-4 border border-green-200">
-                <h3 className="font-bold text-green-700 mb-2">Correct Answer:</h3>
-                <p className="text-green-600 font-semibold">{wrongAnswerData.correctAnswer}</p>
+              <div className="bg-gradient-to-r from-green-100 to-green-200 rounded-2xl p-4 border-2 border-green-300 shadow-md">
+                <h3 className="font-bold text-green-700 mb-2 text-lg">🎯 The Answer Is:</h3>
+                <p className="text-green-800 font-bold text-lg md:text-xl">{wrongAnswerData.correctAnswer}</p>
+                <p className="text-green-600 text-sm mt-1">Remember this for next time! 💡</p>
               </div>
 
               {/* Explanation */}
               {wrongAnswerData.explanation && (
-                <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
-                  <h3 className="font-bold text-blue-700 mb-2">Why?</h3>
-                  <p className="text-blue-600">{wrongAnswerData.explanation}</p>
+                <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl p-4 border-2 border-purple-300 shadow-md">
+                  <h3 className="font-bold text-purple-700 mb-2 text-lg">💭 Why?</h3>
+                  <p className="text-purple-800 text-base">{wrongAnswerData.explanation}</p>
                 </div>
               )}
             </div>
@@ -6246,9 +6340,10 @@ Your Student ✨
                   playSound('click');
                   triggerHaptic('light');
                 }}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-full font-bold text-lg transition-colors transform hover:scale-105 active:scale-95"
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-10 py-4 rounded-full font-extrabold text-xl transition-all transform hover:scale-110 active:scale-95 shadow-xl border-4 border-white"
+                style={{ touchAction: 'manipulation' }}
               >
-                Got It! Continue →
+                Got It! Let's Continue! 🚀
               </button>
             </div>
           </div>

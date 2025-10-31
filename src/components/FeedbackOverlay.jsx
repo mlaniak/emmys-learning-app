@@ -32,14 +32,14 @@ const FeedbackOverlay = ({
         }, 200);
       }
 
-      // Auto-close after delay
+      // Auto-close after delay - longer for correct answers so kids can enjoy the celebration!
       const timer = setTimeout(() => {
         setAnimationPhase('exit');
         setTimeout(() => {
           setShowConfetti(false);
           onClose();
         }, 300);
-      }, isComplete ? 3000 : 2000);
+      }, isComplete ? 4000 : (feedback === 'correct' ? 2500 : 2000));
 
       return () => clearTimeout(timer);
     }
@@ -90,12 +90,12 @@ const FeedbackOverlay = ({
       };
     } else if (isIncorrect) {
       return {
-        emoji: '🤔',
-        title: 'Not quite!',
-        message: 'Try again!',
-        bgColor: 'from-orange-400 via-orange-500 to-orange-600',
+        emoji: '💪',
+        title: 'Nice Try!',
+        message: 'You\'re learning!',
+        bgColor: 'from-yellow-400 via-orange-400 to-orange-500',
         textColor: 'text-white',
-        animation: 'incorrect-shake'
+        animation: 'gentle-bounce'
       };
     }
     
@@ -115,14 +115,17 @@ const FeedbackOverlay = ({
   const getEncouragingMessages = () => {
     if (isCorrect) {
       const messages = [
-        'Fantastic!', 'Brilliant!', 'Excellent!', 'Outstanding!', 
-        'Superb!', 'Wonderful!', 'Perfect!', 'Amazing!'
+        'You\'re a star! ⭐', 'So smart! 🧠', 'Awesome job! 🎉', 'You rock! 🎸', 
+        'Super cool! 🌟', 'Way to go! 🚀', 'Perfect! 💯', 'You did it! 🎊',
+        'Genius! 🎓', 'Amazing! ✨', 'Fantastic! 🌈', 'Brilliant! 💡'
       ];
       return messages[Math.floor(Math.random() * messages.length)];
     } else if (isIncorrect) {
       const messages = [
-        'Almost there!', 'So close!', 'Try once more!', 'You can do it!',
-        'Keep trying!', 'Don\'t give up!', 'You\'re learning!', 'Great effort!'
+        'Almost there! Keep going! 💪', 'So close! Try again! 🌟', 
+        'You\'re learning! That\'s great! 📚', 'Great try! You got this! 💪',
+        'Keep trying! You can do it! 🎯', 'Nice effort! Try one more time! 🌈',
+        'You\'re doing great! Keep learning! 📖', 'Good try! Let\'s try again! 🌟'
       ];
       return messages[Math.floor(Math.random() * messages.length)];
     }
@@ -131,11 +134,11 @@ const FeedbackOverlay = ({
 
   return (
     <>
-      {/* Confetti Effect */}
+      {/* Confetti Effect - More particles for kids! */}
       <ConfettiEffect 
         active={showConfetti}
-        particleCount={isComplete ? 100 : 24}
-        duration={isComplete ? 3000 : autoCloseMs}
+        particleCount={isComplete ? 150 : (isCorrect ? 50 : 24)}
+        duration={isComplete ? 4000 : (isCorrect ? 2500 : autoCloseMs)}
         onComplete={() => setShowConfetti(false)}
       />
 
@@ -179,18 +182,26 @@ const FeedbackOverlay = ({
           >
             ×
           </button>
-          {/* Main Emoji */}
-          <div className="text-8xl md:text-9xl mb-4 animate-bounce">
+          {/* Main Emoji - Bigger for kids! */}
+          <div className="text-9xl md:text-[12rem] mb-6 animate-bounce" style={{ 
+            animation: 'bounce 0.8s ease-in-out infinite',
+            transform: 'scale(1.1)'
+          }}>
             {config.emoji}
           </div>
 
-          {/* Title */}
-          <h2 className={`text-4xl md:text-6xl font-bold ${config.textColor} mb-2`}>
+          {/* Title - Bigger and more fun for kids */}
+          <h2 className={`text-5xl md:text-7xl font-extrabold ${config.textColor} mb-4`} style={{
+            textShadow: '2px 2px 4px rgba(0,0,0,0.2)',
+            letterSpacing: '0.05em'
+          }}>
             {config.title}
           </h2>
 
-          {/* Encouraging Message */}
-          <p className={`text-xl md:text-3xl ${config.textColor} mb-4 opacity-90`}>
+          {/* Encouraging Message - Larger and more engaging */}
+          <p className={`text-2xl md:text-4xl ${config.textColor} mb-6 opacity-95 font-bold`} style={{
+            textShadow: '1px 1px 3px rgba(0,0,0,0.15)'
+          }}>
             {getEncouragingMessages()}
           </p>
 
