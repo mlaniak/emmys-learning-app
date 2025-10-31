@@ -110,6 +110,7 @@ const FeedbackOverlay = ({
   };
 
   const config = getFeedbackConfig();
+  const autoCloseMs = isComplete ? 3000 : (isCorrect ? 1200 : 1600);
 
   const getEncouragingMessages = () => {
     if (isCorrect) {
@@ -133,14 +134,14 @@ const FeedbackOverlay = ({
       {/* Confetti Effect */}
       <ConfettiEffect 
         active={showConfetti}
-        particleCount={isComplete ? 100 : 30}
-        duration={isComplete ? 4000 : 2000}
+        particleCount={isComplete ? 100 : 24}
+        duration={isComplete ? 3000 : autoCloseMs}
         onComplete={() => setShowConfetti(false)}
       />
 
       {/* Feedback Overlay */}
       <div 
-        className={`fixed inset-0 z-50 flex items-center justify-center transition-all duration-300 bg-black/50 backdrop-blur-sm ${
+        className={`fixed inset-0 z-50 flex items-center justify-center transition-all duration-300 bg-black/40 backdrop-blur-sm ${
           animationPhase === 'enter' ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         onClick={() => {

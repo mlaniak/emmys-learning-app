@@ -868,6 +868,66 @@ Your Student ✨
     }, 100);
   };
 
+  // Prevent multiple answers and control auto-advance
+  const [answerLocked, setAnswerLocked] = useState(false);
+  const [advanceScheduled, setAdvanceScheduled] = useState(false);
+
+  const scheduleAdvanceToNextQuestion = (delayMs = 1200) => {
+    if (advanceScheduled) return;
+    setAdvanceScheduled(true);
+    setTimeout(() => {
+      const qs = currentQuestions;
+      // Clear overlay state
+      setShowFeedback(null);
+      setAnswerAnimation('');
+      setShowExplanation(false);
+      setCorrectAnswer('');
+      // Advance or complete
+      if (Array.isArray(qs) && currentQuestion < qs.length - 1) {
+        setCurrentQuestion(currentQuestion + 1);
+      } else if (Array.isArray(qs) && qs.length > 0) {
+        const subjectScore = Math.round((score / (questionCount * 10)) * 100);
+        const isPerfectScore = subjectScore === 100;
+        let newProgress = {
+          ...progress,
+          totalScore: progress.totalScore + score,
+          lastPlayed: new Date().toISOString(),
+          completedSubjects: {
+            ...progress.completedSubjects,
+            [currentScreen]: {
+              completed: true,
+              score: subjectScore,
+              completedAt: new Date().toISOString(),
+              questionsAnswered: questionCount,
+              correctAnswers: Math.floor(score / 10)
+            }
+          }
+        };
+        if (isPerfectScore) {
+          newProgress.stats = newProgress.stats || {};
+          newProgress.stats.perfectScores = (newProgress.stats.perfectScores || 0) + 1;
+        }
+        newProgress = checkAchievements(newProgress);
+        newProgress = checkUnlocks(newProgress);
+        saveProgress(newProgress);
+        playSound('complete');
+        triggerHaptic('success');
+        setCurrentScreen('complete');
+      }
+      setAnswerLocked(false);
+      setAdvanceScheduled(false);
+    }, delayMs);
+  };
+
+  // Safety net: if a correct feedback is showing but for any reason
+  // the advance wasn't scheduled (race conditions, interrupted timers),
+  // schedule it now to avoid getting stuck on a question.
+  useEffect(() => {
+    if (showFeedback === 'correct' && !advanceScheduled && answerLocked) {
+      scheduleAdvanceToNextQuestion(1200);
+    }
+  }, [showFeedback, advanceScheduled, answerLocked]);
+
   // Adaptive Learning System
   const calculateAdaptiveDifficulty = (subject, performance) => {
     const currentDifficulty = adaptiveDifficulty[subject] || 'medium';
@@ -2906,7 +2966,9 @@ Your Student ✨
       timeSpent: currentStats.timeSpent + 1 // Simple time tracking
     };
     
-    if (ok) { 
+  if (ok) { 
+      if (answerLocked) return; 
+      setAnswerLocked(true);
       playSound('correct');
       triggerHaptic('success');
       setShowFeedback('correct'); 
@@ -2917,6 +2979,8 @@ Your Student ✨
       if (questionContainer) {
         animations.triggerSuccess(questionContainer);
       }
+      // Always schedule auto-advance to next question
+      scheduleAdvanceToNextQuestion(1200);
     } else { 
       playSound('incorrect');
       triggerHaptic('error');
@@ -2938,56 +3002,12 @@ Your Student ✨
         question: qs[currentQuestion]
       });
       setShowWrongAnswerModal(true);
+      // Allow retry on incorrect
+      setAnswerLocked(false);
     }
     
     // Only auto-continue for correct answers when enabled
-    if (ok && AUTO_ADVANCE_ON_CORRECT) {
-    setTimeout(() => {
-      setShowFeedback(null); 
-      setAnswerAnimation(''); 
-      setShowExplanation(false); 
-      setCorrectAnswer('');
-      
-      if (currentQuestion < qs.length - 1) {
-        setCurrentQuestion(currentQuestion + 1);
-      } else {
-        // Mark subject as completed
-        const subjectScore = Math.round((newScore / (questionCount * 10)) * 100);
-        const isPerfectScore = subjectScore === 100;
-        
-        let newProgress = {
-          ...progress,
-          totalScore: progress.totalScore + newScore,
-          lastPlayed: new Date().toISOString(),
-          stats: updatedStats,
-          completedSubjects: {
-            ...progress.completedSubjects,
-            [currentScreen]: {
-              completed: true,
-              score: subjectScore,
-              completedAt: new Date().toISOString(),
-              questionsAnswered: questionCount,
-              correctAnswers: Math.floor(newScore / 10)
-            }
-          }
-        };
-        
-        // Update perfect scores count
-        if (isPerfectScore) {
-          newProgress.stats = newProgress.stats || {};
-          newProgress.stats.perfectScores = (newProgress.stats.perfectScores || 0) + 1;
-        }
-        
-        // Check for achievements and unlocks
-        newProgress = checkAchievements(newProgress);
-        newProgress = checkUnlocks(newProgress);
-        
-        saveProgress(newProgress);
-        playSound('complete');
-        triggerHaptic('success');
-        setCurrentScreen('complete');
-      }
-    }, 1800);
+  // Removed old AUTO_ADVANCE_ON_CORRECT branch; handled by scheduleAdvanceToNextQuestion
     }
   };
 
@@ -5787,48 +5807,14 @@ Your Student ✨
           feedback={showFeedback}
           visible={!!showFeedback}
           onClose={() => {
-            // Clear overlay state
+            // Only close the overlay; advancement is scheduled by the answer handler
             setShowFeedback(null);
             setAnswerAnimation('');
             setShowExplanation(false);
             setCorrectAnswer('');
-
-            // Proceed to next question or finish if at the end
-            const qs = currentQuestions;
-            if (Array.isArray(qs) && currentQuestion < qs.length - 1) {
-              setCurrentQuestion(currentQuestion + 1);
-            } else if (Array.isArray(qs) && qs.length > 0) {
-              const subjectScore = Math.round((score / (questionCount * 10)) * 100);
-              const isPerfectScore = subjectScore === 100;
-
-              let newProgress = {
-                ...progress,
-                totalScore: progress.totalScore + score,
-                lastPlayed: new Date().toISOString(),
-                completedSubjects: {
-                  ...progress.completedSubjects,
-                  [currentScreen]: {
-                    completed: true,
-                    score: subjectScore,
-                    completedAt: new Date().toISOString(),
-                    questionsAnswered: questionCount,
-                    correctAnswers: Math.floor(score / 10)
-                  }
-                }
-              };
-
-              if (isPerfectScore) {
-                newProgress.stats = newProgress.stats || {};
-                newProgress.stats.perfectScores = (newProgress.stats.perfectScores || 0) + 1;
-              }
-
-              newProgress = checkAchievements(newProgress);
-              newProgress = checkUnlocks(newProgress);
-
-              saveProgress(newProgress);
-              playSound('complete');
-              triggerHaptic('success');
-              setCurrentScreen('complete');
+            // If this was a correct state and no advance is pending, advance immediately
+            if (showFeedback === 'correct' && !advanceScheduled) {
+              scheduleAdvanceToNextQuestion(0);
             }
           }}
           showExplanation={showExplanation}
@@ -5866,7 +5852,7 @@ Your Student ✨
           {((shuffledOptions && shuffledOptions.length > 0) ? shuffledOptions : (q.options || [])).map((opt, i) => (
             <div key={`${currentQuestion}-${opt}-${i}`} className="flex items-stretch gap-3">
               <div 
-                onClick={() => { triggerHaptic('medium'); handleAnswer(opt, q.correct || q.answer, qs, q.explanation); }} 
+                onClick={() => { if (answerLocked) return; triggerHaptic('medium'); handleAnswer(opt, q.correct || q.answer, qs, q.explanation); }} 
                 className="flex-1 p-3 md:p-4 text-xl md:text-2xl font-semibold rounded-xl shadow-lg hover:scale-105 active:scale-95 cursor-pointer bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900 transition-all duration-200"
                 role="button"
                 aria-label={`Answer option: ${opt}`}
